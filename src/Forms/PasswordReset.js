@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -64,7 +64,7 @@ export default function PasswordReset() {
                                 disableElevation
                                 variant="outlined"
                                 color="primary"
-                                component={RouterLink} to={`/${HomepageUrl}/login`}
+                                component={RouterLink} to={`./login`}
                             >
                                 Войти
                             </Button>

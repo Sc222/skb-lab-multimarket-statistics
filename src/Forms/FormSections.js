@@ -2,22 +2,21 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Paper from "@material-ui/core/Paper";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
 
 import {Route, Switch as RouteSwitch} from 'react-router-dom';
 
 import {HomepageUrl} from "../App";
 import FormSectionStyles from "../Styles/FormSectionStyles";
-import SimpleToolbar from "../SimpleToolbar";
 import Login from "./Login";
 import Register from "./Register";
 import PasswordReset from "./PasswordReset";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
-export default function FormSection() {
+export default function FormSections() {
     const classes = useStyles();
 
     return (
