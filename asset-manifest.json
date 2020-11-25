@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/skb-lab-multimarket-statistics/static/css/main.abdc782d.chunk.css",
+    "main.js": "/skb-lab-multimarket-statistics/static/js/main.70e4edb6.chunk.js",
+    "main.js.map": "/skb-lab-multimarket-statistics/static/js/main.70e4edb6.chunk.js.map",
+    "runtime-main.js": "/skb-lab-multimarket-statistics/static/js/runtime-main.7b22d775.js",
+    "runtime-main.js.map": "/skb-lab-multimarket-statistics/static/js/runtime-main.7b22d775.js.map",
+    "static/js/2.43dce321.chunk.js": "/skb-lab-multimarket-statistics/static/js/2.43dce321.chunk.js",
+    "static/js/2.43dce321.chunk.js.map": "/skb-lab-multimarket-statistics/static/js/2.43dce321.chunk.js.map",
+    "index.html": "/skb-lab-multimarket-statistics/index.html",
+    "static/css/main.abdc782d.chunk.css.map": "/skb-lab-multimarket-statistics/static/css/main.abdc782d.chunk.css.map",
+    "static/js/2.43dce321.chunk.js.LICENSE.txt": "/skb-lab-multimarket-statistics/static/js/2.43dce321.chunk.js.LICENSE.txt",
+    "static/media/app-store-disabled.4080e424.svg": "/skb-lab-multimarket-statistics/static/media/app-store-disabled.4080e424.svg",
+    "static/media/app-store.243dde9c.svg": "/skb-lab-multimarket-statistics/static/media/app-store.243dde9c.svg",
+    "static/media/appgallery-disabled.080c1042.svg": "/skb-lab-multimarket-statistics/static/media/appgallery-disabled.080c1042.svg",
+    "static/media/appgallery.2511b7f7.svg": "/skb-lab-multimarket-statistics/static/media/appgallery.2511b7f7.svg",
+    "static/media/demo_profile.982a8b9d.png": "/skb-lab-multimarket-statistics/static/media/demo_profile.982a8b9d.png",
+    "static/media/google-play-disabled.5007a7b9.svg": "/skb-lab-multimarket-statistics/static/media/google-play-disabled.5007a7b9.svg",
+    "static/media/google-play.0fd81e41.svg": "/skb-lab-multimarket-statistics/static/media/google-play.0fd81e41.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.7b22d775.js",
+    "static/js/2.43dce321.chunk.js",
+    "static/css/main.abdc782d.chunk.css",
+    "static/js/main.70e4edb6.chunk.js"
+  ]
+}
