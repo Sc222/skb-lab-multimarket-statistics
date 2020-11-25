@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {makeStyles, useTheme} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -20,7 +20,6 @@ import {fade} from "@material-ui/core";
 import {AddRounded, SearchRounded} from "@material-ui/icons";
 import InputBase from "@material-ui/core/InputBase";
 import Fab from "@material-ui/core/Fab";
-import Title from "../Dashboard/Title";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
@@ -232,7 +231,6 @@ export default function Applications(props) {
     const [apps, setApps] = React.useState(undefined);
 
     const classes = useStyles();
-    const theme = useTheme();
 
     //todo move to separate file
     const marketsConstants = [
@@ -378,7 +376,9 @@ export default function Applications(props) {
                 <Grid item xs={12}>
                     <Paper className={classes.paper}>
                         <div className={classes.paperContainer}>
-                            <Title>Загрузка</Title>
+                            <Typography component="h2" variant="h6" color="primary">
+                                Загрузка
+                            </Typography>
                             <Typography variant="body1">
                                 Загрузка списка приложений с сервера...
                             </Typography>
@@ -390,7 +390,7 @@ export default function Applications(props) {
                 <Grid item xs={12}>
                     <Paper className={classes.paper}>
                         <div className={classes.paperContainer}>
-                            <Title>У Вас еще нет приложений</Title>
+                            <Typography component="h2" variant="h6" color="primary">У Вас еще нет приложений</Typography>
                             <Typography component="p" variant="body1">
                                 Нажмите на кнопку 'добавить' для того, чтобы создать новое приложение
                             </Typography>

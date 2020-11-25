@@ -1,28 +1,51 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import clsx from 'clsx';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import Link from '@material-ui/core/Link';
 import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import Chart from './Chart';
+import Deposits from './Deposits';
+import Orders from './Orders';
+import DrawerMenu from "./DrawerMenu";
+import {MenuRounded} from "@material-ui/icons";
+import Avatar from "@material-ui/core/Avatar";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 //image imports
+import demoProfile from '../../images/demo_profile.png';
 import {Button} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
-import Orders from "./ApplicationDashboard/Orders";
-import Deposits from "./ApplicationDashboard/Deposits";
-import Chart from "./ApplicationDashboard/Chart";
-import DrawerMenu from "./ApplicationDashboard/DrawerMenu";
-import {Link as RouterLink} from "react-router-dom";
-import {HomepageUrl} from "../App";
+
+function Copyright() {
+    return (
+        <Typography variant="body2" color="textSecondary" align="center">
+            {'Copyright © '}
+            <Link color="inherit" href="https://material-ui.com/">
+                Your Website
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
+}
 
 const drawerWidth = 260;
 
 const useStyles = makeStyles((theme) => ({
     appBarSpacer: {
-        height: '48px'
+        height:'48px'
     },
 
     root: {
@@ -34,8 +57,8 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'flex-end',
     },
 
-    backToAppsButton: {
-        width: '100%'
+    backToAppsButton:{
+        width:'100%'
     },
 
     appBar: {
@@ -98,26 +121,78 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function Application(props) {
+export default function ApplicationDashboard() {
     const classes = useStyles();
-
-    const isDrawerOpen = props.isDrawerOpen;
-    const username = props.username;
-
+    const theme = useTheme();
+    // responsive: change drawer type when medium device
+    const isMediumDevice = useMediaQuery(theme.breakpoints.down('md'));
+    const [isDrawerOpen, setDrawerOpen] = React.useState(true);
+    const [notifications, setNotifications] = React.useState(undefined);
+    const changeDrawerState = () => {
+        setDrawerOpen(!isDrawerOpen);
+    };
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+    useEffect(() => {
+        //document.title='';
+
+        console.log("componentDidMount");
+        // todo load notifications from server
+        setNotifications(['1','2']);
+
+        // todo application route params
+    }, []);
 
     return (
         <div className={classes.root}>
+            <AppBar position="absolute" className={classes.appBar}>
+                <Toolbar variant="dense">
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        aria-label="change drawer state"
+                        onClick={changeDrawerState}
+                        className={classes.menuButton}
+                    >
+                        {isDrawerOpen ? <ArrowBackRoundedIcon/> : <MenuRounded/>}
+                    </IconButton>
+                    <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+                        Multimarket Statistics
+                    </Typography>
+
+                    {/*todo show notifications menu on click*/}
+                    <IconButton color="inherit">
+                        <Badge badgeContent={notifications?.length} color="secondary">
+                            <NotificationsIcon/>
+                        </Badge>
+                    </IconButton>
+
+                    {/*todo load profile picture from server*/}
+                    <IconButton className={classes.profileIconButton} color='inherit'>
+                    <Avatar className={classes.profileIcon} alt='Profile picture' src={demoProfile}/>
+                    </IconButton>
+                </Toolbar>
+            </AppBar>
             <Drawer
-                variant={'permanent'}
+                variant={isMediumDevice ? 'temporary' : 'permanent'}
                 classes={{
                     paper: clsx(classes.drawerPaper, !isDrawerOpen && classes.drawerPaperClose),
                 }}
                 anchor={'left'}
                 open={isDrawerOpen}
                 /*onClose={isMediumDevice ? setDrawerOpen(false) : null}*/>
-                <div className={classes.appBarSpacer}/>
+                {
+                    isMediumDevice
+                        ? <IconButton
+                            edge="start"
+                            color="inherit"
+                            aria-label="change drawer state"
+                            onClick={changeDrawerState}
+                        >
+                            {isDrawerOpen ? <ArrowBackRoundedIcon/> : <MenuRounded/>}
+                        </IconButton>
+                        : <div className={classes.appBarSpacer}/>
+                }
                 <Box mx={3} my={1.5} width={'auto'}>
                     <Button
                         className={classes.backToAppsButton}
@@ -125,8 +200,6 @@ export default function Application(props) {
                         color="primary"
                         size="medium"
                         startIcon={<ArrowBackRoundedIcon/>}
-                        component={RouterLink}
-                        to={`${HomepageUrl}/user/${username}/apps`}
                     >
                         Все приложения
                     </Button>
@@ -157,6 +230,9 @@ export default function Application(props) {
                             </Paper>
                         </Grid>
                     </Grid>
+                    <Box pt={4}>
+                        <Copyright/>
+                    </Box>
                 </Container>
             </main>
         </div>

@@ -17,7 +17,10 @@ function Homepage() {
         {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (refusedguy) (еще не реализовано)'},
         {link: `${HomepageUrl}/user/sc222/apps`, title: 'Пользователь с приложениями (sc222)'},
         {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (sc222) (еще не реализовано)'},
-        {link: `${HomepageUrl}/user/sc222/new-app`, title: 'Добавить приложение (sc222) (карточки маркетов пока статичны)'},
+        {
+            link: `${HomepageUrl}/user/sc222/new-app`,
+            title: 'Добавить приложение (sc222) (карточки маркетов пока статичны)'
+        },
         {
             link: `${HomepageUrl}/user/sc222/app/pixel-fishing/dashboard`,
             title: 'Панель управления (sc222, pixel-fishing) (доделать боковое меню)'

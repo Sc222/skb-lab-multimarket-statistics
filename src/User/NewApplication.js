@@ -185,7 +185,7 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     searchCard: {
-        display:'block',
+        display: 'block',
         borderRadius: theme.shape.borderRadius,
         marginTop: theme.spacing(1.5),
         position: 'relative',
@@ -195,7 +195,7 @@ const useStyles = makeStyles((theme) => ({
         },
 
         [theme.breakpoints.up('sm')]: {
-            display:'inline-block',
+            display: 'inline-block',
         },
 
     },
@@ -210,7 +210,7 @@ const useStyles = makeStyles((theme) => ({
     },
     inputRoot: {
         color: 'inherit',
-        width:'100%'
+        width: '100%'
     },
     inputInput: {
         padding: theme.spacing(1, 1, 1, 0),
