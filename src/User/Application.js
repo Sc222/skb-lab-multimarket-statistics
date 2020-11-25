@@ -142,7 +142,7 @@ export default function Application(props) {
                         size="medium"
                         startIcon={<ArrowBackRoundedIcon/>}
                         component={RouterLink}
-                        to={`/${HomepageUrl}/user/${username}/apps`}
+                        to={`${HomepageUrl}/user/${username}/apps`}
                     >
                         Все приложения
                     </Button>

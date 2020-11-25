@@ -10,20 +10,20 @@ import {MoodRounded} from "@material-ui/icons";
 
 function Homepage() {
     const DemoSections = [
-        {link: `/${HomepageUrl}/register`, title: 'Регистрация'},
-        {link: `/${HomepageUrl}/login`, title: 'Вход'},
-        {link: `/${HomepageUrl}/password-reset`, title: 'Сброс пароля'},
-        {link: `/${HomepageUrl}/user/refusedguy/apps`, title: 'Пользователь без приложений (refusedguy)'},
-        {link: `/${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (refusedguy) (еще не реализовано)'},
-        {link: `/${HomepageUrl}/user/sc222/apps`, title: 'Пользователь с приложениями (sc222)'},
-        {link: `/${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (sc222) (еще не реализовано)'},
-        {link: `/${HomepageUrl}/user/sc222/new-app`, title: 'Добавить приложение (sc222) (еще не реализовано)'},
+        {link: `${HomepageUrl}/register`, title: 'Регистрация'},
+        {link: `${HomepageUrl}/login`, title: 'Вход'},
+        {link: `${HomepageUrl}/password-reset`, title: 'Сброс пароля'},
+        {link: `${HomepageUrl}/user/refusedguy/apps`, title: 'Пользователь без приложений (refusedguy)'},
+        {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (refusedguy) (еще не реализовано)'},
+        {link: `${HomepageUrl}/user/sc222/apps`, title: 'Пользователь с приложениями (sc222)'},
+        {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (sc222) (еще не реализовано)'},
+        {link: `${HomepageUrl}/user/sc222/new-app`, title: 'Добавить приложение (sc222) (карточки маркетов пока статичны)'},
         {
-            link: `/${HomepageUrl}/user/sc222/app/pixel-fishing/dashboard`,
+            link: `${HomepageUrl}/user/sc222/app/pixel-fishing/dashboard`,
             title: 'Панель управления (sc222, pixel-fishing) (доделать боковое меню)'
         },
         {
-            link: `/${HomepageUrl}/user/sc222/app/pixel-fishing/settings`,
+            link: `${HomepageUrl}/user/sc222/app/pixel-fishing/settings`,
             title: 'Настройки приложения (sc222, pixel-fishing) (доделать боковое меню)'
         },
     ];
@@ -39,6 +39,13 @@ function Homepage() {
             </Typography>
             <Typography variant='subtitle2'>
                 Разделы сайта (пока демо без сервера и темы + без редиректов по неверным ссылкам):
+            </Typography>
+            <Typography variant='subtitle2'>
+                TODO: <br/>
+                - profile / notification POPOVER <br/>
+                - profile setup section <br/>
+                - app dashboard menu + cards <br/>
+                - app settings menu + cards <br/>
             </Typography>
             <List dense style={{color: '#61dafb'}}>
                 {DemoSections.map(

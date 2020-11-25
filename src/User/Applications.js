@@ -429,6 +429,8 @@ export default function Applications(props) {
                                                      component='a'
                                                      label={marketsConstants[index].name}
                                                      href={market.link}
+                                                     target="_blank"
+                                                     rel='noreferrer'
                                                      disabled={market.disabled}
                                                      color={market.disabled ? "default" : "primary"}
                                                      avatar={<Avatar style={{background: 'transparent'}}

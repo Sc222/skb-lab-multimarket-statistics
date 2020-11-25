@@ -162,8 +162,8 @@ export default function UserSection() {
 
     const classes = useStyles();
 
-    const regexpUrlWithoutDrawer = new RegExp(`^\/${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/(apps|new-app)`);
-    const regexpUrlWithDrawer = new RegExp(`^\/${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/app\/[a-zA-Z0-9-]+\/(dashboard|settings)`);
+    const regexpUrlWithoutDrawer = new RegExp(`^${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/(apps|new-app)`);
+    const regexpUrlWithDrawer = new RegExp(`^${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/app\/[a-zA-Z0-9-]+\/(dashboard|settings)`);
 
     const [isDrawerOpen, setDrawerOpen] = React.useState(true);
 
@@ -232,19 +232,19 @@ export default function UserSection() {
             <main className={classes.content}>
 
                 <RouteSwitch>
-                    <Route path={`/${HomepageUrl}/user/:username/apps`}>
+                    <Route path={`${HomepageUrl}/user/:username/apps`}>
                         <Applications username={username}/>
                     </Route>
                 </RouteSwitch>
 
                 <RouteSwitch>
-                    <Route path={`/${HomepageUrl}/user/:username/new-app`}>
+                    <Route path={`${HomepageUrl}/user/:username/new-app`}>
                         <NewApplication username={username}/>
                     </Route>
                 </RouteSwitch>
 
                 <RouteSwitch>
-                    <Route path={`/${HomepageUrl}/user/:username/app/:appname`}>
+                    <Route path={`${HomepageUrl}/user/:username/app/:appname`}>
                         <Application username={username} isDrawerOpen={isDrawerOpen}/>
                         {/*todo if path is /${HomepageUrl}/user/:username/app/:appname (without dashboard|settings) -> redirect to dashboard*/}
                     </Route>

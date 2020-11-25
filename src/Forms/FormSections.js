@@ -19,6 +19,8 @@ const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 export default function FormSections() {
     const classes = useStyles();
 
+    /* todo add same height appbar spacer as in user section */
+
     return (
         <div>
             <AppBar position="absolute">
@@ -34,13 +36,13 @@ export default function FormSections() {
             <Container maxWidth="sm">
                 <Paper elevation={2} className={classes.paper}>
                     <RouteSwitch>
-                        <Route path={`/${HomepageUrl}/login/`}>
+                        <Route path={`${HomepageUrl}/login/`}>
                             <Login/>
                         </Route>
-                        <Route path={`/${HomepageUrl}/register/`}>
+                        <Route path={`${HomepageUrl}/register/`}>
                             <Register/>
                         </Route>
-                        <Route path={`/${HomepageUrl}/password-reset/`}>
+                        <Route path={`${HomepageUrl}/password-reset/`}>
                             <PasswordReset/>
                         </Route>
                     </RouteSwitch>
