@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/skb-lab-multimarket-statistics/static/css/main.abdc782d.chunk.css",
-    "main.js": "/skb-lab-multimarket-statistics/static/js/main.6cadc327.chunk.js",
-    "main.js.map": "/skb-lab-multimarket-statistics/static/js/main.6cadc327.chunk.js.map",
+    "main.js": "/skb-lab-multimarket-statistics/static/js/main.353b1e76.chunk.js",
+    "main.js.map": "/skb-lab-multimarket-statistics/static/js/main.353b1e76.chunk.js.map",
     "runtime-main.js": "/skb-lab-multimarket-statistics/static/js/runtime-main.7b22d775.js",
     "runtime-main.js.map": "/skb-lab-multimarket-statistics/static/js/runtime-main.7b22d775.js.map",
-    "static/js/2.43dce321.chunk.js": "/skb-lab-multimarket-statistics/static/js/2.43dce321.chunk.js",
-    "static/js/2.43dce321.chunk.js.map": "/skb-lab-multimarket-statistics/static/js/2.43dce321.chunk.js.map",
+    "static/js/2.24c5f96d.chunk.js": "/skb-lab-multimarket-statistics/static/js/2.24c5f96d.chunk.js",
+    "static/js/2.24c5f96d.chunk.js.map": "/skb-lab-multimarket-statistics/static/js/2.24c5f96d.chunk.js.map",
     "index.html": "/skb-lab-multimarket-statistics/index.html",
     "static/css/main.abdc782d.chunk.css.map": "/skb-lab-multimarket-statistics/static/css/main.abdc782d.chunk.css.map",
-    "static/js/2.43dce321.chunk.js.LICENSE.txt": "/skb-lab-multimarket-statistics/static/js/2.43dce321.chunk.js.LICENSE.txt",
+    "static/js/2.24c5f96d.chunk.js.LICENSE.txt": "/skb-lab-multimarket-statistics/static/js/2.24c5f96d.chunk.js.LICENSE.txt",
     "static/media/app-store-disabled.4080e424.svg": "/skb-lab-multimarket-statistics/static/media/app-store-disabled.4080e424.svg",
     "static/media/app-store.243dde9c.svg": "/skb-lab-multimarket-statistics/static/media/app-store.243dde9c.svg",
     "static/media/appgallery-disabled.080c1042.svg": "/skb-lab-multimarket-statistics/static/media/appgallery-disabled.080c1042.svg",
@@ -20,8 +20,8 @@
   },
   "entrypoints": [
     "static/js/runtime-main.7b22d775.js",
-    "static/js/2.43dce321.chunk.js",
+    "static/js/2.24c5f96d.chunk.js",
     "static/css/main.abdc782d.chunk.css",
-    "static/js/main.6cadc327.chunk.js"
+    "static/js/main.353b1e76.chunk.js"
   ]
 }
