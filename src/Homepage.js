@@ -13,21 +13,21 @@ function Homepage() {
         {link: `${HomepageUrl}/register`, title: 'Регистрация'},
         {link: `${HomepageUrl}/login`, title: 'Вход'},
         {link: `${HomepageUrl}/password-reset`, title: 'Сброс пароля'},
-        {link: `${HomepageUrl}/user/refusedguy/apps`, title: 'Пользователь без приложений (refusedguy)'},
-        {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (refusedguy) (еще не реализовано)'},
+        {link: `${HomepageUrl}/user/refusedguy/apps`, title: 'Пользователь без приложений'},
+        {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (refusedguy)'},
         {link: `${HomepageUrl}/user/sc222/apps`, title: 'Пользователь с приложениями (sc222)'},
-        {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (sc222) (еще не реализовано)'},
+        {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (sc222)'},
         {
             link: `${HomepageUrl}/user/sc222/new-app`,
-            title: 'Добавить приложение (sc222) (карточки маркетов пока статичны)'
+            title: 'Добавить приложение (sc222) (статичные карточки маркетов)'
         },
         {
             link: `${HomepageUrl}/user/sc222/app/pixel-fishing/dashboard`,
-            title: 'Панель управления (sc222, pixel-fishing) (доделать боковое меню)'
+            title: 'Панель управления (sc222, pixel-fishing) (пока демо)'
         },
         {
             link: `${HomepageUrl}/user/sc222/app/pixel-fishing/settings`,
-            title: 'Настройки приложения (sc222, pixel-fishing) (доделать боковое меню)'
+            title: 'Настройки приложения (sc222, pixel-fishing) (пока демо)'
         },
     ];
 
@@ -45,6 +45,7 @@ function Homepage() {
             </Typography>
             <Typography variant='subtitle2'>
                 TODO: <br/>
+                - add app from market
                 - app dashboard menu + cards <br/>
                 - app settings menu + cards <br/>
             </Typography>

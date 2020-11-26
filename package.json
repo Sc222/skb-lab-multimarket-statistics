@@ -6,7 +6,7 @@
     "type" : "git",
     "url" : "https://github.com/Sc222/skb-lab-multimarket-statistics.git"
   },
-  "homepage": "https://multimarket-stats.netlify.app/",
+  "homepage": "https://multi-stats.netlify.app/",
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
