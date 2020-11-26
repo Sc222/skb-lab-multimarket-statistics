@@ -26,6 +26,7 @@ import Box from "@material-ui/core/Box";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
+import Profile from "./Profile";
 
 const drawerWidth = 260;
 
@@ -404,6 +405,12 @@ export default function UserSection() {
                 <RouteSwitch>
                     <Route path={`${HomepageUrl}/user/:username/new-app`}>
                         <NewApplication username={username}/>
+                    </Route>
+                </RouteSwitch>
+
+                <RouteSwitch>
+                    <Route path={`${HomepageUrl}/user/:username/profile`}>
+                        <Profile username={username}/>
                     </Route>
                 </RouteSwitch>
 

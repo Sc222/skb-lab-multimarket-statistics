@@ -45,8 +45,6 @@ function Homepage() {
             </Typography>
             <Typography variant='subtitle2'>
                 TODO: <br/>
-                - profile / notification POPOVER <br/>
-                - profile setup section <br/>
                 - app dashboard menu + cards <br/>
                 - app settings menu + cards <br/>
             </Typography>
