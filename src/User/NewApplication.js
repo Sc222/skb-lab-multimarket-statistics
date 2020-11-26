@@ -177,12 +177,9 @@ const useStyles = makeStyles((theme) => ({
         background: "transparent",
         color: theme.palette.text.primary
     },
-    extraToolbarTitle: {
+    extraToolbarTitleNoHide: {
         flexGrow: 1,
-        display: 'none',
-        [theme.breakpoints.up('sm')]: {
-            display: 'block',
-        },
+        display: 'block',
     },
     searchCard: {
         display: 'block',
@@ -310,7 +307,7 @@ export default function NewApplications(props) {
                                 >
                                     {<ArrowBackRoundedIcon color="action"/>}
                                 </IconButton>
-                                <Typography className={classes.extraToolbarTitle} variant="h6" noWrap>
+                                <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
                                     Добавить приложение
                                 </Typography>
                             </Toolbar>

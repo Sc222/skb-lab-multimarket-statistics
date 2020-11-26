@@ -146,12 +146,9 @@ const useStyles = makeStyles((theme) => ({
         background: "transparent",
         color: theme.palette.text.primary
     },
-    extraToolbarTitle: {
+    extraToolbarTitleNoHide: {
         flexGrow: 1,
-        display: 'none',
-        [theme.breakpoints.up('sm')]: {
-            display: 'block',
-        },
+        display: 'block',
     },
     searchCard: {
         display: 'block',
@@ -268,7 +265,7 @@ export default function Profile(props) {
                     <Paper elevation={1}>
                         <AppBar elevation={0} position="static" className={classes.extraToolbar}>
                             <Toolbar variant="dense" className={classes.extraToolbar}>
-                                <Typography className={classes.extraToolbarTitle} variant="h6" noWrap>
+                                <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
                                     Настройки
                                 </Typography>
                             </Toolbar>
