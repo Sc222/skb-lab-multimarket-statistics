@@ -7,14 +7,6 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
-//image imports
-import googlePlay from "../images/google-play.svg";
-import googlePlayDisabled from "../images/google-play-disabled.svg";
-import appStore from "../images/app-store.svg";
-import appStoreDisabled from "../images/app-store-disabled.svg";
-import appGallery from "../images/appgallery.svg";
-import appGalleryDisabled from "../images/appgallery-disabled.svg";
-
 import update from 'immutability-helper';
 
 import {fade} from "@material-ui/core";
@@ -25,15 +17,15 @@ import Hidden from "@material-ui/core/Hidden";
 import {Link as RouterLink} from "react-router-dom";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
-import FormSectionStyles from "../Styles/FormSectionStyles";
 import TextField from "@material-ui/core/TextField";
 import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
 import InputBase from "@material-ui/core/InputBase";
+import FormSectionStyles from "../Styles/FormSectionStyles";
+import MarketChipStyles from "../Styles/MarketChipStyles";
+import {MarketsInfo} from "../Constants/MarketsInfo";
 
 const drawerWidth = 260;
-
-const useFormStyles = makeStyles((theme) => FormSectionStyles(theme));
 
 const useStyles = makeStyles((theme) => ({
 
@@ -145,20 +137,6 @@ const useStyles = makeStyles((theme) => ({
         height: 128
     },
 
-    marketsContainer: {
-        display: 'flex',
-        justifyContent: 'left',
-        flexWrap: 'wrap',
-        paddingLeft: theme.spacing(1),
-        paddingRight: theme.spacing(1),
-        paddingBottom: theme.spacing(1.5),
-        '& > *': {
-            marginTop: theme.spacing(1),
-            marginLeft: theme.spacing(0.5),
-            marginRight: theme.spacing(0.5),
-        },
-    },
-
     fixedHeight: {
         height: 240,
     },
@@ -237,38 +215,16 @@ const useStyles = makeStyles((theme) => ({
     }
 
 }));
+const useFormSectionStyles = makeStyles((theme)=> FormSectionStyles(theme));
+const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function NewApplications(props) {
     let username = props.username;
     const [selectedMarkets, setSelectedMarkets] = React.useState([false, false, false]);
 
     const classes = useStyles();
-    const formClasses = useFormStyles();
-
-    //todo move to separate file
-    const marketsConstants = [
-        {
-            name: "Play Store",
-            description: "Найдите свое приложение в Google Play Store",
-            getIcon: (disabled) => {
-                return disabled ? googlePlayDisabled : googlePlay
-            }
-        },
-        {
-            name: "App Store",
-            description: "Найдите свое приложение в Apple App Store",
-            getIcon: (disabled) => {
-                return disabled ? appStoreDisabled : appStore
-            }
-        },
-        {
-            name: "AppGallery",
-            description: "Найдите свое приложение в Huawei AppGallery",
-            getIcon: (disabled) => {
-                return disabled ? appGalleryDisabled : appGallery
-            }
-        }
-    ];
+    const formClasses = useFormSectionStyles();
+    const marketClasses = useMarketChipStyles();
 
     function addNewApp() {
         //todo validate input and check if app name is unique,
@@ -368,19 +324,19 @@ export default function NewApplications(props) {
                                 </Typography>
                             </div>
                             <Divider className={formClasses.fullWidthDivider}/>
-                            <div className={classes.marketsContainer}>
+                            <div className={marketClasses.marketsContainer}>
                                 {
                                     selectedMarkets.map((isSelected, index) => {
                                         return <Chip variant="outlined"
                                                      clickable
-                                                     key={marketsConstants[index].name}
+                                                     key={MarketsInfo[index].name}
                                                      component='a'
                                                      onClick={() => toggleMarket(index)}
-                                                     label={marketsConstants[index].name}
+                                                     label={MarketsInfo[index].name}
                                                      color={isSelected ? "primary" : "default"}
-                                                     avatar={<Avatar style={{background: 'transparent'}}
+                                                     avatar={<Avatar className={marketClasses.transparentBg}
                                                                      variant='square'
-                                                                     src={marketsConstants[index].getIcon(!isSelected)}/>}/>
+                                                                     src={MarketsInfo[index].getIcon(!isSelected)}/>}/>
                                     })
                                 }
                             </div>
@@ -396,10 +352,10 @@ export default function NewApplications(props) {
                                     <div className={formClasses.cardContainer}>
                                         <div className={formClasses.container}>
                                             <Typography variant="h6">
-                                                {marketsConstants[index].name}
+                                                {MarketsInfo[index].name}
                                             </Typography>
                                             <Typography variant="body2">
-                                                {marketsConstants[index].description}
+                                                {MarketsInfo[index].description}
                                             </Typography>
                                         </div>
                                         <Divider className={formClasses.fullWidthDivider}/>
@@ -427,7 +383,6 @@ export default function NewApplications(props) {
                             </Grid>
                     })
                 }
-
             </Grid>
 
             <Hidden smDown>

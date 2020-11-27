@@ -46,7 +46,7 @@ function Homepage() {
             <Typography variant='subtitle2'>
                 TODO: <br/>
                 - add app from market
-                - market chips fix MOBILE size<br/>
+                - !!! scroll to top when new section is opened (check router settings)<br/>
                 - app dashboard/settings MOBILE menu<br/>
                 - app dashboard menu + cards <br/>
                 - app settings menu + cards <br/>

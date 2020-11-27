@@ -26,6 +26,8 @@ import Avatar from "@material-ui/core/Avatar";
 import Hidden from "@material-ui/core/Hidden";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import {Link as RouterLink} from "react-router-dom";
+import MarketChipStyles from "../Styles/MarketChipStyles";
+import {MarketsInfo} from "../Constants/MarketsInfo";
 
 const drawerWidth = 260;
 
@@ -136,20 +138,6 @@ const useStyles = makeStyles((theme) => ({
         height: 128
     },
 
-    marketsContainer: {
-        display: 'flex',
-        justifyContent: 'left',
-        flexWrap: 'wrap',
-        paddingLeft: theme.spacing(1),
-        paddingRight: theme.spacing(1),
-        paddingBottom: theme.spacing(1.5),
-        '& > *': {
-            marginTop: theme.spacing(1),
-            marginLeft: theme.spacing(0.5),
-            marginRight: theme.spacing(0.5),
-        },
-    },
-
     fixedHeight: {
         height: 240,
     },
@@ -161,7 +149,6 @@ const useStyles = makeStyles((theme) => ({
         width: theme.spacing(4.5),
         height: theme.spacing(4.5),
     },
-
 
     //search toolbar styles
     extraToolbar: {
@@ -225,31 +212,14 @@ const useStyles = makeStyles((theme) => ({
     },
 
 }));
+const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function Applications(props) {
     let username = props.username;
     const [apps, setApps] = React.useState(undefined);
 
     const classes = useStyles();
-
-    //todo move to separate file
-    const marketsConstants = [
-        {
-            name: "Play Store", getIcon: (disabled) => {
-                return disabled ? googlePlayDisabled : googlePlay
-            }
-        },
-        {
-            name: "App Store", getIcon: (disabled) => {
-                return disabled ? appStoreDisabled : appStore
-            }
-        },
-        {
-            name: "AppGallery", getIcon: (disabled) => {
-                return disabled ? appGalleryDisabled : appGallery
-            }
-        }
-    ];
+    const marketClasses = useMarketChipStyles();
 
     useEffect(() => {
         //todo use iuliia-js to transliterate app name into id
@@ -257,6 +227,7 @@ export default function Applications(props) {
         // todo load info by username
         console.log(username);
         // todo if username !== logged in username => redirect
+
 
 
         // todo load applications list by username from server
@@ -421,21 +392,21 @@ export default function Applications(props) {
                                 </div>
                             </ButtonBase>
                             <Divider className={classes.fullWidthDivider}/>
-                            <div className={classes.marketsContainer}>
+                            <div className={marketClasses.marketsContainer}>
                                 {
                                     app.markets.map((market, index) => {
                                         return <Chip variant="outlined"
                                                      clickable
                                                      component='a'
-                                                     label={marketsConstants[index].name}
+                                                     label={MarketsInfo[index].name}
                                                      href={market.link}
                                                      target="_blank"
                                                      rel='noreferrer'
                                                      disabled={market.disabled}
                                                      color={market.disabled ? "default" : "primary"}
-                                                     avatar={<Avatar style={{background: 'transparent'}}
+                                                     avatar={<Avatar className={marketClasses.transparentBg}
                                                                      variant='square'
-                                                                     src={marketsConstants[index].getIcon(market.disabled)}/>}/>
+                                                                     src={MarketsInfo[index].getIcon(market.disabled)}/>}/>
                                     })
                                 }
                             </div>
