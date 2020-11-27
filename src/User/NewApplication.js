@@ -248,7 +248,7 @@ export default function NewApplications(props) {
     //todo move to separate file
     const marketsConstants = [
         {
-            name: "Google Play",
+            name: "Play Store",
             description: "Найдите свое приложение в Google Play Store",
             getIcon: (disabled) => {
                 return disabled ? googlePlayDisabled : googlePlay
