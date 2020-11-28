@@ -222,8 +222,6 @@ export default function Applications(props) {
         console.log(username);
         // todo if username !== logged in username => redirect
 
-
-
         // todo load applications list by username from server
         // todo more complex classes in json
         const apps = {

@@ -17,7 +17,7 @@ import demoProfile from '../images/demo_profile.png';
 import {fade} from "@material-ui/core";
 import {HomepageUrl} from "../App";
 import Applications from "./Applications";
-import Application from "./Application";
+import ApplicationSection from "./Application/ApplicationSection";
 import NewApplication from "./NewApplication";
 import Popover from "@material-ui/core/Popover";
 import Divider from "@material-ui/core/Divider";
@@ -400,23 +400,14 @@ export default function UserSection() {
                     <Route path={`${HomepageUrl}/user/:username/apps`}>
                         <Applications username={username}/>
                     </Route>
-                </RouteSwitch>
-
-                <RouteSwitch>
                     <Route path={`${HomepageUrl}/user/:username/new-app`}>
                         <NewApplication username={username}/>
                     </Route>
-                </RouteSwitch>
-
-                <RouteSwitch>
                     <Route path={`${HomepageUrl}/user/:username/profile`}>
                         <Profile username={username}/>
                     </Route>
-                </RouteSwitch>
-
-                <RouteSwitch>
                     <Route path={`${HomepageUrl}/user/:username/app/:appname`}>
-                        <Application username={username} isDrawerOpen={isDrawerOpen}/>
+                        <ApplicationSection username={username} isDrawerOpen={isDrawerOpen}/>
                         {/*todo if path is /${HomepageUrl}/user/:username/app/:appname (without dashboard|settings) -> redirect to dashboard*/}
                     </Route>
                 </RouteSwitch>
