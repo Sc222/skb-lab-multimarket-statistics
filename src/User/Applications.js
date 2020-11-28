@@ -9,12 +9,6 @@ import Paper from '@material-ui/core/Paper';
 
 //image imports
 import demoAppIcon from "../images/demo_app_icon.png";
-import googlePlay from "../images/google-play.svg";
-import googlePlayDisabled from "../images/google-play-disabled.svg";
-import appStore from "../images/app-store.svg";
-import appStoreDisabled from "../images/app-store-disabled.svg";
-import appGallery from "../images/appgallery.svg";
-import appGalleryDisabled from "../images/appgallery-disabled.svg";
 
 import {fade} from "@material-ui/core";
 import {AddRounded, SearchRounded} from "@material-ui/icons";

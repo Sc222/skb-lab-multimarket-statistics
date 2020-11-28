@@ -16,20 +16,12 @@ export default function App() {
             <CssBaseline/>
             <BrowserRouter>
                 <RouteSwitch>
-                    <Route exact path={`${HomepageUrl}/`}>
-                        {/* TODO LANDING PAGE WITH LOGIN FORM ON TOP (LIKE GITHUB)*/}
-                        <Homepage/>
-                    </Route>
-
-                    {/* todo pass 99 as link argument*/}
+                    {/* TODO LANDING PAGE WITH LOGIN FORM ON TOP (LIKE GITHUB)*/}
+                    <Route exact path={`${HomepageUrl}/`} component={Homepage}/>
                     <Route path={`${HomepageUrl}/user/:username/`} component={UserSection}/>
-
-                    <Route path={`${HomepageUrl}/(login|register|password-reset)/`}>
-                        <FormSections/>
-                    </Route>
+                    <Route path={`${HomepageUrl}/(login|register|password-reset)/`} component={FormSections}/>
 
                     {/* todo render 404 not found page*/}
-
                 </RouteSwitch>
             </BrowserRouter>
         </React.StrictMode>

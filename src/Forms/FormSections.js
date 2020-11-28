@@ -36,15 +36,9 @@ export default function FormSections() {
             <Container maxWidth="sm">
                 <Paper elevation={2} className={classes.paper}>
                     <RouteSwitch>
-                        <Route path={`${HomepageUrl}/login/`}>
-                            <Login/>
-                        </Route>
-                        <Route path={`${HomepageUrl}/register/`}>
-                            <Register/>
-                        </Route>
-                        <Route path={`${HomepageUrl}/password-reset/`}>
-                            <PasswordReset/>
-                        </Route>
+                        <Route path={`${HomepageUrl}/login/`} component={Login}/>
+                        <Route path={`${HomepageUrl}/register/`} component={Register}/>
+                        <Route path={`${HomepageUrl}/password-reset/`} component={PasswordReset}/>
                     </RouteSwitch>
                 </Paper>
             </Container>
