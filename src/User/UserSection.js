@@ -407,7 +407,7 @@ export default function UserSection() {
                         <Profile username={username}/>
                     </Route>
                     <Route path={`${HomepageUrl}/user/:username/app/:appname`}>
-                        <ApplicationSection username={username} isDrawerOpen={isDrawerOpen}/>
+                        <ApplicationSection username={username} isDrawerOpen={isDrawerOpen} changeDrawerState={changeDrawerState}/>
                         {/*todo if path is /${HomepageUrl}/user/:username/app/:appname (without dashboard|settings) -> redirect to dashboard*/}
                     </Route>
                 </RouteSwitch>

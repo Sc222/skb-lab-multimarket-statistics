@@ -14,6 +14,9 @@ import {Link as RouterLink, Route, Switch as RouteSwitch, useParams} from "react
 import {HomepageUrl} from "../../App";
 import ApplicationDashboard from "./ApplicationDashboard";
 import demoAppIcon from "../../images/demo_app_icon.png";
+import Hidden from "@material-ui/core/Hidden";
+import IconButton from "@material-ui/core/IconButton";
+import {CloseRounded} from "@material-ui/icons";
 
 const drawerWidth = 260;
 
@@ -35,6 +38,16 @@ const useStyles = makeStyles((theme) => ({
         width: '100%'
     },
 
+    mobileDrawerButtonsContainer: {
+        position: "relative",
+    },
+
+    closeDrawerButton: {
+        position: "absolute",
+        top: theme.spacing(0.25),
+        right: theme.spacing(0.5)
+    },
+
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
     },
@@ -49,6 +62,8 @@ const useStyles = makeStyles((theme) => ({
 
     /*TODO FIX SMOOTH PERSISTENT DRAWER OPEN ANIMATION*/
     drawerPaper: {
+        zIndex: theme.zIndex.drawer,
+
         position: 'relative',
         whiteSpace: 'nowrap',
         width: drawerWidth,
@@ -100,7 +115,6 @@ export default function ApplicationSection(props) {
 
     let {appname} = useParams();
 
-    const isDrawerOpen = props.isDrawerOpen;
     const username = props.username;
     const [app, setApp] = React.useState(undefined);
 
@@ -213,31 +227,62 @@ export default function ApplicationSection(props) {
 
     return (
         <div className={classes.root}>
-            <Drawer
-                variant={'permanent'}
-                classes={{
-                    paper: clsx(classes.drawerPaper, !isDrawerOpen && classes.drawerPaperClose),
-                }}
-                anchor={'left'}
-                open={isDrawerOpen}
-                /*onClose={isMediumDevice ? setDrawerOpen(false) : null}*/>
-                <div className={classes.appBarSpacer}/>
-                <Box mx={3} my={1.5} width={'auto'}>
-                    <Button
-                        className={classes.backToAppsButton}
-                        variant="outlined"
-                        color="primary"
-                        size="medium"
-                        startIcon={<ArrowBackRoundedIcon/>}
-                        component={RouterLink}
-                        to={`${HomepageUrl}/user/${username}/apps`}
-                    >
-                        Все приложения
-                    </Button>
-                </Box>
-                <Divider/>
-                <DrawerMenu/>
-            </Drawer>
+            <Hidden smUp>
+                <Drawer
+                    variant='temporary'
+                    classes={{
+                        paper: clsx(classes.drawerPaper, !props.isDrawerOpen && classes.drawerPaperClose),
+                    }}
+                    anchor={'left'}
+                    open={props.isDrawerOpen}
+                    onClose={props.changeDrawerState}>
+                    <Box ml={1} pr={5} my={1.5} width={'auto'} className={classes.mobileDrawerButtonsContainer}>
+                        <Button
+                            className={classes.backToAppsButton}
+                            variant="outlined"
+                            color="primary"
+                            size="medium"
+                            startIcon={<ArrowBackRoundedIcon/>}
+                            component={RouterLink}
+                            to={`${HomepageUrl}/user/${username}/apps`}
+                        >
+                            Все приложения
+                        </Button>
+                        <IconButton className={classes.closeDrawerButton} size='small'
+                                    onClick={props.changeDrawerState}>
+                            <CloseRounded/>
+                        </IconButton>
+                    </Box>
+                    <Divider/>
+                    <DrawerMenu/>
+                </Drawer>
+            </Hidden>
+            <Hidden xsDown>
+                <Drawer
+                    variant='permanent'
+                    classes={{
+                        paper: clsx(classes.drawerPaper, !props.isDrawerOpen && classes.drawerPaperClose),
+                    }}
+                    open={props.isDrawerOpen}>
+                    <div className={classes.appBarSpacer}/>
+                    <Box mx={3} my={1.5} width={'auto'}>
+                        <Button
+                            className={classes.backToAppsButton}
+                            variant="outlined"
+                            color="primary"
+                            size="medium"
+                            startIcon={<ArrowBackRoundedIcon/>}
+                            component={RouterLink}
+                            to={`${HomepageUrl}/user/${username}/apps`}
+                        >
+                            Все приложения
+                        </Button>
+                    </Box>
+                    <Divider/>
+                    <DrawerMenu/>
+                </Drawer>
+            </Hidden>
+
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}/>
                 <Container maxWidth="lg" className={classes.container}>

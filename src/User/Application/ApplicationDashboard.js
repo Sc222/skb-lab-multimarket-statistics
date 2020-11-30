@@ -367,13 +367,13 @@ export default function ApplicationDashboard(props) {
                             <Grid container spacing={2} justify='flex-start' className={classes.chartSelectsContainer}>
                                 <Grid item xs={9} sm={7}>
                                     <FormControl fullWidth variant="outlined" size='small'>
-                                        <InputLabel id="averageRatingTypeLabel">Показать среднюю оценку</InputLabel>
+                                        <InputLabel id="averageRatingTypeLabel">Средняя оценка</InputLabel>
                                         <Select
                                             fullWidth
                                             labelId="averageRatingTypeLabel"
                                             id="averageRatingType"
                                             value={chartAverageRatingType}
-                                            label="Показать среднюю оценку"
+                                            label="Средняя оценка"
                                             onChange={event => setAverageRatingType(event.target.value)}>
                                             <MenuItem value={'day'}>За день</MenuItem>
                                             <MenuItem value={'allTime'}>За все время</MenuItem>
