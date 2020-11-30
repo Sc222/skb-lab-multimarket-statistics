@@ -14,20 +14,19 @@ function Homepage() {
         {link: `${HomepageUrl}/login`, title: 'Вход'},
         {link: `${HomepageUrl}/password-reset`, title: 'Сброс пароля'},
         {link: `${HomepageUrl}/user/refusedguy/apps`, title: 'Пользователь без приложений'},
-        {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (refusedguy)'},
-        {link: `${HomepageUrl}/user/sc222/apps`, title: 'Пользователь с приложениями (sc222)'},
-        {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя (sc222)'},
+        {link: `${HomepageUrl}/user/sc222/apps`, title: 'Пользователь с приложениями'},
+        {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя'},
         {
             link: `${HomepageUrl}/user/sc222/new-app`,
-            title: 'Добавить приложение (sc222) (статичные карточки маркетов)'
+            title: 'Добавить приложение (статичные карточки маркетов)'
         },
         {
             link: `${HomepageUrl}/user/sc222/app/pixel-fishing/dashboard`,
-            title: 'Панель управления (sc222, pixel-fishing) (пока демо)'
+            title: 'Панель управления (еще не все готово)'
         },
         {
             link: `${HomepageUrl}/user/sc222/app/pixel-fishing/settings`,
-            title: 'Настройки приложения (sc222, pixel-fishing) (пока демо)'
+            title: 'Настройки приложения (не готово)'
         },
     ];
 
@@ -45,7 +44,7 @@ function Homepage() {
             </Typography>
             <Typography variant='subtitle2'>
                 TODO: <br/>
-                - add app from market
+                - add app section market search
                 - !!! scroll to top when new section is opened (check router settings)<br/>
                 - app dashboard/settings MOBILE menu<br/>
                 - app dashboard menu + cards <br/>
