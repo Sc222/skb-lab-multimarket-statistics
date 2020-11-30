@@ -8,7 +8,6 @@ import Paper from '@material-ui/core/Paper';
 import Chart from './Chart';
 import Avatar from "@material-ui/core/Avatar";
 
-//image imports
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
@@ -20,7 +19,6 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import {RemoveRounded} from "@material-ui/icons";
 import update from "immutability-helper";
 
 const drawerWidth = 260;
@@ -269,7 +267,7 @@ export default function ApplicationDashboard(props) {
 
         setChartData(demoData);
 
-    }, [props.username, props.app, chartAverageRatingType, chartAverageRatingInterval] );
+    }, [props.username, props.app, chartAverageRatingType, chartAverageRatingInterval]);
 
     function toggleSelectedMarket(index) {
         console.log('toggle market: ' + index);
@@ -401,7 +399,7 @@ export default function ApplicationDashboard(props) {
                             </Grid>
                         </Container>
 
-                        <Chart data={chartData} selectedMarkets = {selectedChartMarkets}/>
+                        <Chart data={chartData} selectedMarkets={selectedChartMarkets}/>
 
                         <Divider className={formClasses.fullWidthDivider}/>
                         <div className={marketClasses.marketsContainer}>
@@ -409,13 +407,13 @@ export default function ApplicationDashboard(props) {
                             props.app.markets.map((market, index) => {
                                 return (!market.disabled &&
                                     <Chip
-                                          clickable
-                                          key={MarketsInfo[index].name}
-                                          component='a'
-                                          color={selectedChartMarkets[index] ? "primary" : "default"}
-                                          style={{backgroundColor: getChipChartColor(theme, index,selectedChartMarkets[index])}}
-                                          onClick={() => toggleSelectedMarket(index)}
-                                          label={MarketsInfo[index].name}
+                                        clickable
+                                        key={MarketsInfo[index].name}
+                                        component='a'
+                                        color={selectedChartMarkets[index] ? "primary" : "default"}
+                                        style={{backgroundColor: getChipChartColor(theme, index, selectedChartMarkets[index])}}
+                                        onClick={() => toggleSelectedMarket(index)}
+                                        label={MarketsInfo[index].name}
                                     />)
                             })
                             }
@@ -442,26 +440,6 @@ export default function ApplicationDashboard(props) {
                     </div>
                 </Paper>
             </Grid>
-
-
-            {/*  from dashboard template
-            <Grid item xs={12} md={8} lg={9}>
-                <Paper className={fixedHeightPaper}>
-                    <Chart/>
-                </Paper>
-            </Grid>
-            {/* Recent Deposits
-            <Grid item xs={12} md={4} lg={3}>
-                <Paper className={fixedHeightPaper}>
-                    <Deposits/>
-                </Paper>
-            </Grid>
-            {/* Recent Orders
-            <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                    <Orders/>
-                </Paper>
-            </Grid>*/}
         </Grid>
     );
 }

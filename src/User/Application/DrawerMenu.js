@@ -50,9 +50,6 @@ export default function DrawerMenu() {
         }
     ];
 
-    //const icon =
-
-
     function isMainSelected(index) {
         return selectedMain === index;
     }
@@ -75,9 +72,6 @@ export default function DrawerMenu() {
             dense
             component="nav"
             aria-labelledby="nested-list-subheader"
-            /*subheader={<ListSubheader component="div" id="nested-list-subheader">
-                    Nested List Items
-                </ListSubheader>}*/
         >
             {menus.map((item, index) => {
                 return (<Box>

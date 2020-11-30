@@ -3,20 +3,16 @@ import {makeStyles, useTheme} from '@material-ui/core/styles';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip as ChartTooltip, XAxis, YAxis} from 'recharts';
 import {MarketsInfo, MarketsKeys} from "../../Constants/MarketsInfo";
 
-const useChartStyles = makeStyles((theme) => ({
+const useChartStyles = makeStyles(() => ({
     disableScroll: {
         overflow: 'hidden'
     }
 }));
 
-// Generate Sales Data
-
-
 export default function Chart(props) {
     const theme = useTheme();
 
     const chartClasses = useChartStyles();
-
 
     return (
         <ResponsiveContainer height={300}>
