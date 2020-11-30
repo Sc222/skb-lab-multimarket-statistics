@@ -1,39 +1,27 @@
 import React, {useEffect} from 'react';
-import clsx from 'clsx';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
 import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
 import Avatar from "@material-ui/core/Avatar";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 //image imports
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
-import {MarketsInfo} from "../../Constants/MarketsInfo";
+import {getChipChartColor, MarketsInfo} from "../../Constants/MarketsInfo";
 import MarketChipStyles from "../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import {RemoveRounded} from "@material-ui/icons";
+import update from "immutability-helper";
 
 const drawerWidth = 260;
 
@@ -86,6 +74,14 @@ const useStyles = makeStyles((theme) => ({
         width: 0,
     },
 
+    containerNotCentered: {
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(2),
+        width: '100%',
+        marginLeft: 0,
+        marginRight: 0
+    },
+
     content: {
         flexGrow: 1,
         height: '100vh',
@@ -96,10 +92,12 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: theme.spacing(4),
     },
     paper: {
-        padding: theme.spacing(2),
+        paddingTop: theme.spacing(1.5),
+        paddingBottom: theme.spacing(1.5),
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
+        height: '100%',
     },
     fixedHeight: {
         height: 240,
@@ -152,8 +150,6 @@ const useStyles = makeStyles((theme) => ({
         width: 128,
         height: 128
     },
-
-
     //search toolbar styles
     extraToolbar: {
         background: "transparent",
@@ -205,46 +201,81 @@ const useStyles = makeStyles((theme) => ({
             },
         },
     },
-
     extendedIcon: {
         marginRight: theme.spacing(1),
     },
-
     fullWidthDivider: {
         width: '100%',
         marginBottom: theme.spacing(0.5),
     },
-
+    chartSelectsContainer: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+    }
 }));
 const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function ApplicationDashboard(props) {
+
+    const theme = useTheme();
+
     const classes = useStyles();
     const formClasses = useFormSectionStyles();
     const marketClasses = useMarketChipStyles();
 
-    const theme = useTheme();
+    const [selectedChartMarkets, setSelectedChartMarkets] = React.useState([false, false, false]);
 
+    console.log(selectedChartMarkets);
 
-    // responsive: change drawer type when medium device
-    const isMediumDevice = useMediaQuery(theme.breakpoints.down('md'));
-    const [isDrawerOpen, setDrawerOpen] = React.useState(true);
-    const [notifications, setNotifications] = React.useState(undefined);
-    const changeDrawerState = () => {
-        setDrawerOpen(!isDrawerOpen);
-    };
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+    const [chartAverageRatingType, setAverageRatingType] = React.useState('day'); //all time or by day
+    const [chartAverageRatingInterval, setAverageRatingInterval] = React.useState('day'); //daily, weekly, monthly
+    const [chartData, setChartData] = React.useState(undefined);
 
     useEffect(() => {
-        //document.title='';
+        if (props.app) {
+            setSelectedChartMarkets([
+                !props.app.markets[0].disabled,
+                !props.app.markets[1].disabled,
+                !props.app.markets[2].disabled
+            ]);
+            console.log([
+                !props.app.markets[0].disabled,
+                !props.app.markets[1].disabled,
+                !props.app.markets[2].disabled
+            ]);
+        }
+    }, [props.app]);
 
-        console.log("componentDidMount");
-        // todo load notifications from server
-        setNotifications(['1', '2']);
+    useEffect(() => {
 
-        // todo application route params
-    }, []);
+        //todo API: load chart data from server
+
+        function createData(date, playStore, appStore, appGallery) {
+            return {date, playStore, appStore, appGallery};
+        }
+
+        const demoData = [
+            createData('00:00', 4.0, 4.2, 3.8),
+            createData('03:00', 4.5, 4.1, 3.9),
+            createData('06:00', 4.7, 3.9, 4.2),
+            createData('09:00', 4.3, 3.7, 4.5),
+            createData('12:00', 4.5, 3.8, 4.3),
+            createData('15:00', 4.3, 4.0, 4.1),
+            createData('18:00', 4.7, 4.3, 3.8),
+            createData('21:00', 4.8, 4.6, 4.0),
+            createData('24:00', 4.5, 4.4, 4.3),
+        ];
+
+        setChartData(demoData);
+
+    }, [props.username, props.app, chartAverageRatingType, chartAverageRatingInterval] );
+
+    function toggleSelectedMarket(index) {
+        console.log('toggle market: ' + index);
+        const newValue = update(selectedChartMarkets, {[index]: {$set: !selectedChartMarkets[index]}});
+        setSelectedChartMarkets(newValue);
+    }
 
     return (
         <Grid container spacing={3}>
@@ -263,9 +294,9 @@ export default function ApplicationDashboard(props) {
 
             {/* todo lg = {6} TEST   */}
             <Grid item xs={12}>
-                {/* todo show app not found card when app not found */}
+                {/* TODO !!! IMPORTANT show app not found card when app not found */}
                 {props.app &&
-                <Paper className={classes.paperNoPadding}>
+                <Paper className={classes.paperNoPadding} elevation={1}>
                     <div className={classes.appDescriptionContainer}>
                         <Grid container alignItems='center' spacing={2}>
                             <Grid item xs={3} sm={2} md={1}>
@@ -304,7 +335,7 @@ export default function ApplicationDashboard(props) {
             </Grid>
 
             <Grid item xs={12}>
-                <Paper elevation={1} className={formClasses.paper}>
+                <Paper elevation={1} className={classes.paper}>
                     <div className={formClasses.cardContainer}>
                         <div className={formClasses.container}>
                             <Typography variant="h6">
@@ -322,7 +353,7 @@ export default function ApplicationDashboard(props) {
             </Grid>
 
             <Grid item xs={12}>
-                <Paper elevation={1} className={formClasses.paper}>
+                <Paper elevation={1} className={classes.paper}>
                     <div className={formClasses.cardContainer}>
                         <div className={formClasses.container}>
                             <Typography variant="h6">
@@ -333,14 +364,69 @@ export default function ApplicationDashboard(props) {
                             </Typography>
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
+
                         <Container maxWidth='sm' className={classes.containerNotCentered}>
+                            <Grid container spacing={2} justify='flex-start' className={classes.chartSelectsContainer}>
+                                <Grid item xs={9} sm={7}>
+                                    <FormControl fullWidth variant="outlined" size='small'>
+                                        <InputLabel id="averageRatingTypeLabel">Показать среднюю оценку</InputLabel>
+                                        <Select
+                                            fullWidth
+                                            labelId="averageRatingTypeLabel"
+                                            id="averageRatingType"
+                                            value={chartAverageRatingType}
+                                            label="Показать среднюю оценку"
+                                            onChange={event => setAverageRatingType(event.target.value)}>
+                                            <MenuItem value={'day'}>За день</MenuItem>
+                                            <MenuItem value={'allTime'}>За все время</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6} sm={5}>
+                                    <FormControl fullWidth variant="outlined" size='small'>
+                                        <InputLabel id="averageRatingIntervalLabel">Интервал</InputLabel>
+                                        <Select
+                                            fullWidth
+                                            labelId="averageRatingIntervalLabel"
+                                            id="averageRatingInterval"
+                                            value={chartAverageRatingInterval}
+                                            label="Интервал"
+                                            onChange={event => setAverageRatingInterval(event.target.value)}>
+                                            <MenuItem value={'day'}>День</MenuItem>
+                                            <MenuItem value={'week'}>Неделя</MenuItem>
+                                            <MenuItem value={'month'}>Месяц</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
                         </Container>
+
+                        <Chart data={chartData} selectedMarkets = {selectedChartMarkets}/>
+
+                        <Divider className={formClasses.fullWidthDivider}/>
+                        <div className={marketClasses.marketsContainer}>
+                            {props.app &&
+                            props.app.markets.map((market, index) => {
+                                return (!market.disabled &&
+                                    <Chip
+                                          clickable
+                                          key={MarketsInfo[index].name}
+                                          component='a'
+                                          color={selectedChartMarkets[index] ? "primary" : "default"}
+                                          style={{backgroundColor: getChipChartColor(theme, index,selectedChartMarkets[index])}}
+                                          onClick={() => toggleSelectedMarket(index)}
+                                          label={MarketsInfo[index].name}
+                                    />)
+                            })
+                            }
+                        </div>
+
                     </div>
                 </Paper>
             </Grid>
 
             <Grid item xs={12}>
-                <Paper elevation={1} className={formClasses.paper}>
+                <Paper elevation={1} className={classes.paper}>
                     <div className={formClasses.cardContainer}>
                         <div className={formClasses.container}>
                             <Typography variant="h6">
