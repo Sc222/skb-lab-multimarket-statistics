@@ -366,7 +366,7 @@ export default function Applications(props) {
                 return (<Grid key={app.id} item xs={12} md={6}>
                         <Paper className={classes.paperNoPadding}>
                             <ButtonBase className={classes.primaryRipple} component={RouterLink}
-                                        to={`./app/${app.id}`}>
+                                        to={`./app/${app.id}/dashboard/`}>
 
                                 <div className={classes.appDescriptionContainer}>
                                     <Grid container alignItems='center' spacing={2}>
