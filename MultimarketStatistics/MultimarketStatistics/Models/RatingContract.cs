@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using Storage.Entities;
 
-namespace Storage.Entities
+namespace MultimarketStatistics.Models
 {
-    public class Rating : GuidIdentifiable
+    public class RatingContract
     {
-        [ForeignKey("AppForeignKey")]
-        public virtual App App { get; set; }
-
         public int Total { get; set; }
 
         public int FiveStarsCount { get; set; }

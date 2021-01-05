@@ -16,6 +16,9 @@ namespace Domain.Clients.AppGallery
         [JsonProperty("commentInfo")]
         public string Text { get; set; }
 
+        [JsonProperty("commentId")]
+        public string Id { get; set; }
+
         [JsonProperty("nickName")]
         public string ReviewerUsername { get; set; }
 

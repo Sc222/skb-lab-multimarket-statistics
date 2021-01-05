@@ -1,23 +1,20 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Storage.Entities
+namespace MultimarketStatistics.Models
 {
-    public class App : GuidIdentifiable
+    public class AppContract
     {
+        public Guid Id { get; set; }
+
         public string Name { get; set; }
 
-        public string AppGalleryId { get; set; }
+        public string AppGalleryId { get; set; } //null, если нет маркета
 
         public string AppStoreId { get; set; }
 
         public string PlayMarketId { get; set; }
-
-        [ForeignKey("UserForeignKey")]
-        public virtual User User { get; set; }
 
         public string Description { get; set; }
 

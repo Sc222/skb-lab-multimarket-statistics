@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using Storage.Entities;
 
-namespace Storage.Entities
+namespace MultimarketStatistics.Models
 {
-    public class Review : GuidIdentifiable
+    public class ReviewContract
     {
-        [ForeignKey("AppForeignKey")]
-        public virtual App App { get; set; }
-
         public MarketType Market { get; set; }
-
-        public string MarketReviewId { get; set; }
 
         public string Text { get; set; }
 
@@ -23,7 +18,5 @@ namespace Storage.Entities
         public string Version { get; set; }
 
         public DateTime Date { get; set; }
-
-        public string DevResponse { get; set; }
     }
 }

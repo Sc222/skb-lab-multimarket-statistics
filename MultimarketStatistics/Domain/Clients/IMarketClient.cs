@@ -7,9 +7,7 @@ namespace Domain
 {
     public interface IMarketClient
     {
-        App GetApp(string appId);
-
-        Task<List<Review>> GetAppReviewsAsync(App app);
+        Task<List<Review>> GetAppReviewsAsync(App app, int requestedPagesNumber);
 
         Task<Rating> GetAppRatingAsync(App app);
     }

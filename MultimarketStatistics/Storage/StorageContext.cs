@@ -24,18 +24,6 @@ namespace Storage
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-            modelBuilder.Entity<App>()
-                .HasIndex(a => a.AppGalleryId)
-                .IsUnique();
-
-            modelBuilder.Entity<App>()
-                .HasIndex(a => a.AppStoreId)
-                .IsUnique();
-
-            modelBuilder.Entity<App>()
-                .HasIndex(a => a.PlayMarketId)
-                .IsUnique();
-
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
@@ -54,11 +42,17 @@ namespace Storage
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-            modelBuilder.Entity<Notification>()
-                        .HasOne(n => n.User)
-                        .WithMany()
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+            modelBuilder.Entity<Review>()
+                .HasOne(n => n.App)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+
+            modelBuilder.Entity<Rating>()
+                .HasOne(n => n.App)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

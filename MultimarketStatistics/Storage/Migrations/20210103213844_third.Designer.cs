@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Storage;
@@ -9,9 +10,10 @@ using Storage;
 namespace Storage.Migrations
 {
     [DbContext(typeof(StorageContext))]
-    partial class StorageContextModelSnapshot : ModelSnapshot
+    [Migration("20210103213844_third")]
+    partial class third
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,13 +45,12 @@ namespace Storage.Migrations
                     b.Property<string>("PlayMarketId")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("UserForeignKey")
-                        .IsRequired()
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserForeignKey");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Apps");
                 });
@@ -73,8 +74,7 @@ namespace Storage.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AppForeignKey")
-                        .IsRequired()
+                    b.Property<Guid>("AppId")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsChecked")
@@ -88,7 +88,7 @@ namespace Storage.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppForeignKey");
+                    b.HasIndex("AppId");
 
                     b.ToTable("Notifications");
                 });
@@ -99,8 +99,7 @@ namespace Storage.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AppForeignKey")
-                        .IsRequired()
+                    b.Property<Guid>("AppId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("Date")
@@ -129,7 +128,7 @@ namespace Storage.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppForeignKey");
+                    b.HasIndex("AppId");
 
                     b.ToTable("Ratings");
                 });
@@ -140,8 +139,7 @@ namespace Storage.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AppForeignKey")
-                        .IsRequired()
+                    b.Property<Guid>("AppId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("Date")
@@ -170,7 +168,7 @@ namespace Storage.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppForeignKey");
+                    b.HasIndex("AppId");
 
                     b.ToTable("Reviews");
                 });
@@ -211,7 +209,7 @@ namespace Storage.Migrations
                 {
                     b.HasOne("Storage.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserForeignKey")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
@@ -220,7 +218,7 @@ namespace Storage.Migrations
                 {
                     b.HasOne("Storage.Entities.App", "App")
                         .WithMany()
-                        .HasForeignKey("AppForeignKey")
+                        .HasForeignKey("AppId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
@@ -229,7 +227,7 @@ namespace Storage.Migrations
                 {
                     b.HasOne("Storage.Entities.App", "App")
                         .WithMany()
-                        .HasForeignKey("AppForeignKey")
+                        .HasForeignKey("AppId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
@@ -238,7 +236,7 @@ namespace Storage.Migrations
                 {
                     b.HasOne("Storage.Entities.App", "App")
                         .WithMany()
-                        .HasForeignKey("AppForeignKey")
+                        .HasForeignKey("AppId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

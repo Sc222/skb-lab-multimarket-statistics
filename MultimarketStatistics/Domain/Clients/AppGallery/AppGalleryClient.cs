@@ -1,39 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using Domain.Clients.AppGallery;
 using Storage.Entities;
 
-namespace Domain.Clients
+namespace Domain.Clients.AppGallery
 {
     public class AppGalleryClient : IMarketClient
     {
-        private readonly string apiUrl;
+        private const string apiUrl = "https://web-drru.hispace.dbankcloud.cn/uowap/index?method=internal.user.commenList3";
         private const int MaxReviewPages = 4;
+        private const int ReviewsPerPage = 25;
 
-        public AppGalleryClient(Config config)
+        public async Task<List<Review>> GetAppReviewsAsync(App app, int requestedPagesNumber = MaxReviewPages)
         {
-            apiUrl = config.AppGalleryApiUrl;
-        }
-
-        public App GetApp(string appId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Review>> GetAppReviewsAsync(App app)
-        {
-            var client = RestClient.GetClient();
+            using var client = RestClient.GetClient();
             var result = new List<Review>();
-            for (var pageNum = 1; pageNum <= MaxReviewPages; ++pageNum)
+            var totalPages = Math.Min(MaxReviewPages, requestedPagesNumber);
+            for (var pageNum = 1; pageNum <= totalPages; ++pageNum)
                 try
                 {
                     var uri = CreateReviewUri(pageNum, app.AppGalleryId);
-                    var reviewsList = await RestClient.GetAsync<AppGalleryReviewList>(client, uri);
-                    result.AddRange(ConvertToReview(reviewsList, app));
+                    var reviewsList = await RestClient.GetAsync<AppGalleryReviewList>(client, uri).ConfigureAwait(false);
+                    result.AddRange(ConvertToReviews(reviewsList, app));
+                    if (reviewsList.ReviewsList.Count < ReviewsPerPage)
+                        break;
                 }
                 catch (Exception e)
                 {
@@ -47,7 +38,7 @@ namespace Domain.Clients
             apiUrl + $"&reqPageNum={page}&maxResults=25&appid={appId}";
 
         //Вынести в отдельный класс??
-        private IEnumerable<Review> ConvertToReview(AppGalleryReviewList reviews, App app)
+        private IEnumerable<Review> ConvertToReviews(AppGalleryReviewList reviews, App app)
         {
             return reviews.ReviewsList.Select(r => new Review
             {
@@ -55,6 +46,7 @@ namespace Domain.Clients
                 Date = r.Date,
                 DevResponse = r.DevResponse,
                 Market = MarketType.AppGallery,
+                MarketReviewId = r.Id,
                 Rating = r.Rating,
                 ReviewerUsername = r.ReviewerUsername,
                 Text = r.Text,
@@ -64,16 +56,17 @@ namespace Domain.Clients
 
         public async Task<Rating> GetAppRatingAsync(App app)
         {
-            var client = RestClient.GetClient();
+            using var client = RestClient.GetClient();
             try
             {
                 var uri = apiUrl + $"&appid={app.AppGalleryId}";
-                var ratingsList = await RestClient.GetAsync<AppGalleryRatingList>(client, uri);
+                var ratingsList = await RestClient.GetAsync<AppGalleryRatingList>(client, uri).ConfigureAwait(false);
                 return ConvertToRating(ratingsList, app);
             }
             catch (Exception e)
             {
-                throw e; // тоже в лог
+                Console.WriteLine(e); // тоже в лог
+                throw e;
             }
         }
 

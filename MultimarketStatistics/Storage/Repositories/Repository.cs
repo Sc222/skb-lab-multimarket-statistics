@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using MoreLinq;
 using Microsoft.EntityFrameworkCore;
 
 namespace Storage.Repositories
@@ -23,16 +22,28 @@ namespace Storage.Repositories
             return context.Set<TEntity>().Find(keyValues);
         }
 
-        public TEntity[] GetAll()
+        public TEntity[] GetAll(bool eager = false)
         {
             var context = contextFactory.Create();
-            return context.Set<TEntity>().ToArray();
+            var query = LoadEntities(context, eager);
+            return query.ToArray();
         }
 
-        public TEntity[] Find(Expression<Func<TEntity, bool>> predicate)
+        public TEntity[] Find(Expression<Func<TEntity, bool>> predicate, bool eager = false)
         {
             var context = contextFactory.Create();
-            return context.Set<TEntity>().Where(predicate).ToArray();
+            var query = LoadEntities(context, eager);
+            return query.Where(predicate).ToArray();
+        }
+
+        private IQueryable<TEntity> LoadEntities(DbContext context, bool eager = false)
+        {
+            IQueryable<TEntity> query = context.Set<TEntity>();
+            if (eager)
+                foreach (var property in context.Model.FindEntityType(typeof(TEntity)).GetNavigations())
+                    query = query.Include(property.Name);
+
+            return query;
         }
 
         public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate)
@@ -45,7 +56,8 @@ namespace Storage.Repositories
         {
             var context = contextFactory.Create();
             var entity = context.Set<TEntity>().Find(id);
-            Delete(entity);
+            context.Entry(entity).State = EntityState.Deleted;
+            context.SaveChanges();
         }
 
         public void Delete(TEntity entity)
@@ -55,10 +67,24 @@ namespace Storage.Repositories
             context.SaveChanges();
         }
 
+        public void DeleteRange(IEnumerable<TEntity> entities)
+        {
+            var context = contextFactory.Create();
+            entities.ForEach(e => context.Entry(e).State = EntityState.Deleted);
+            context.SaveChanges();
+        }
+
         public void Create(TEntity entity)
         {
             var context = contextFactory.Create();
             context.Entry(entity).State = EntityState.Added;
+            context.SaveChanges();
+        }
+
+        public void CreateRange(IEnumerable<TEntity> entities)
+        {
+            var context = contextFactory.Create();
+            entities.ForEach(e => context.Entry(e).State = EntityState.Added);
             context.SaveChanges();
         }
 

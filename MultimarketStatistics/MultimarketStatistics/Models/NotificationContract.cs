@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace Storage.Entities
+namespace MultimarketStatistics.Models
 {
-    public class Notification : GuidIdentifiable
+    public class NotificationContract
     {
-        [ForeignKey("AppForeignKey")]
-        public virtual App App { get; set; }
-
         public string Text { get; set; }
 
         public bool IsChecked { get; set; }
 
         public string Title { get; set; }
+
+        public Guid AppId { get; set; }
     }
 }

@@ -11,18 +11,22 @@ namespace Storage.Repositories
     {
         TEntity Get(params object[] keyValues);
 
-        TEntity[] GetAll();
+        TEntity[] GetAll(bool eager = false);
 
-        TEntity[] Find(Expression<Func<TEntity, bool>> predicate);
+        TEntity[] Find(Expression<Func<TEntity, bool>> predicate, bool eager = false);
 
         TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate);
 
         void Create(TEntity entity);
+
+        void CreateRange(IEnumerable<TEntity> entities);
 
         void Update(TEntity entity);
 
         void Delete(Guid id);
 
         void Delete(TEntity entity);
+
+        void DeleteRange(IEnumerable<TEntity> entities);
     }
 }

@@ -7,6 +7,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
+using Domain.Services;
+using Microsoft.EntityFrameworkCore;
+using MultimarketStatistics.Models;
+using Storage;
+using Storage.Repositories;
 
 namespace MultimarketStatistics
 {
@@ -41,6 +46,21 @@ namespace MultimarketStatistics
             });
 
             services.AddSwaggerGen();
+
+
+            var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<ContractsMappingProfile>());
+            services.AddSingleton(mapperConfig.CreateMapper());
+
+            services.AddScoped<UserService>();
+            services.AddScoped<ReviewService>();
+            services.AddScoped<RatingService>();
+            services.AddScoped<AppService>();
+            services.AddScoped<NotificationService>();
+
+            services.AddScoped(typeof(DbContext), typeof(StorageContext))
+                .AddScoped<ContextFactory>()
+                .AddScoped(typeof(IRepository<>), typeof(Repository<>))
+                .AddEntityFrameworkProxies();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,8 +68,9 @@ namespace MultimarketStatistics
         {
             app.UseDeveloperExceptionPage();
 
-            app.UseHttpsRedirection();
-            app.UseSwaggerUI();
+            //app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Multimarket API"));
 
             app.UseRouting();
             app.UseAuthorization();
