@@ -26,5 +26,14 @@ namespace Domain
                 "appGallery" => MarketType.AppGallery,
                 _ => throw new ArgumentException("Market cannot be null!")
             };
+
+        public static string ToStringMarket(this MarketType marketType) =>
+            marketType switch
+            {
+                MarketType.AppGallery => "App Gallery",
+                MarketType.AppStore => "App Store",
+                MarketType.PlayMarket => "Play Market",
+                _ => throw new ArgumentException("Unexpected MarketType!")
+            };
     }
 }

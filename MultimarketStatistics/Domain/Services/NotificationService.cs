@@ -33,5 +33,16 @@ namespace Domain.Services
         {
             notificationRepository.CreateRange(notifications);
         }
+
+        public IEnumerable<Notification> GetNotificationsFromReviews(App app, IEnumerable<Review> newReviews)
+        {
+            return newReviews.GroupBy(r => r.Market)
+                .Select(g => new Notification
+                {
+                    App = app,
+                    Title = $"New {g.Key.ToStringMarket()} reviews!",
+                    Text = $"New {g.Count()} reviews for {app.Name}"
+                });
+        }
     }
 }

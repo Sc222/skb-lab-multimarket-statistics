@@ -1,4 +1,4 @@
-﻿using Domain.Clients;
+﻿using Domain.Clients.AppGallery;
 using Domain.Clients.AppStore;
 using Domain.Clients.PlayMarket;
 using Domain.Services;
