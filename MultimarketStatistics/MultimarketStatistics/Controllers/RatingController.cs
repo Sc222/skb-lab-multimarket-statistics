@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using AutoMapper;
+using Domain;
 using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using MultimarketStatistics.Models;
@@ -20,9 +22,13 @@ namespace MultimarketStatistics.Controllers
         }
 
         [HttpGet("{appId}")]
-        public RatingContract[] GetAppRatings(Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to)
+        public RatingContract[] GetAppRatings(Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to, [FromBody] string market)
         {
             var ratings = ratingService.GetRatingsByApp(appId, from, to);
+
+            if (market != null)
+                ratings = ratings.Where(r => r.Market == market.ToMarketType()).ToArray();
+
             return mapper.Map<RatingContract[]>(ratings);
         }
     }
