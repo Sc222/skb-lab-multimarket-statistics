@@ -59,14 +59,14 @@ namespace Domain.Clients.AppGallery
             using var client = RestClient.GetClient();
             try
             {
-                var uri = apiUrl + $"&appid={app.AppGalleryId}";
+                var uri = apiUrl + $"&appid={app.AppGalleryId}&page=1";
                 var ratingsList = await RestClient.GetAsync<AppGalleryRatingList>(client, uri).ConfigureAwait(false);
                 return ConvertToRating(ratingsList, app);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e); // тоже в лог
-                throw e;
+                return null;
             }
         }
 

@@ -10,6 +10,7 @@ namespace Domain.Services
     public class AppService
     {
         private readonly IRepository<App> appRepository;
+        //private readonly FetcherService
 
         public AppService(IRepository<App> appRepository)
         {

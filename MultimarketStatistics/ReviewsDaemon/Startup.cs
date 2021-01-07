@@ -28,6 +28,7 @@ namespace ReviewsDaemon
             services.AddScoped<RatingService>();
             services.AddScoped<AppService>();
             services.AddScoped<NotificationService>();
+            services.AddScoped<FetcherService>();
 
             services.AddScoped(typeof(DbContext), typeof(StorageContext))
                 .AddScoped<ContextFactory>()

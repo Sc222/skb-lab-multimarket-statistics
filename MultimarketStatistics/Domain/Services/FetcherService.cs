@@ -55,12 +55,11 @@ namespace Domain.Services
         {
             var result = new List<Rating>();
 
-            var realAppStoreReviews = appStoreOldReviews
-                .Concat(appStoreNewReviews)
+            var realAppStoreReviews = GetAppStoreReviews(appStoreOldReviews, appStoreNewReviews)?
                 .Where(r => r.Market == MarketType.AppStore)
                 .ToArray();
 
-            if (!string.IsNullOrEmpty(app.AppStoreId) && realAppStoreReviews.Length != 0)
+            if (!string.IsNullOrEmpty(app.AppStoreId) && realAppStoreReviews?.Length != 0)
             {
                 var rating = GetAppStoreRating(app, realAppStoreReviews);
                 result.Add(rating);
@@ -77,11 +76,23 @@ namespace Domain.Services
             return result;
         }
 
+        private static IEnumerable<Review> GetAppStoreReviews(IEnumerable<Review> appStoreOldReviews, IEnumerable<Review> appStoreNewReviews) =>
+            appStoreOldReviews != null
+                ? appStoreNewReviews != null
+                    ? appStoreOldReviews.Concat(appStoreNewReviews)
+                    : appStoreOldReviews
+                : appStoreNewReviews;
+        
+
         private static Rating GetAppStoreRating(App app, Review[] appStoreReviews)
         {
             var scores = appStoreReviews
                 .GroupBy(r => r.Rating)
                 .ToDictionary(g => g.Key, g => g.Count());
+
+            for (var i = 1; i <= 5; ++i)
+                if (!scores.ContainsKey(i))
+                    scores[i] = 0;
 
             return new Rating
             {

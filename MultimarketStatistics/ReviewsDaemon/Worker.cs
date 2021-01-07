@@ -56,17 +56,23 @@ namespace ReviewsDaemon
                 var ratingsToAdd = new List<Rating>();
                 var notificationsToAdd = new List<Notification>();
 
-                foreach (var app in apps)
-                {
-                    var newReviews = await fetcherService.FetchAppReviews(app, lastRecordedReviewsIds[app.Id]).ConfigureAwait(false);
-                    reviewsToAdd.AddRange(newReviews);
-                    var newAppStoreReviews = newReviews.Where(r => r.Market == MarketType.AppStore);
-                    ratingsToAdd.AddRange(await fetcherService.FetchAppRating(app, appStoreReviewsByApp[app.Id], newAppStoreReviews).ConfigureAwait(false));
-                    notificationsToAdd.AddRange(notificationService.GetNotificationsFromReviews(app, newReviews));
-                }
-
                 try
                 {
+
+                    foreach (var app in apps)
+                    {
+                        lastRecordedReviewsIds.TryGetValue(app.Id, out var lastAppReviewIds);
+                        var newReviews = await fetcherService.FetchAppReviews(app, lastAppReviewIds).ConfigureAwait(false);
+                        reviewsToAdd.AddRange(newReviews);
+
+                        var newAppStoreReviews = newReviews.Where(r => r.Market == MarketType.AppStore);
+                        appStoreReviewsByApp.TryGetValue(app.Id, out var appStoreAppReviews);
+                        ratingsToAdd.AddRange(await fetcherService.FetchAppRating(app, appStoreAppReviews, newAppStoreReviews).ConfigureAwait(false));
+
+                        notificationsToAdd.AddRange(notificationService.GetNotificationsFromReviews(app, newReviews));
+                    }
+
+
                     reviewService.CreateRange(reviewsToAdd);
                     ratingService.CreateRange(ratingsToAdd);
                     notificationService.CreateRange(notificationsToAdd);
