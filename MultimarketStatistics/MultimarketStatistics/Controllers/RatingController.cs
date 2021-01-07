@@ -22,7 +22,7 @@ namespace MultimarketStatistics.Controllers
         }
 
         [HttpGet("{appId}")]
-        public RatingContract[] GetAppRatings(Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to, [FromBody] string market)
+        public RatingContract[] GetAppRatings(Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to, [FromQuery] string market)
         {
             var ratings = ratingService.GetRatingsByApp(appId, from, to);
 
