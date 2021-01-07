@@ -13,11 +13,6 @@ namespace Domain.Clients.AppStore
         private const int MaxITunesRssPages = 10;
         private const int ReviewsPerPage = 50;
 
-        public App GetApp(string appId)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<Rating> GetAppRatingAsync(App app)
         {
             

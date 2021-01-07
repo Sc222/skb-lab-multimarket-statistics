@@ -14,11 +14,6 @@ namespace Domain.Clients.PlayMarket
         private const int maxPages = 4;
         private const int ReviewsPerPage = 150;
 
-        public App GetApp(string appId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<List<Review>> GetAppReviewsAsync(App app, int requestedPagesNumber = maxPages) // пусть пока будет 10 (надо поменять!!!)...
         {
             using var client = RestClient.GetClient();
@@ -68,10 +63,18 @@ namespace Domain.Clients.PlayMarket
 
         public async Task<Rating> GetAppRatingAsync(App app)
         {
-            using var client = RestClient.GetClient();
-            var uri = CreateRatingUri(app.PlayMarketId);
-            var ratings = await RestClient.GetAsync<PlayMarketRatings>(client, uri).ConfigureAwait(false);
-            return ConvertToRating(ratings, app);
+            try
+            {
+                using var client = RestClient.GetClient();
+                var uri = CreateRatingUri(app.PlayMarketId);
+                var ratings = await RestClient.GetAsync<PlayMarketRatings>(client, uri).ConfigureAwait(false);
+                return ConvertToRating(ratings, app);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         private string CreateRatingUri(string appId) => playMarketApiUri + appId;

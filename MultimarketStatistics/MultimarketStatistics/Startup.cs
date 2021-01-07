@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
+using Domain.Clients.AppGallery;
+using Domain.Clients.AppStore;
+using Domain.Clients.PlayMarket;
 using Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using MultimarketStatistics.Models;
@@ -56,6 +59,11 @@ namespace MultimarketStatistics
             services.AddScoped<RatingService>();
             services.AddScoped<AppService>();
             services.AddScoped<NotificationService>();
+            services.AddScoped<FetcherService>();
+
+            services.AddScoped<AppGalleryClient>()
+                .AddScoped<AppStoreClient>()
+                .AddScoped<PlayMarketClient>();
 
             services.AddScoped(typeof(DbContext), typeof(StorageContext))
                 .AddScoped<ContextFactory>()

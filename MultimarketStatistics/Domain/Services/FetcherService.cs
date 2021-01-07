@@ -51,7 +51,7 @@ namespace Domain.Services
             return newReviews;
         }
 
-        public async Task<List<Rating>> FetchAppRating(App app, IEnumerable<Review> appStoreOldReviews, IEnumerable<Review> appStoreNewReviews)
+        public async Task<IEnumerable<Rating>> FetchAppRating(App app, IEnumerable<Review> appStoreOldReviews, IEnumerable<Review> appStoreNewReviews)
         {
             var result = new List<Rating>();
 
@@ -73,7 +73,7 @@ namespace Domain.Services
                 result.Add(await playMarket.GetAppRatingAsync(app).ConfigureAwait(false));
             }
 
-            return result;
+            return result.Where(r => r != null);
         }
 
         private static IEnumerable<Review> GetAppStoreReviews(IEnumerable<Review> appStoreOldReviews, IEnumerable<Review> appStoreNewReviews) =>

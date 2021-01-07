@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Principal;
 using System.Text;
+using System.Threading.Tasks;
 using AutoMapper;
 using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -24,11 +25,11 @@ namespace MultimarketStatistics.Controllers
         }
 
         [HttpPost("create/{userId}")]
-        public Guid Create(Guid userId, [FromBody] AppContract webApp)
+        public async Task<Guid> Create(Guid userId, [FromBody] AppContract webApp)
         {
             var app = mapper.Map<App>(webApp);
             app.User = new User{Id = userId};
-            return appService.Create(app);
+            return await appService.Create(app).ConfigureAwait(false);
         }
 
         [HttpPut("update/{userId}")]
