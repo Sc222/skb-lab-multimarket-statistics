@@ -10,18 +10,20 @@ namespace Domain.Services
     public class NotificationService
     {
         private readonly IRepository<Notification> notificationRepository;
-        private readonly AppService appService;
 
-        public NotificationService(IRepository<Notification> notificationRepository, AppService appService)
+        public NotificationService(IRepository<Notification> notificationRepository)
         {
             this.notificationRepository = notificationRepository;
-            this.appService = appService;
         }
 
         public Notification[] GetNotificationsByUser(Guid userId)
         {
-            var userApps = appService.GetAppsByUser(userId);
-            return notificationRepository.Find(n => userApps.Contains(n.App));
+            return notificationRepository.Find(n => n.User.Id == userId);
+        }
+
+        public Notification[] GetNotCheckedNotificationsByUsers(Guid[] userIds)
+        {
+            return notificationRepository.Find(n => userIds.Contains(n.User.Id) && !n.IsChecked);
         }
 
         public void Delete(IEnumerable<Notification> notifications)
@@ -40,6 +42,7 @@ namespace Domain.Services
                 .Select(g => new Notification
                 {
                     App = app,
+                    User = app.User,
                     Title = $"New {g.Key.ToStringMarket()} reviews!",
                     Text = $"New {g.Count()} reviews for {app.Name}"
                 });

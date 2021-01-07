@@ -42,6 +42,12 @@ namespace Storage
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+
             modelBuilder.Entity<Review>()
                 .HasOne(n => n.App)
                 .WithMany()

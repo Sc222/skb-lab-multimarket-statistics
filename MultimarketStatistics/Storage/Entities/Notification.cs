@@ -10,6 +10,9 @@ namespace Storage.Entities
         [ForeignKey("AppForeignKey")]
         public virtual App App { get; set; }
 
+        [ForeignKey("UserForeignKey")]
+        public virtual User User { get; set; }
+
         public string Text { get; set; }
 
         public bool IsChecked { get; set; }

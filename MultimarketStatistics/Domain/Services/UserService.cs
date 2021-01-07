@@ -26,6 +26,16 @@ namespace Domain.Services
             return userRepository.Get(id);
         }
 
+        public User[] GetAll()
+        {
+            return userRepository.GetAll();
+        }
+
+        public User[] GetAllWithSlackCredentials()
+        {
+            return userRepository.Find(u => !string.IsNullOrEmpty(u.SlackCredentials));
+        }
+
         public void Update(User user)
         {
             userRepository.Update(user);
