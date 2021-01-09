@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  postgres:
+      container_name: postgres_container
+      image: postgres
+      environment:
+        POSTGRES_USER: ${POSTGRES_USER:-postgres}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wt}
+        POSTGRES_DB: ${POSTGRES_DB:-multimarket}
+        PGDATA: /data/postgres
+      # volumes:
+      #    - postgres:/data/postgres
+      ports:
+        - "5432:80"
+      networks:
+      - my-network
+      restart: unless-stopped
+
+  multimarket-api:
+    image: multimarketapi
+    ports:
+      - "5000:80"
+    networks:
+      - my-network
+    depends_on:
+      - postgres
+
+  reviews-daemon:
+    image: reviewsdaemon
+    ports:
+      - "5001:80"
+    networks:
+      - my-network
+    depends_on:
+      - postgres
+  
+  slack-app:
+    image: slackapp
+    ports:
+      - "5002:80"
+    networks:
+      - my-network
+    depends_on: 
+      - postgres
+
+networks:
+  my-network:
+    external: true
