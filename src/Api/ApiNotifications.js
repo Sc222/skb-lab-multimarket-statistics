@@ -22,3 +22,10 @@ export async function deleteNotification(notificationId) {
             method: "DELETE",
         });
 }
+
+export async function deleteNotifications(notificationIds) {
+    return fetch(`${ApiRoot}/api/Notification/?id=${notificationIds.join("&id=")}`,
+        {
+            method: "DELETE",
+        });
+}

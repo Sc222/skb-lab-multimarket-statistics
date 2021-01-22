@@ -29,7 +29,7 @@ import List from "@material-ui/core/List";
 import Profile from "./Profile";
 import getUserId from "../Api/ApiTmpConstants";
 
-import {deleteNotification, getNotifications} from "../Api/ApiNotifications";
+import {deleteNotification, deleteNotifications, getNotifications} from "../Api/ApiNotifications";
 
 import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
@@ -242,6 +242,12 @@ export default function UserSection() {
         deleteNotification(notificationId).then(result => console.log(result.status));
     }
 
+    function deleteAllNotifications(){
+        console.log("delete all notifications");
+       // setNotifications(newNotifications);
+        deleteNotifications(notifications?.map(notification=>notification.id)).then(result => console.log(result.status));
+    }
+
     useEffect(() => {
         // todo load info by username
         console.log(username);
@@ -276,7 +282,7 @@ export default function UserSection() {
             .then(result=>{
                 console.log("set notifications");
                 setNotifications(result);
-                //console.log(result);
+                console.log(result);
             })
             .catch(error=>{
                 console.log("error notifications");
@@ -354,7 +360,8 @@ export default function UserSection() {
             >
                 <div className={classes.popover}>
                     {/* todo add button to mark notifications as viewed \ delete it */}
-                    {notifications?.map((notification, index) => {
+                    {
+                        notifications?.map((notification, index) => {
                         return (
                             <div key={notification.id}>
                                 <div className={classes.popoverContainer}>
@@ -374,10 +381,38 @@ export default function UserSection() {
                                         Удалить
                                     </Link>
                                 </div>
-                                {index !== (notifications.length - 1) && <Divider className={classes.fullWidth}/>}
+                                <Divider className={classes.fullWidth}/>
                             </div>
                         );
                     })
+                    }
+                    {notifications !== undefined && notifications.length!==0 &&
+                    <div className={classes.popoverContainer}>
+                        <Link
+                            component="button"
+                            onClick={() => deleteAllNotifications()}
+                        >
+                            Удалить все уведомления
+                        </Link>
+                    </div>
+                    }
+                    {notifications !== undefined && notifications.length===0 &&
+                    <div className={classes.popoverContainer}>
+                        <div className={classes.flex}>
+                            <Typography variant='body1' color='inherit'>
+                                Уведомлений нет
+                            </Typography>
+                        </div>
+                    </div>
+                    }
+                    {notifications ===undefined &&
+                    <div className={classes.popoverContainer}>
+                        <div className={classes.flex}>
+                            <Typography variant='body1' color='inherit'>
+                                Загрузка уведомлений
+                            </Typography>
+                        </div>
+                    </div>
                     }
                 </div>
             </Popover>
