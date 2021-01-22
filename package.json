@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "description": "Service for merging statistics from App Store, Google Play and HUAWEI AppGallery",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/Sc222/skb-lab-multimarket-statistics.git"
+    "type": "git",
+    "url": "https://github.com/Sc222/skb-lab-multimarket-statistics.git"
   },
   "homepage": "https://multi-stats.netlify.app/",
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@mui-treasury/components": "^1.9.1",
     "@mui-treasury/layout": "^4.5.0",
     "@mui-treasury/styles": "^1.13.0",
