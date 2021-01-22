@@ -30,6 +30,12 @@ namespace Domain.Services
             notificationRepository.DeleteRange(notifications);
         }
 
+        public void DeleteByUser(Guid userId)
+        {
+            var notificationsToDelete = notificationRepository.Find(n => n.User.Id == userId);
+            notificationRepository.DeleteRange(notificationsToDelete);
+        }
+
         public void CreateRange(IEnumerable<Notification> notifications)
         {
             notificationRepository.CreateRange(notifications);

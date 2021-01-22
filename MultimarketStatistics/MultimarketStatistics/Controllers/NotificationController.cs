@@ -34,5 +34,11 @@ namespace MultimarketStatistics.Controllers
         {
             notificationService.Delete(notificationIds.Select(id => new Notification {Id = id}));
         }
+
+        [HttpDelete("{userId")]
+        public void DeleteByUser(Guid userId)
+        {
+            notificationService.DeleteByUser(userId);
+        }
     }
 }
