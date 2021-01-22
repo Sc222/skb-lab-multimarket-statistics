@@ -29,7 +29,11 @@ import List from "@material-ui/core/List";
 import Profile from "./Profile";
 import getUserId from "../Api/ApiTmpConstants";
 
-import {deleteNotification, deleteNotifications, getNotifications} from "../Api/ApiNotifications";
+import {
+    deleteAllNotifications as apiDeleteAllNotifications,
+    deleteNotification,
+    getNotifications
+} from "../Api/ApiNotifications";
 
 import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
@@ -233,19 +237,28 @@ export default function UserSection() {
             setProfilePopoverAnchor(event.currentTarget.parentElement);
     }
 
-    function updateNotifications(notificationId, index){
+    function updateNotifications(notificationId, index) {
         console.log("delete notification");
         console.log(notifications);
-        let newNotifications = update(notifications, { $splice: [[index, 1]] } );
+        let newNotifications = update(notifications, {$splice: [[index, 1]]});
         console.log(newNotifications);
         setNotifications(newNotifications);
         deleteNotification(notificationId).then(result => console.log(result.status));
     }
 
-    function deleteAllNotifications(){
+    function deleteAllNotifications() {
         console.log("delete all notifications");
-       // setNotifications(newNotifications);
-        deleteNotifications(notifications?.map(notification=>notification.id)).then(result => console.log(result.status));
+        apiDeleteAllNotifications(getUserId(username))
+            .then(result => {
+                if (result.ok) {
+                    setNotifications([]);
+                    setNotificationPopoverAnchor(null);
+                } else {
+                    console.log("error deleting notifications");
+                    //todo show error alert
+                }
+            })
+        ;
     }
 
     useEffect(() => {
@@ -253,44 +266,16 @@ export default function UserSection() {
         console.log(username);
         console.log(getUserId(username));
 
-
-
-
-        // todo load notifications from server
-        /*const notifications = [
-            {
-                title: 'Уведомление 1',
-                description: "Достаточно длинный текст первого уведомления",
-                date: "21 Ноября 2020",
-                new: true
-            },
-            {
-                title: 'Уведомление 2',
-                description: "Достаточно длинный текст второго уведомления",
-                date: "15 Ноября 2020",
-                new: false
-            },
-            {
-                title: 'Уведомление 3',
-                description: "Достаточно длинный текст третьего уведомления",
-                date: "7 Ноября 2020",
-                new: false
-            }
-        ];*/
-
         getNotifications(getUserId(username))
-            .then(result=>{
+            .then(result => {
                 console.log("set notifications");
                 setNotifications(result);
                 console.log(result);
             })
-            .catch(error=>{
+            .catch(error => {
                 console.log("error notifications");
                 console.log(error);
             });
-
-
-
 
         // todo application route params
     }, []);
@@ -362,41 +347,43 @@ export default function UserSection() {
                     {/* todo add button to mark notifications as viewed \ delete it */}
                     {
                         notifications?.map((notification, index) => {
-                        return (
-                            <div key={notification.id}>
-                                <div className={classes.popoverContainer}>
-                                    <div className={classes.flex}>
-                                        <Typography variant='body1' color={notification.isChecked ? 'primary' : 'inherit'}>
-                                            {notification.title}
-                                        </Typography>
-                                        {notification.isChecked && <NewReleasesRounded color='primary'/>}
+                            return (
+                                <div key={notification.id}>
+                                    <div className={classes.popoverContainer}>
+                                        <div className={classes.flex}>
+                                            <Typography variant='body1'
+                                                        color={notification.isChecked ? 'primary' : 'inherit'}>
+                                                {notification.title}
+                                            </Typography>
+                                            {notification.isChecked && <NewReleasesRounded color='primary'/>}
+                                        </div>
+                                        <Typography variant='body2'>{notification.text}</Typography>
+                                        {/*<Typography variant='caption'>Удалить</Typography>*/}
+                                        <Link
+                                            component="button"
+                                            variant="body2"
+                                            onClick={() => updateNotifications(notification.id, index)}
+                                        >
+                                            Удалить
+                                        </Link>
                                     </div>
-                                    <Typography variant='body2'>{notification.text}</Typography>
-                                    {/*<Typography variant='caption'>Удалить</Typography>*/}
-                                    <Link
-                                        component="button"
-                                        variant="body2"
-                                        onClick={()=>updateNotifications(notification.id, index)}
-                                    >
-                                        Удалить
-                                    </Link>
+                                    <Divider className={classes.fullWidth}/>
                                 </div>
-                                <Divider className={classes.fullWidth}/>
-                            </div>
-                        );
-                    })
+                            );
+                        })
                     }
-                    {notifications !== undefined && notifications.length!==0 &&
+                    {notifications !== undefined && notifications.length !== 0 &&
                     <div className={classes.popoverContainer}>
                         <Link
                             component="button"
                             onClick={() => deleteAllNotifications()}
+
                         >
                             Удалить все уведомления
                         </Link>
                     </div>
                     }
-                    {notifications !== undefined && notifications.length===0 &&
+                    {notifications !== undefined && notifications.length === 0 &&
                     <div className={classes.popoverContainer}>
                         <div className={classes.flex}>
                             <Typography variant='body1' color='inherit'>
@@ -405,7 +392,7 @@ export default function UserSection() {
                         </div>
                     </div>
                     }
-                    {notifications ===undefined &&
+                    {notifications === undefined &&
                     <div className={classes.popoverContainer}>
                         <div className={classes.flex}>
                             <Typography variant='body1' color='inherit'>

@@ -19,13 +19,20 @@ export async function getNotifications(userId) {
 export async function deleteNotification(notificationId) {
     return fetch(`${ApiRoot}/api/Notification/?id=${notificationId}`,
         {
-            method: "DELETE",
+            method: "DELETE"
+        });
+}
+
+export async function deleteAllNotifications(userId) {
+    return fetch(`${ApiRoot}/api/Notification/${userId}`,
+        {
+            method: "DELETE"
         });
 }
 
 export async function deleteNotifications(notificationIds) {
     return fetch(`${ApiRoot}/api/Notification/?id=${notificationIds.join("&id=")}`,
         {
-            method: "DELETE",
+            method: "DELETE"
         });
 }
