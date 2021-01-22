@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Storage.Entities
 {
@@ -16,8 +12,7 @@ namespace Storage.Entities
 
         public string PlayMarketId { get; set; }
 
-        [ForeignKey("UserForeignKey")]
-        public virtual User User { get; set; }
+        [ForeignKey("UserForeignKey")] public virtual User User { get; set; }
 
         public string Description { get; set; }
 

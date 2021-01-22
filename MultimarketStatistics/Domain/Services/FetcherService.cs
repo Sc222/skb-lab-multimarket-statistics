@@ -1,19 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Domain.Clients.AppGallery;
 using Domain.Clients.AppStore;
 using Domain.Clients.PlayMarket;
 using Storage.Entities;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Domain.Services
 {
     public class FetcherService
     {
         private readonly AppGalleryClient appGallery;
-        private readonly PlayMarketClient playMarket;
         private readonly AppStoreClient appStore;
+        private readonly PlayMarketClient playMarket;
 
         public FetcherService(AppStoreClient appStore, PlayMarketClient playMarket, AppGalleryClient appGallery)
         {
@@ -22,23 +22,28 @@ namespace Domain.Services
             this.appGallery = appGallery;
         }
 
-        public async Task<List<Review>> FetchAppReviews(App app, Dictionary<MarketType, Review> lastRecordedReviewsIds = null)
+        public async Task<List<Review>> FetchAppReviews(App app,
+            Dictionary<MarketType, Review> lastRecordedReviewsIds = null)
         {
             var result = new List<Review>();
 
             if (!string.IsNullOrEmpty(app.AppStoreId))
-                result.AddRange(await GetReviews(app, lastRecordedReviewsIds, appStore, MarketType.AppStore).ConfigureAwait(false));
+                result.AddRange(await GetReviews(app, lastRecordedReviewsIds, appStore, MarketType.AppStore)
+                    .ConfigureAwait(false));
 
             if (!string.IsNullOrEmpty(app.AppGalleryId))
-                result.AddRange(await GetReviews(app, lastRecordedReviewsIds, appGallery, MarketType.AppGallery).ConfigureAwait(false));
+                result.AddRange(await GetReviews(app, lastRecordedReviewsIds, appGallery, MarketType.AppGallery)
+                    .ConfigureAwait(false));
 
             if (!string.IsNullOrEmpty(app.PlayMarketId))
-                result.AddRange(await GetReviews(app, lastRecordedReviewsIds, playMarket, MarketType.PlayMarket).ConfigureAwait(false));
+                result.AddRange(await GetReviews(app, lastRecordedReviewsIds, playMarket, MarketType.PlayMarket)
+                    .ConfigureAwait(false));
 
             return result;
         }
 
-        private async Task<IEnumerable<Review>> GetReviews(App app, Dictionary<MarketType, Review> lastRecordedReviewsIds,
+        private async Task<IEnumerable<Review>> GetReviews(App app,
+            Dictionary<MarketType, Review> lastRecordedReviewsIds,
             IMarketClient marketClient, MarketType market)
         {
             var reviews = await marketClient.GetAppReviewsAsync(app, 10).ConfigureAwait(false); //поправить 10
@@ -51,7 +56,8 @@ namespace Domain.Services
             return newReviews;
         }
 
-        public async Task<IEnumerable<Rating>> FetchAppRating(App app, IEnumerable<Review> appStoreOldReviews, IEnumerable<Review> appStoreNewReviews)
+        public async Task<IEnumerable<Rating>> FetchAppRating(App app, IEnumerable<Review> appStoreOldReviews,
+            IEnumerable<Review> appStoreNewReviews)
         {
             var result = new List<Rating>();
 
@@ -64,25 +70,25 @@ namespace Domain.Services
                 var rating = GetAppStoreRating(app, realAppStoreReviews);
                 result.Add(rating);
             }
+
             if (!string.IsNullOrEmpty(app.AppGalleryId))
-            {
                 result.Add(await appGallery.GetAppRatingAsync(app).ConfigureAwait(false));
-            }
             if (!string.IsNullOrEmpty(app.PlayMarketId))
-            {
                 result.Add(await playMarket.GetAppRatingAsync(app).ConfigureAwait(false));
-            }
 
             return result.Where(r => r != null);
         }
 
-        private static IEnumerable<Review> GetAppStoreReviews(IEnumerable<Review> appStoreOldReviews, IEnumerable<Review> appStoreNewReviews) =>
-            appStoreOldReviews != null
+        private static IEnumerable<Review> GetAppStoreReviews(IEnumerable<Review> appStoreOldReviews,
+            IEnumerable<Review> appStoreNewReviews)
+        {
+            return appStoreOldReviews != null
                 ? appStoreNewReviews != null
                     ? appStoreOldReviews.Concat(appStoreNewReviews)
                     : appStoreOldReviews
                 : appStoreNewReviews;
-        
+        }
+
 
         private static Rating GetAppStoreRating(App app, Review[] appStoreReviews)
         {

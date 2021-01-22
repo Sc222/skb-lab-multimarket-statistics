@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Storage.Entities
 {
     public class Review : GuidIdentifiable
     {
-        [ForeignKey("AppForeignKey")]
-        public virtual App App { get; set; }
+        [ForeignKey("AppForeignKey")] public virtual App App { get; set; }
 
         public MarketType Market { get; set; }
 

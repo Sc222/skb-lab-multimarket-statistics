@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using MoreLinq;
 using Microsoft.EntityFrameworkCore;
+using MoreLinq;
 
 namespace Storage.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity: class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly ContextFactory contextFactory;
 
@@ -34,16 +34,6 @@ namespace Storage.Repositories
             var context = contextFactory.Create();
             var query = LoadEntities(context, eager);
             return query.Where(predicate).ToArray();
-        }
-
-        private IQueryable<TEntity> LoadEntities(DbContext context, bool eager = false)
-        {
-            IQueryable<TEntity> query = context.Set<TEntity>();
-            if (eager)
-                foreach (var property in context.Model.FindEntityType(typeof(TEntity)).GetNavigations())
-                    query = query.Include(property.Name);
-
-            return query;
         }
 
         public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate)
@@ -93,6 +83,16 @@ namespace Storage.Repositories
             var context = contextFactory.Create();
             context.Entry(entity).State = EntityState.Modified;
             context.SaveChanges();
+        }
+
+        private IQueryable<TEntity> LoadEntities(DbContext context, bool eager = false)
+        {
+            IQueryable<TEntity> query = context.Set<TEntity>();
+            if (eager)
+                foreach (var property in context.Model.FindEntityType(typeof(TEntity)).GetNavigations())
+                    query = query.Include(property.Name);
+
+            return query;
         }
     }
 }

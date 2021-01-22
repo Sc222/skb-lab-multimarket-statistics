@@ -8,20 +8,17 @@ namespace Storage.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Locales",
-                columns: table => new
+                "Locales",
+                table => new
                 {
                     AppId = table.Column<Guid>(nullable: false),
                     Market = table.Column<int>(nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Locales", x => new { x.AppId, x.Market });
-                });
+                constraints: table => { table.PrimaryKey("PK_Locales", x => new {x.AppId, x.Market}); });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
+                "Users",
+                table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Username = table.Column<string>(nullable: true),
@@ -29,14 +26,11 @@ namespace Storage.Migrations
                     Email = table.Column<string>(nullable: true),
                     SlackCredentials = table.Column<string>(nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Users", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Apps",
-                columns: table => new
+                "Apps",
+                table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(nullable: true),
@@ -51,15 +45,15 @@ namespace Storage.Migrations
                 {
                     table.PrimaryKey("PK_Apps", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Apps_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
+                        "FK_Apps_Users_UserId",
+                        x => x.UserId,
+                        "Users",
+                        "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Notifications",
-                columns: table => new
+                "Notifications",
+                table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
@@ -72,20 +66,20 @@ namespace Storage.Migrations
                 {
                     table.PrimaryKey("PK_Notifications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Notifications_Apps_AppId",
-                        column: x => x.AppId,
-                        principalTable: "Apps",
-                        principalColumn: "Id");
+                        "FK_Notifications_Apps_AppId",
+                        x => x.AppId,
+                        "Apps",
+                        "Id");
                     table.ForeignKey(
-                        name: "FK_Notifications_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
+                        "FK_Notifications_Users_UserId",
+                        x => x.UserId,
+                        "Users",
+                        "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ratings",
-                columns: table => new
+                "Ratings",
+                table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     AppId = table.Column<Guid>(nullable: true),
@@ -102,16 +96,16 @@ namespace Storage.Migrations
                 {
                     table.PrimaryKey("PK_Ratings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ratings_Apps_AppId",
-                        column: x => x.AppId,
-                        principalTable: "Apps",
-                        principalColumn: "Id",
+                        "FK_Ratings_Apps_AppId",
+                        x => x.AppId,
+                        "Apps",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
-                columns: table => new
+                "Reviews",
+                table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     AppId = table.Column<Guid>(nullable: true),
@@ -127,94 +121,94 @@ namespace Storage.Migrations
                 {
                     table.PrimaryKey("PK_Reviews", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reviews_Apps_AppId",
-                        column: x => x.AppId,
-                        principalTable: "Apps",
-                        principalColumn: "Id",
+                        "FK_Reviews_Apps_AppId",
+                        x => x.AppId,
+                        "Apps",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Apps_AppGalleryId",
-                table: "Apps",
-                column: "AppGalleryId",
+                "IX_Apps_AppGalleryId",
+                "Apps",
+                "AppGalleryId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Apps_AppStoreId",
-                table: "Apps",
-                column: "AppStoreId",
+                "IX_Apps_AppStoreId",
+                "Apps",
+                "AppStoreId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Apps_PlayMarketId",
-                table: "Apps",
-                column: "PlayMarketId",
+                "IX_Apps_PlayMarketId",
+                "Apps",
+                "PlayMarketId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Apps_UserId",
-                table: "Apps",
-                column: "UserId");
+                "IX_Apps_UserId",
+                "Apps",
+                "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_AppId",
-                table: "Notifications",
-                column: "AppId");
+                "IX_Notifications_AppId",
+                "Notifications",
+                "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UserId",
-                table: "Notifications",
-                column: "UserId");
+                "IX_Notifications_UserId",
+                "Notifications",
+                "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ratings_AppId",
-                table: "Ratings",
-                column: "AppId");
+                "IX_Ratings_AppId",
+                "Ratings",
+                "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_AppId",
-                table: "Reviews",
-                column: "AppId");
+                "IX_Reviews_AppId",
+                "Reviews",
+                "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                table: "Users",
-                column: "Email",
+                "IX_Users_Email",
+                "Users",
+                "Email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_SlackCredentials",
-                table: "Users",
-                column: "SlackCredentials",
+                "IX_Users_SlackCredentials",
+                "Users",
+                "SlackCredentials",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_Username",
-                table: "Users",
-                column: "Username",
+                "IX_Users_Username",
+                "Users",
+                "Username",
                 unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Locales");
+                "Locales");
 
             migrationBuilder.DropTable(
-                name: "Notifications");
+                "Notifications");
 
             migrationBuilder.DropTable(
-                name: "Ratings");
+                "Ratings");
 
             migrationBuilder.DropTable(
-                name: "Reviews");
+                "Reviews");
 
             migrationBuilder.DropTable(
-                name: "Apps");
+                "Apps");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                "Users");
         }
     }
 }

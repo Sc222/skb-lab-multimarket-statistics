@@ -3,15 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain;
-using Domain.Clients;
-using Domain.Clients.AppGallery;
-using Domain.Clients.AppStore;
-using Domain.Clients.PlayMarket;
 using Domain.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MoreLinq;
 using Storage.Entities;
 
 namespace ReviewsDaemon
@@ -20,10 +14,10 @@ namespace ReviewsDaemon
     {
         private readonly ILogger<Worker> _logger;
         private readonly AppService appService;
-        private readonly ReviewService reviewService;
-        private readonly RatingService ratingService;
-        private readonly NotificationService notificationService;
         private readonly FetcherService fetcherService;
+        private readonly NotificationService notificationService;
+        private readonly RatingService ratingService;
+        private readonly ReviewService reviewService;
 
         public Worker(ILogger<Worker> logger, AppService appService, ReviewService reviewService,
             RatingService ratingService, NotificationService notificationService, FetcherService fetcherService)
@@ -58,16 +52,17 @@ namespace ReviewsDaemon
 
                 try
                 {
-
                     foreach (var app in apps)
                     {
                         lastRecordedReviewsIds.TryGetValue(app.Id, out var lastAppReviewIds);
-                        var newReviews = await fetcherService.FetchAppReviews(app, lastAppReviewIds).ConfigureAwait(false);
+                        var newReviews = await fetcherService.FetchAppReviews(app, lastAppReviewIds)
+                            .ConfigureAwait(false);
                         reviewsToAdd.AddRange(newReviews);
 
                         var newAppStoreReviews = newReviews.Where(r => r.Market == MarketType.AppStore);
                         appStoreReviewsByApp.TryGetValue(app.Id, out var appStoreAppReviews);
-                        ratingsToAdd.AddRange(await fetcherService.FetchAppRating(app, appStoreAppReviews, newAppStoreReviews).ConfigureAwait(false));
+                        ratingsToAdd.AddRange(await fetcherService
+                            .FetchAppRating(app, appStoreAppReviews, newAppStoreReviews).ConfigureAwait(false));
 
                         notificationsToAdd.AddRange(notificationService.GetNotificationsFromReviews(app, newReviews));
                     }
@@ -82,6 +77,7 @@ namespace ReviewsDaemon
                     Console.WriteLine(e);
                     throw;
                 }
+
                 _logger.LogInformation("Finished writing at {time}", DateTimeOffset.Now);
                 await Task.Delay(TimeSpan.FromHours(1), stoppingToken).ConfigureAwait(false);
             }

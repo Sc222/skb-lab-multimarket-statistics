@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using AutoMapper;
 using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +13,8 @@ namespace MultimarketStatistics.Controllers
     [Route("api/[controller]")]
     public class NotificationController
     {
-        private readonly NotificationService notificationService;
         private readonly IMapper mapper;
+        private readonly NotificationService notificationService;
 
         public NotificationController(NotificationService notificationService, IMapper mapper)
         {
@@ -33,7 +32,7 @@ namespace MultimarketStatistics.Controllers
         [HttpDelete]
         public void Delete([FromQuery(Name = "id")] IEnumerable<Guid> notificationIds)
         {
-            notificationService.Delete(notificationIds.Select(id => new Notification{Id = id}));
+            notificationService.Delete(notificationIds.Select(id => new Notification {Id = id}));
         }
     }
 }

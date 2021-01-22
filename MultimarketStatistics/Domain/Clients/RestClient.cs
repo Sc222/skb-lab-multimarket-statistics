@@ -1,15 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Serialization;
-using Domain.Clients.AppStore;
+using Newtonsoft.Json;
 
 namespace Domain.Clients
 {

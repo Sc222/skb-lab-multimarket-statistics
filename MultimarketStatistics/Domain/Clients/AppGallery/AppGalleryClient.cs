@@ -8,7 +8,9 @@ namespace Domain.Clients.AppGallery
 {
     public class AppGalleryClient : IMarketClient
     {
-        private const string apiUrl = "https://web-drru.hispace.dbankcloud.cn/uowap/index?method=internal.user.commenList3";
+        private const string apiUrl =
+            "https://web-drru.hispace.dbankcloud.cn/uowap/index?method=internal.user.commenList3";
+
         private const int MaxReviewPages = 4;
         private const int ReviewsPerPage = 25;
 
@@ -21,7 +23,8 @@ namespace Domain.Clients.AppGallery
                 try
                 {
                     var uri = CreateReviewUri(pageNum, app.AppGalleryId);
-                    var reviewsList = await RestClient.GetAsync<AppGalleryReviewList>(client, uri).ConfigureAwait(false);
+                    var reviewsList =
+                        await RestClient.GetAsync<AppGalleryReviewList>(client, uri).ConfigureAwait(false);
                     result.AddRange(ConvertToReviews(reviewsList, app));
                     if (reviewsList.ReviewsList.Count < ReviewsPerPage)
                         break;
@@ -32,26 +35,6 @@ namespace Domain.Clients.AppGallery
                 }
 
             return result;
-        }
-
-        private string CreateReviewUri(int page, string appId) =>
-            apiUrl + $"&reqPageNum={page}&maxResults=25&appid={appId}";
-
-        //Вынести в отдельный класс??
-        private IEnumerable<Review> ConvertToReviews(AppGalleryReviewList reviews, App app)
-        {
-            return reviews.ReviewsList.Select(r => new Review
-            {
-                App = app,
-                Date = r.Date,
-                DevResponse = r.DevResponse,
-                Market = MarketType.AppGallery,
-                MarketReviewId = r.Id,
-                Rating = r.Rating,
-                ReviewerUsername = r.ReviewerUsername,
-                Text = r.Text,
-                Version = r.Version
-            });
         }
 
         public async Task<Rating> GetAppRatingAsync(App app)
@@ -68,6 +51,28 @@ namespace Domain.Clients.AppGallery
                 Console.WriteLine(e); // тоже в лог
                 return null;
             }
+        }
+
+        private string CreateReviewUri(int page, string appId)
+        {
+            return apiUrl + $"&reqPageNum={page}&maxResults=25&appid={appId}";
+        }
+
+        //Вынести в отдельный класс??
+        private IEnumerable<Review> ConvertToReviews(AppGalleryReviewList reviews, App app)
+        {
+            return reviews.ReviewsList.Select(r => new Review
+            {
+                App = app,
+                Date = r.Date,
+                DevResponse = r.DevResponse,
+                Market = MarketType.AppGallery,
+                MarketReviewId = r.Id,
+                Rating = r.Rating,
+                ReviewerUsername = r.ReviewerUsername,
+                Text = r.Text,
+                Version = r.Version
+            });
         }
 
         private Rating ConvertToRating(AppGalleryRatingList ratingsList, App app)

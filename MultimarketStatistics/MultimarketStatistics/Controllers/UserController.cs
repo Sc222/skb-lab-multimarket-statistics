@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using AutoMapper;
 using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +11,8 @@ namespace MultimarketStatistics.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserService userService;
         private readonly IMapper mapper;
+        private readonly UserService userService;
 
         public UserController(UserService userService, IMapper mapper)
         {

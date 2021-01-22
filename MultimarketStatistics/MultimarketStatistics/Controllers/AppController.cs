@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Domain.Services;
@@ -28,7 +25,7 @@ namespace MultimarketStatistics.Controllers
         public async Task<Guid> Create(Guid userId, [FromBody] AppContract webApp)
         {
             var app = mapper.Map<App>(webApp);
-            app.User = new User{Id = userId};
+            app.User = new User {Id = userId};
             return await appService.Create(app).ConfigureAwait(false);
         }
 
@@ -36,7 +33,7 @@ namespace MultimarketStatistics.Controllers
         public void Update(Guid userId, [FromBody] AppContract webApp)
         {
             var app = mapper.Map<App>(webApp);
-            app.User = new User { Id = userId };
+            app.User = new User {Id = userId};
             appService.Update(app);
         }
 

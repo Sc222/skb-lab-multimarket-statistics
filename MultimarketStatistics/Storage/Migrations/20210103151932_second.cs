@@ -8,46 +8,46 @@ namespace Storage.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Notifications_Users_UserId",
-                table: "Notifications");
+                "FK_Notifications_Users_UserId",
+                "Notifications");
 
             migrationBuilder.DropIndex(
-                name: "IX_Notifications_UserId",
-                table: "Notifications");
+                "IX_Notifications_UserId",
+                "Notifications");
 
             migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "Notifications");
+                "UserId",
+                "Notifications");
 
             migrationBuilder.AddColumn<string>(
-                name: "MarketReviewId",
-                table: "Reviews",
+                "MarketReviewId",
+                "Reviews",
                 nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "MarketReviewId",
-                table: "Reviews");
+                "MarketReviewId",
+                "Reviews");
 
             migrationBuilder.AddColumn<Guid>(
-                name: "UserId",
-                table: "Notifications",
-                type: "uuid",
+                "UserId",
+                "Notifications",
+                "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UserId",
-                table: "Notifications",
-                column: "UserId");
+                "IX_Notifications_UserId",
+                "Notifications",
+                "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Notifications_Users_UserId",
-                table: "Notifications",
-                column: "UserId",
-                principalTable: "Users",
+                "FK_Notifications_Users_UserId",
+                "Notifications",
+                "UserId",
+                "Users",
                 principalColumn: "Id");
         }
     }

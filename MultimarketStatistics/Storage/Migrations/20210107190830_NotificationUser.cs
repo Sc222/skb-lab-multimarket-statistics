@@ -8,37 +8,37 @@ namespace Storage.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
-                name: "UserForeignKey",
-                table: "Notifications",
+                "UserForeignKey",
+                "Notifications",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UserForeignKey",
-                table: "Notifications",
-                column: "UserForeignKey");
+                "IX_Notifications_UserForeignKey",
+                "Notifications",
+                "UserForeignKey");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Notifications_Users_UserForeignKey",
-                table: "Notifications",
-                column: "UserForeignKey",
-                principalTable: "Users",
+                "FK_Notifications_Users_UserForeignKey",
+                "Notifications",
+                "UserForeignKey",
+                "Users",
                 principalColumn: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Notifications_Users_UserForeignKey",
-                table: "Notifications");
+                "FK_Notifications_Users_UserForeignKey",
+                "Notifications");
 
             migrationBuilder.DropIndex(
-                name: "IX_Notifications_UserForeignKey",
-                table: "Notifications");
+                "IX_Notifications_UserForeignKey",
+                "Notifications");
 
             migrationBuilder.DropColumn(
-                name: "UserForeignKey",
-                table: "Notifications");
+                "UserForeignKey",
+                "Notifications");
         }
     }
 }

@@ -12,8 +12,8 @@ namespace MultimarketStatistics.Controllers
     [Route("api/[controller]")]
     public class RatingController
     {
-        private readonly RatingService ratingService;
         private readonly IMapper mapper;
+        private readonly RatingService ratingService;
 
         public RatingController(RatingService ratingService, IMapper mapper)
         {
@@ -22,7 +22,8 @@ namespace MultimarketStatistics.Controllers
         }
 
         [HttpGet("{appId}")]
-        public RatingContract[] GetAppRatings(Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to, [FromQuery] string market)
+        public RatingContract[] GetAppRatings(Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to,
+            [FromQuery] string market)
         {
             var ratings = ratingService.GetRatingsByApp(appId, from, to);
 
