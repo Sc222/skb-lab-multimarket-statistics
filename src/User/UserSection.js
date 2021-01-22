@@ -27,6 +27,12 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 import Profile from "./Profile";
+import getUserId from "../Api/ApiTmpConstants";
+
+import {deleteNotification, getNotifications} from "../Api/ApiNotifications";
+
+import update from 'immutability-helper';
+import Link from "@material-ui/core/Link";
 
 const drawerWidth = 260;
 
@@ -182,7 +188,8 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: theme.spacing(1.5),
         paddingTop: theme.spacing(1),
         paddingBottom: theme.spacing(1),
-    }
+    },
+
 
 }));
 
@@ -197,7 +204,7 @@ export default function UserSection() {
     const [notificationPopoverAnchor, setNotificationPopoverAnchor] = React.useState(null);
     const [profilePopoverAnchor, setProfilePopoverAnchor] = React.useState(null);
 
-    const [isDrawerOpen, setDrawerOpen] = React.useState(true);
+    const [isDrawerOpen, setDrawerOpen] = React.useState(false);
 
     //hide or show drawer and drawer menus
     const [isDrawerOnPage, setIsDrawerOnPage] = React.useState(false);
@@ -226,12 +233,25 @@ export default function UserSection() {
             setProfilePopoverAnchor(event.currentTarget.parentElement);
     }
 
+    function updateNotifications(notificationId, index){
+        console.log("delete notification");
+        console.log(notifications);
+        let newNotifications = update(notifications, { $splice: [[index, 1]] } );
+        console.log(newNotifications);
+        setNotifications(newNotifications);
+        deleteNotification(notificationId).then(result => console.log(result.status));
+    }
+
     useEffect(() => {
         // todo load info by username
         console.log(username);
+        console.log(getUserId(username));
+
+
+
 
         // todo load notifications from server
-        const notifications = [
+        /*const notifications = [
             {
                 title: 'Уведомление 1',
                 description: "Достаточно длинный текст первого уведомления",
@@ -250,8 +270,21 @@ export default function UserSection() {
                 date: "7 Ноября 2020",
                 new: false
             }
-        ];
-        setNotifications(notifications);
+        ];*/
+
+        getNotifications(getUserId(username))
+            .then(result=>{
+                console.log("set notifications");
+                setNotifications(result);
+                //console.log(result);
+            })
+            .catch(error=>{
+                console.log("error notifications");
+                console.log(error);
+            });
+
+
+
 
         // todo application route params
     }, []);
@@ -323,16 +356,23 @@ export default function UserSection() {
                     {/* todo add button to mark notifications as viewed \ delete it */}
                     {notifications?.map((notification, index) => {
                         return (
-                            <div>
+                            <div key={notification.id}>
                                 <div className={classes.popoverContainer}>
                                     <div className={classes.flex}>
-                                        <Typography variant='body1' color={notification.new ? 'primary' : 'inherit'}>
+                                        <Typography variant='body1' color={notification.isChecked ? 'primary' : 'inherit'}>
                                             {notification.title}
                                         </Typography>
-                                        {notification.new && <NewReleasesRounded color='primary'/>}
+                                        {notification.isChecked && <NewReleasesRounded color='primary'/>}
                                     </div>
-                                    <Typography variant='body2'>{notification.description}</Typography>
-                                    <Typography variant='caption'>{notification.date}</Typography>
+                                    <Typography variant='body2'>{notification.text}</Typography>
+                                    {/*<Typography variant='caption'>Удалить</Typography>*/}
+                                    <Link
+                                        component="button"
+                                        variant="body2"
+                                        onClick={()=>updateNotifications(notification.id, index)}
+                                    >
+                                        Удалить
+                                    </Link>
                                 </div>
                                 {index !== (notifications.length - 1) && <Divider className={classes.fullWidth}/>}
                             </div>
@@ -407,7 +447,8 @@ export default function UserSection() {
                         <Profile username={username}/>
                     </Route>
                     <Route path={`${HomepageUrl}/user/:username/app/:appname`}>
-                        <ApplicationSection username={username} isDrawerOpen={isDrawerOpen} changeDrawerState={changeDrawerState}/>
+                        <ApplicationSection username={username} isDrawerOpen={isDrawerOpen}
+                                            changeDrawerState={changeDrawerState}/>
                         {/*todo if path is /${HomepageUrl}/user/:username/app/:appname (without dashboard|settings) -> redirect to dashboard*/}
                     </Route>
                 </RouteSwitch>

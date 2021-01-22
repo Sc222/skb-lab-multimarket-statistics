@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import Chart from './Chart';
 import Avatar from "@material-ui/core/Avatar";
 
+//image imports
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
@@ -433,6 +434,7 @@ export default function ApplicationDashboard(props) {
                             <Typography variant="body2">
                                 Читайте и анализируйте отзывы о вашем приложении
                             </Typography>
+                            
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container maxWidth='sm' className={classes.containerNotCentered}>
