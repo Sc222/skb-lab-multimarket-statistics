@@ -20,6 +20,7 @@ namespace MultimarketStatistics.Controllers
             this.mapper = mapper;
         }
 
+        //[Authorize]
         [HttpPost("create")]
         public Guid Create([FromBody] UserContract webUser)
         {
@@ -27,6 +28,7 @@ namespace MultimarketStatistics.Controllers
             return userService.Create(user);
         }
 
+        //[Authorize]
         [HttpPut("update")]
         public void Update([FromBody] UserContract webUser)
         {
@@ -34,11 +36,23 @@ namespace MultimarketStatistics.Controllers
             userService.Update(user);
         }
 
+        //[Authorize]
         [HttpGet("{userId}")]
         public UserContract Get(Guid userId)
         {
             var user = userService.Get(userId);
             return mapper.Map<UserContract>(user);
+        }
+
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromBody] UserContract user)
+        {
+            var response = userService.Authenticate(mapper.Map<User>(user));
+
+            if (response == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+            return Ok(response);
         }
     }
 }

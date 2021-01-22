@@ -12,7 +12,8 @@ namespace MultimarketStatistics.Models
                 .ReverseMap();
             CreateMap<Rating, RatingContract>().ReverseMap();
             CreateMap<Review, ReviewContract>().ReverseMap();
-            CreateMap<User, UserContract>().ReverseMap();
+            CreateMap<User, UserContract>().ForMember(d => d.Password, opt => opt.Ignore())
+                .ReverseMap();
         }
     }
 }

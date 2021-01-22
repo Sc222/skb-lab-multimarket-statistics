@@ -21,6 +21,7 @@ namespace MultimarketStatistics.Controllers
             this.mapper = mapper;
         }
 
+        //[Authorize]
         [HttpPost("create/{userId}")]
         public async Task<Guid> Create(Guid userId, [FromBody] AppContract webApp)
         {
@@ -29,6 +30,7 @@ namespace MultimarketStatistics.Controllers
             return await appService.Create(app).ConfigureAwait(false);
         }
 
+        //[Authorize]
         [HttpPut("update/{userId}")]
         public void Update(Guid userId, [FromBody] AppContract webApp)
         {
@@ -37,6 +39,7 @@ namespace MultimarketStatistics.Controllers
             appService.Update(app);
         }
 
+        //[Authorize]
         [HttpGet("{userId}/apps")]
         public AppContract[] GetUserApps(Guid userId)
         {
@@ -44,6 +47,7 @@ namespace MultimarketStatistics.Controllers
             return mapper.Map<AppContract[]>(apps);
         }
 
+        //[Authorize]
         [HttpGet("{appId}")]
         public AppContract Get(Guid appId)
         {

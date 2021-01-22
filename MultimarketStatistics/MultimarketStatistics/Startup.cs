@@ -99,7 +99,7 @@ namespace MultimarketStatistics
 
             app.UseCors(MultimarketAllowSpecificOrigins);
 
-            app.UseAuthorization();
+            app.UseMiddleware<JwtMiddleware>();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
