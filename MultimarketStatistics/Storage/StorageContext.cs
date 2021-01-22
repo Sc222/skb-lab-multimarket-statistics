@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Storage.Entities;
 
 namespace Storage
@@ -16,13 +15,13 @@ namespace Storage
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Locale>()
-                        .HasKey(l => new { l.AppId, l.Market });
+                .HasKey(l => new {l.AppId, l.Market});
 
             modelBuilder.Entity<App>()
-                        .HasOne(a => a.User)
-                        .WithMany()
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                .HasOne(a => a.User)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
@@ -37,10 +36,10 @@ namespace Storage
                 .IsUnique();
 
             modelBuilder.Entity<Notification>()
-                        .HasOne(n => n.App)
-                        .WithMany()
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                .HasOne(n => n.App)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
 
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.User)
@@ -65,7 +64,7 @@ namespace Storage
         {
             var connectionString = "Host=localhost;Port=5432;Username=postgres;Password=wt;Database=postgres;";
             optionsBuilder.UseNpgsql(connectionString)
-                          .UseLazyLoadingProxies();
+                .UseLazyLoadingProxies();
         }
     }
 }

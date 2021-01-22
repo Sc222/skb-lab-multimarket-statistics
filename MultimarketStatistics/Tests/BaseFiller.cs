@@ -28,7 +28,7 @@ namespace Tests
             var vkCreds = new AppCreds("com.vkontakte.android", "564177498", "C101104117");
             var igCreds = new AppCreds("com.instagram.android", "389801252", null);
             var tinderCreds = new AppCreds("com.tinder", "547702041", "C101456235");
-             
+
             var skbBankCreds = new AppCreds("ru.skbbank.ib", "1440976872", "C102672675");
             var deloBankCreds = new AppCreds("ru.skblab.skbbank", "1259088609", "C102683819");
             //var rybalkaCreds
@@ -52,7 +52,7 @@ namespace Tests
             var tinder = CreateApp(bigAppsUser, "Tinder", tinderCreds);
             var deloBank = CreateApp(smallAppsUser, "Delobank", deloBankCreds);
             var skbBank = CreateApp(smallAppsUser, "SKB Bank", skbBankCreds);
-            
+
             userRepository.Create(bigAppsUser);
             userRepository.Create(smallAppsUser);
 
@@ -61,20 +61,6 @@ namespace Tests
             appRepository.Create(tinder);
             appRepository.Create(deloBank);
             appRepository.Create(skbBank);
-        }
-
-        private class AppCreds
-        {
-            public readonly string PlayMarketCreds;
-            public readonly string AppStoreCreds;
-            public readonly string AppGalleryCreds;
-
-            public AppCreds(string playMarketCreds, string appStoreCreds, string appGalleryCreds)
-            {
-                PlayMarketCreds = playMarketCreds;
-                AppStoreCreds = appStoreCreds;
-                AppGalleryCreds = appGalleryCreds;
-            }
         }
 
         private App CreateApp(User user, string name, AppCreds creds)
@@ -88,6 +74,20 @@ namespace Tests
                 AppStoreId = creds.AppStoreCreds,
                 AppGalleryId = creds.AppGalleryCreds
             };
+        }
+
+        private class AppCreds
+        {
+            public readonly string AppGalleryCreds;
+            public readonly string AppStoreCreds;
+            public readonly string PlayMarketCreds;
+
+            public AppCreds(string playMarketCreds, string appStoreCreds, string appGalleryCreds)
+            {
+                PlayMarketCreds = playMarketCreds;
+                AppStoreCreds = appStoreCreds;
+                AppGalleryCreds = appGalleryCreds;
+            }
         }
     }
 }

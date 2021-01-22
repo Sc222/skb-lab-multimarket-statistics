@@ -8,250 +8,250 @@ namespace Storage.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Apps_Users_UserId",
-                table: "Apps");
+                "FK_Apps_Users_UserId",
+                "Apps");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Notifications_Apps_AppId",
-                table: "Notifications");
+                "FK_Notifications_Apps_AppId",
+                "Notifications");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Ratings_Apps_AppId",
-                table: "Ratings");
+                "FK_Ratings_Apps_AppId",
+                "Ratings");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Reviews_Apps_AppId",
-                table: "Reviews");
+                "FK_Reviews_Apps_AppId",
+                "Reviews");
 
             migrationBuilder.DropIndex(
-                name: "IX_Reviews_AppId",
-                table: "Reviews");
+                "IX_Reviews_AppId",
+                "Reviews");
 
             migrationBuilder.DropIndex(
-                name: "IX_Ratings_AppId",
-                table: "Ratings");
+                "IX_Ratings_AppId",
+                "Ratings");
 
             migrationBuilder.DropIndex(
-                name: "IX_Notifications_AppId",
-                table: "Notifications");
+                "IX_Notifications_AppId",
+                "Notifications");
 
             migrationBuilder.DropIndex(
-                name: "IX_Apps_UserId",
-                table: "Apps");
+                "IX_Apps_UserId",
+                "Apps");
 
             migrationBuilder.DropColumn(
-                name: "AppId",
-                table: "Reviews");
+                "AppId",
+                "Reviews");
 
             migrationBuilder.DropColumn(
-                name: "AppId",
-                table: "Ratings");
+                "AppId",
+                "Ratings");
 
             migrationBuilder.DropColumn(
-                name: "AppId",
-                table: "Notifications");
+                "AppId",
+                "Notifications");
 
             migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "Apps");
+                "UserId",
+                "Apps");
 
             migrationBuilder.AddColumn<Guid>(
-                name: "AppForeignKey",
-                table: "Reviews",
+                "AppForeignKey",
+                "Reviews",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
-                name: "AppForeignKey",
-                table: "Ratings",
+                "AppForeignKey",
+                "Ratings",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
-                name: "AppForeignKey",
-                table: "Notifications",
+                "AppForeignKey",
+                "Notifications",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
-                name: "UserForeignKey",
-                table: "Apps",
+                "UserForeignKey",
+                "Apps",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_AppForeignKey",
-                table: "Reviews",
-                column: "AppForeignKey");
+                "IX_Reviews_AppForeignKey",
+                "Reviews",
+                "AppForeignKey");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ratings_AppForeignKey",
-                table: "Ratings",
-                column: "AppForeignKey");
+                "IX_Ratings_AppForeignKey",
+                "Ratings",
+                "AppForeignKey");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_AppForeignKey",
-                table: "Notifications",
-                column: "AppForeignKey");
+                "IX_Notifications_AppForeignKey",
+                "Notifications",
+                "AppForeignKey");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Apps_UserForeignKey",
-                table: "Apps",
-                column: "UserForeignKey");
+                "IX_Apps_UserForeignKey",
+                "Apps",
+                "UserForeignKey");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Apps_Users_UserForeignKey",
-                table: "Apps",
-                column: "UserForeignKey",
-                principalTable: "Users",
+                "FK_Apps_Users_UserForeignKey",
+                "Apps",
+                "UserForeignKey",
+                "Users",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Notifications_Apps_AppForeignKey",
-                table: "Notifications",
-                column: "AppForeignKey",
-                principalTable: "Apps",
+                "FK_Notifications_Apps_AppForeignKey",
+                "Notifications",
+                "AppForeignKey",
+                "Apps",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Ratings_Apps_AppForeignKey",
-                table: "Ratings",
-                column: "AppForeignKey",
-                principalTable: "Apps",
+                "FK_Ratings_Apps_AppForeignKey",
+                "Ratings",
+                "AppForeignKey",
+                "Apps",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Reviews_Apps_AppForeignKey",
-                table: "Reviews",
-                column: "AppForeignKey",
-                principalTable: "Apps",
+                "FK_Reviews_Apps_AppForeignKey",
+                "Reviews",
+                "AppForeignKey",
+                "Apps",
                 principalColumn: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Apps_Users_UserForeignKey",
-                table: "Apps");
+                "FK_Apps_Users_UserForeignKey",
+                "Apps");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Notifications_Apps_AppForeignKey",
-                table: "Notifications");
+                "FK_Notifications_Apps_AppForeignKey",
+                "Notifications");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Ratings_Apps_AppForeignKey",
-                table: "Ratings");
+                "FK_Ratings_Apps_AppForeignKey",
+                "Ratings");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Reviews_Apps_AppForeignKey",
-                table: "Reviews");
+                "FK_Reviews_Apps_AppForeignKey",
+                "Reviews");
 
             migrationBuilder.DropIndex(
-                name: "IX_Reviews_AppForeignKey",
-                table: "Reviews");
+                "IX_Reviews_AppForeignKey",
+                "Reviews");
 
             migrationBuilder.DropIndex(
-                name: "IX_Ratings_AppForeignKey",
-                table: "Ratings");
+                "IX_Ratings_AppForeignKey",
+                "Ratings");
 
             migrationBuilder.DropIndex(
-                name: "IX_Notifications_AppForeignKey",
-                table: "Notifications");
+                "IX_Notifications_AppForeignKey",
+                "Notifications");
 
             migrationBuilder.DropIndex(
-                name: "IX_Apps_UserForeignKey",
-                table: "Apps");
+                "IX_Apps_UserForeignKey",
+                "Apps");
 
             migrationBuilder.DropColumn(
-                name: "AppForeignKey",
-                table: "Reviews");
+                "AppForeignKey",
+                "Reviews");
 
             migrationBuilder.DropColumn(
-                name: "AppForeignKey",
-                table: "Ratings");
+                "AppForeignKey",
+                "Ratings");
 
             migrationBuilder.DropColumn(
-                name: "AppForeignKey",
-                table: "Notifications");
+                "AppForeignKey",
+                "Notifications");
 
             migrationBuilder.DropColumn(
-                name: "UserForeignKey",
-                table: "Apps");
+                "UserForeignKey",
+                "Apps");
 
             migrationBuilder.AddColumn<Guid>(
-                name: "AppId",
-                table: "Reviews",
-                type: "uuid",
+                "AppId",
+                "Reviews",
+                "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
-                name: "AppId",
-                table: "Ratings",
-                type: "uuid",
+                "AppId",
+                "Ratings",
+                "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
-                name: "AppId",
-                table: "Notifications",
-                type: "uuid",
+                "AppId",
+                "Notifications",
+                "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
-                name: "UserId",
-                table: "Apps",
-                type: "uuid",
+                "UserId",
+                "Apps",
+                "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_AppId",
-                table: "Reviews",
-                column: "AppId");
+                "IX_Reviews_AppId",
+                "Reviews",
+                "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ratings_AppId",
-                table: "Ratings",
-                column: "AppId");
+                "IX_Ratings_AppId",
+                "Ratings",
+                "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_AppId",
-                table: "Notifications",
-                column: "AppId");
+                "IX_Notifications_AppId",
+                "Notifications",
+                "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Apps_UserId",
-                table: "Apps",
-                column: "UserId");
+                "IX_Apps_UserId",
+                "Apps",
+                "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Apps_Users_UserId",
-                table: "Apps",
-                column: "UserId",
-                principalTable: "Users",
+                "FK_Apps_Users_UserId",
+                "Apps",
+                "UserId",
+                "Users",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Notifications_Apps_AppId",
-                table: "Notifications",
-                column: "AppId",
-                principalTable: "Apps",
+                "FK_Notifications_Apps_AppId",
+                "Notifications",
+                "AppId",
+                "Apps",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Ratings_Apps_AppId",
-                table: "Ratings",
-                column: "AppId",
-                principalTable: "Apps",
+                "FK_Ratings_Apps_AppId",
+                "Ratings",
+                "AppId",
+                "Apps",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Reviews_Apps_AppId",
-                table: "Reviews",
-                column: "AppId",
-                principalTable: "Apps",
+                "FK_Reviews_Apps_AppId",
+                "Reviews",
+                "AppId",
+                "Apps",
                 principalColumn: "Id");
         }
     }

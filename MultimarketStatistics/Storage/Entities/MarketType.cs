@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Storage.Entities
+﻿namespace Storage.Entities
 {
     public enum MarketType
     {
-        AppStore, 
+        AppStore,
         AppGallery,
         PlayMarket
     }

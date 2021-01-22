@@ -1,9 +1,8 @@
-﻿using Storage.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Storage.Entities;
 
 namespace Domain.Clients.AppStore
 {
@@ -15,11 +14,10 @@ namespace Domain.Clients.AppStore
 
         public Task<Rating> GetAppRatingAsync(App app)
         {
-            
             throw new NotImplementedException();
         }
 
-        public async Task<List<Review>> GetAppReviewsAsync(App app,int requestedPagesNumber = MaxITunesRssPages)
+        public async Task<List<Review>> GetAppReviewsAsync(App app, int requestedPagesNumber = MaxITunesRssPages)
         {
             using var client = RestClient.GetClient();
             var result = new List<Review>();
@@ -42,8 +40,10 @@ namespace Domain.Clients.AppStore
             return result;
         }
 
-        private string CreateReviewUri(int page, string appId, string locale) =>
-            iTunesApiUrl + $"/{locale}/rss/customerreviews/page={page}/id={appId}/sortby=mostrecent/xml";
+        private string CreateReviewUri(int page, string appId, string locale)
+        {
+            return iTunesApiUrl + $"/{locale}/rss/customerreviews/page={page}/id={appId}/sortby=mostrecent/xml";
+        }
 
         private IEnumerable<Review> ConvertToReviews(AppStoreFeed reviewsList, App app)
         {

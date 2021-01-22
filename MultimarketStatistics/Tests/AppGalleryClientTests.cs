@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain;
+﻿using Domain;
 using Domain.Clients;
 using Domain.Clients.AppGallery;
-using NUnit.Framework;
 using Domain.Clients.AppStore;
 using Domain.Clients.PlayMarket;
+using NUnit.Framework;
 using Storage.Entities;
 
 namespace Tests
@@ -27,7 +24,8 @@ namespace Tests
         {
             var client = RestClient.GetClient();
 
-            var uri = "https://web-drru.hispace.dbankcloud.cn/uowap/index?method=internal.user.commenList3&reqPageNum=1&maxResults=25&appid=C101104117";
+            var uri =
+                "https://web-drru.hispace.dbankcloud.cn/uowap/index?method=internal.user.commenList3&reqPageNum=1&maxResults=25&appid=C101104117";
             var a = RestClient.GetAsync<AppGalleryReviewList>(client, uri).Result;
         }
 
@@ -45,7 +43,7 @@ namespace Tests
         {
             var client = RestClient.GetClient();
 
-            var app = new App() {PlayMarketId = "com.vkontakte.android"};
+            var app = new App {PlayMarketId = "com.vkontakte.android"};
 
             var appClient = new PlayMarketClient();
             var reviews = appClient.GetAppReviewsAsync(app, 2).Result;
@@ -57,8 +55,8 @@ namespace Tests
         {
             var client = RestClient.GetClient();
 
-            var app = new App() { AppStoreId = "564177498" };
-            var config = new Config{ITunesApiUrl = "https://itunes.apple.com/ru/rss/customerreviews"};
+            var app = new App {AppStoreId = "564177498"};
+            var config = new Config {ITunesApiUrl = "https://itunes.apple.com/ru/rss/customerreviews"};
             var appClient = new AppStoreClient();
             var reviews = appClient.GetAppReviewsAsync(app, 2).Result;
         }
@@ -68,8 +66,11 @@ namespace Tests
         {
             var client = RestClient.GetClient();
 
-            var app = new App() { AppGalleryId = "C101104117" };
-            var config = new Config { AppGalleryApiUrl = "https://web-drru.hispace.dbankcloud.cn/uowap/index?method=internal.user.commenList3" };
+            var app = new App {AppGalleryId = "C101104117"};
+            var config = new Config
+            {
+                AppGalleryApiUrl = "https://web-drru.hispace.dbankcloud.cn/uowap/index?method=internal.user.commenList3"
+            };
             var appClient = new AppGalleryClient();
             var reviews = appClient.GetAppReviewsAsync(app, 2).Result;
             var rating = appClient.GetAppRatingAsync(app).Result;

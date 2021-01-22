@@ -1,31 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Domain.Clients.PlayMarket
 {
     public class PlayMarketRatings
     {
-        [JsonProperty("histogram")]
-        public PlayMarketRating Rating { get; set; }
-        
-        [JsonProperty("ratings")]
-        public int Total { get; set; }
+        [JsonProperty("histogram")] public PlayMarketRating Rating { get; set; }
+
+        [JsonProperty("ratings")] public int Total { get; set; }
     }
 
     public class PlayMarketRating
     {
-        [JsonProperty("5")]
-        public int FiveStars { get; set; }
-        [JsonProperty("4")]
-        public int FourStars { get; set; }
-        [JsonProperty("3")]
-        public int ThreeStars { get; set; }
-        [JsonProperty("2")]
-        public int TwoStars { get; set; }
-        [JsonProperty("1")]
-        public int OneStars { get; set; }
+        [JsonProperty("5")] public int FiveStars { get; set; }
 
+        [JsonProperty("4")] public int FourStars { get; set; }
+
+        [JsonProperty("3")] public int ThreeStars { get; set; }
+
+        [JsonProperty("2")] public int TwoStars { get; set; }
+
+        [JsonProperty("1")] public int OneStars { get; set; }
     }
 }

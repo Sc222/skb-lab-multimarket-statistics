@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,11 +32,11 @@ namespace SlackApp
                 var usersWithSlack = userService.GetAllWithSlackCredentials();
 
                 var notificationsByUser = notificationService
-                        .GetNotCheckedNotificationsByUsers(usersWithSlack
-                            .Select(u => u.Id)
-                            .ToArray())
-                        .GroupBy(n => n.User.Id)
-                        .ToDictionary(g => g.Key, g => g.ToArray());
+                    .GetNotCheckedNotificationsByUsers(usersWithSlack
+                        .Select(u => u.Id)
+                        .ToArray())
+                    .GroupBy(n => n.User.Id)
+                    .ToDictionary(g => g.Key, g => g.ToArray());
 
                 foreach (var user in usersWithSlack)
                 {

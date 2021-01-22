@@ -17,7 +17,8 @@ namespace Domain.Services
 
         public Dictionary<App, Review[]> GetAllByApps(IEnumerable<App> apps)
         {
-            return reviewRepository.Find(r => apps.Contains(r.App)).GroupBy(r => r.App).ToDictionary(g => g.Key, g => g.ToArray());
+            return reviewRepository.Find(r => apps.Contains(r.App)).GroupBy(r => r.App)
+                .ToDictionary(g => g.Key, g => g.ToArray());
         }
 
         public void CreateRange(IEnumerable<Review> reviews)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Storage.Entities;
 using Storage.Repositories;
 
@@ -29,6 +28,12 @@ namespace Domain.Services
         public void Delete(IEnumerable<Notification> notifications)
         {
             notificationRepository.DeleteRange(notifications);
+        }
+
+        public void DeleteByUser(Guid userId)
+        {
+            var notificationsToDelete = notificationRepository.Find(n => n.User.Id == userId);
+            notificationRepository.DeleteRange(notificationsToDelete);
         }
 
         public void CreateRange(IEnumerable<Notification> notifications)

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Storage.Entities;
-using HttpClient = System.Net.Http.HttpClient;
 
 namespace Domain.Clients.PlayMarket
 {
@@ -14,7 +13,9 @@ namespace Domain.Clients.PlayMarket
         private const int maxPages = 4;
         private const int ReviewsPerPage = 150;
 
-        public async Task<List<Review>> GetAppReviewsAsync(App app, int requestedPagesNumber = maxPages) // пусть пока будет 10 (надо поменять!!!)...
+        public async Task<List<Review>>
+            GetAppReviewsAsync(App app,
+                int requestedPagesNumber = maxPages) // пусть пока будет 10 (надо поменять!!!)...
         {
             using var client = RestClient.GetClient();
             var result = new List<Review>();
@@ -37,30 +38,6 @@ namespace Domain.Clients.PlayMarket
             return result;
         }
 
-        private Task<PlayMarketResult> GetApiResult(HttpClient client, App app, string pageToken)
-        {
-            var locale = "ru"; //позже..
-            var uri = CreateReviewUri(app.PlayMarketId, locale, pageToken);
-            return RestClient.GetAsync<PlayMarketResult>(client, uri);
-        }
-
-        private string CreateReviewUri(string appId, string locale, string pageToken = null) =>
-            playMarketApiUri + $"{appId}/reviews?lang={locale}&paginate=true&{(pageToken == null ? "" : "nextPaginationToken=" + pageToken)}";
-
-        private IEnumerable<Review> ConvertToReviews(App app, PlayMarketResult playMarketResult)
-        {
-            return playMarketResult.Reviews.Select(r => new Review
-            {
-                App = app,
-                Date = r.Date,
-                Market = MarketType.PlayMarket,
-                MarketReviewId = r.Id,
-                Rating = r.Score,
-                Text = r.Text,
-                Version = r.Version
-            });
-        }
-
         public async Task<Rating> GetAppRatingAsync(App app)
         {
             try
@@ -77,7 +54,37 @@ namespace Domain.Clients.PlayMarket
             }
         }
 
-        private string CreateRatingUri(string appId) => playMarketApiUri + appId;
+        private Task<PlayMarketResult> GetApiResult(HttpClient client, App app, string pageToken)
+        {
+            var locale = "ru"; //позже..
+            var uri = CreateReviewUri(app.PlayMarketId, locale, pageToken);
+            return RestClient.GetAsync<PlayMarketResult>(client, uri);
+        }
+
+        private string CreateReviewUri(string appId, string locale, string pageToken = null)
+        {
+            return playMarketApiUri +
+                   $"{appId}/reviews?lang={locale}&paginate=true&{(pageToken == null ? "" : "nextPaginationToken=" + pageToken)}";
+        }
+
+        private IEnumerable<Review> ConvertToReviews(App app, PlayMarketResult playMarketResult)
+        {
+            return playMarketResult.Reviews.Select(r => new Review
+            {
+                App = app,
+                Date = r.Date,
+                Market = MarketType.PlayMarket,
+                MarketReviewId = r.Id,
+                Rating = r.Score,
+                Text = r.Text,
+                Version = r.Version
+            });
+        }
+
+        private string CreateRatingUri(string appId)
+        {
+            return playMarketApiUri + appId;
+        }
 
         private Rating ConvertToRating(PlayMarketRatings ratings, App app)
         {

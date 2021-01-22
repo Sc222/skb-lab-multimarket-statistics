@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Storage.Entities;
 using Storage.Repositories;
@@ -11,9 +8,9 @@ namespace Domain.Services
     public class AppService
     {
         private readonly IRepository<App> appRepository;
-        private readonly IRepository<Review> reviewRepository;
-        private readonly IRepository<Rating> ratingRepository;
         private readonly FetcherService fetcherService;
+        private readonly IRepository<Rating> ratingRepository;
+        private readonly IRepository<Review> reviewRepository;
 
         public AppService(IRepository<App> appRepository, FetcherService fetcherService,
             IRepository<Review> reviewRepository, IRepository<Rating> ratingRepository)

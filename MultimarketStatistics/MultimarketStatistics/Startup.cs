@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.Clients.AppGallery;
 using Domain.Clients.AppStore;
 using Domain.Clients.PlayMarket;
 using Domain.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using MultimarketStatistics.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using Storage;
 using Storage.Repositories;
 
@@ -20,7 +20,7 @@ namespace MultimarketStatistics
 {
     public class Startup
     {
-        readonly string MultimarketAllowSpecificOrigins = "_multimarketAllowSpecificOrigins";
+        private readonly string MultimarketAllowSpecificOrigins = "_multimarketAllowSpecificOrigins";
 
 
         public Startup(IConfiguration configuration)
@@ -35,7 +35,7 @@ namespace MultimarketStatistics
             //todo replace * with normal origins list and make normal headers and methods list
             services.AddCors(options =>
             {
-                options.AddPolicy(name: MultimarketAllowSpecificOrigins,
+                options.AddPolicy(MultimarketAllowSpecificOrigins,
                     builder =>
                     {
                         builder.WithOrigins("*")
