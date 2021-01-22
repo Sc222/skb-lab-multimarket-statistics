@@ -20,6 +20,9 @@ namespace MultimarketStatistics
 {
     public class Startup
     {
+        readonly string MultimarketAllowSpecificOrigins = "_multimarketAllowSpecificOrigins";
+
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,24 +32,36 @@ namespace MultimarketStatistics
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(options =>
+            //todo replace * with normal origins list and make normal headers and methods list
+            services.AddCors(options =>
             {
-                options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
-                options.ReturnHttpNotAcceptable = true;
-                options.RespectBrowserAcceptHeader = true;
-            })
-            .ConfigureApiBehaviorOptions(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-                options.SuppressMapClientErrors = true;
-            })
-            .AddNewtonsoftJson(o =>
-            {
-                o.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                o.SerializerSettings.Formatting = Formatting.None;
-                o.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
+                options.AddPolicy(name: MultimarketAllowSpecificOrigins,
+                    builder =>
+                    {
+                        builder.WithOrigins("*")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
             });
+
+            services.AddControllers(options =>
+                {
+                    options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+                    options.ReturnHttpNotAcceptable = true;
+                    options.RespectBrowserAcceptHeader = true;
+                })
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.SuppressModelStateInvalidFilter = true;
+                    options.SuppressMapClientErrors = true;
+                })
+                .AddNewtonsoftJson(o =>
+                {
+                    o.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    o.SerializerSettings.Formatting = Formatting.None;
+                    o.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
+                });
 
             services.AddSwaggerGen();
 
@@ -81,11 +96,11 @@ namespace MultimarketStatistics
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Multimarket API"));
 
             app.UseRouting();
+
+            app.UseCors(MultimarketAllowSpecificOrigins);
+
             app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
