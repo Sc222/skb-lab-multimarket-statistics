@@ -13,5 +13,7 @@ namespace MultimarketStatistics.Models
         public string Title { get; set; }
 
         public Guid AppId { get; set; }
+
+        public Guid Id { get; set; }
     }
 }
