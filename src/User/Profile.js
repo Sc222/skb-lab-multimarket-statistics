@@ -233,7 +233,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Profile(props) {
-    let username = props.username;
+    let userId = props.userId;
 
     //todo get this values from net
     const [shouldChangeEmail, setShouldChangeEmail] = React.useState(false);
@@ -244,15 +244,15 @@ export default function Profile(props) {
     const formClasses = useFormStyles();
 
     function editProfile() {
-        //todo validate input and check if username is unique,
+        //todo validate input and check if userId is unique,
         //todo  make post request to edit profile and redirect to apps section if everything is ok
         //todo !!! TYPE CURRENT PASSWORD TO CHANGE EMAIL OR PASSWORD
         console.log('update profile');
     }
 
     useEffect(() => {
-        // todo load info by username
-        console.log(username);
+        // todo load info by userId
+        console.log(userId);
     }, []);
 
 

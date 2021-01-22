@@ -113,9 +113,9 @@ const useStyles = makeStyles((theme) => ({
 export default function ApplicationSection(props) {
     const classes = useStyles();
 
-    let {appname} = useParams();
+    let {appId} = useParams();
 
-    const username = props.username;
+    const userId = props.userId;
     const [app, setApp] = React.useState(undefined);
 
     useEffect(() => {
@@ -218,10 +218,10 @@ export default function ApplicationSection(props) {
             'yakiy_pes': []
         };
 
-        console.log(apps[username][appname]);
-        console.log(username + "" + appname);
+        console.log(apps[userId][appId]);
+        console.log(userId + "" + appId);
 
-        setApp(apps[username][appname]);
+        setApp(apps[userId][appId]);
 
     }, []);
 
@@ -244,7 +244,7 @@ export default function ApplicationSection(props) {
                             size="medium"
                             startIcon={<ArrowBackRoundedIcon/>}
                             component={RouterLink}
-                            to={`${HomepageUrl}/user/${username}/apps`}
+                            to={`${HomepageUrl}/user/${userId}/apps`}
                         >
                             Все приложения
                         </Button>
@@ -273,7 +273,7 @@ export default function ApplicationSection(props) {
                             size="medium"
                             startIcon={<ArrowBackRoundedIcon/>}
                             component={RouterLink}
-                            to={`${HomepageUrl}/user/${username}/apps`}
+                            to={`${HomepageUrl}/user/${userId}/apps`}
                         >
                             Все приложения
                         </Button>
@@ -288,11 +288,11 @@ export default function ApplicationSection(props) {
                 <Container maxWidth="lg" className={classes.container}>
 
                     <RouteSwitch>
-                        <Route path={`${HomepageUrl}/user/:username/app/:appname/dashboard`}>
-                            <ApplicationDashboard username={username} app={app}/>
+                        <Route path={`${HomepageUrl}/user/:userId/app/:appId/dashboard`}>
+                            <ApplicationDashboard userId={userId} app={app}/>
                         </Route>
-                        {/*<Route path={`${HomepageUrl}/user/:username/app/:appname/settings`}>
-                                <Applications username={username}/>
+                        {/*<Route path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
+                                <Applications userId={userId}/>
                             </Route>*/}
                     </RouteSwitch>
                 </Container>

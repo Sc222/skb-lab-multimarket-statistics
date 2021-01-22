@@ -268,7 +268,7 @@ export default function ApplicationDashboard(props) {
 
         setChartData(demoData);
 
-    }, [props.username, props.app, chartAverageRatingType, chartAverageRatingInterval]);
+    }, [props.userId, props.app, chartAverageRatingType, chartAverageRatingInterval]);
 
     function toggleSelectedMarket(index) {
         console.log('toggle market: ' + index);

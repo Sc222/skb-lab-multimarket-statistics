@@ -209,7 +209,7 @@ const useStyles = makeStyles((theme) => ({
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function Applications(props) {
-    let username = props.username;
+    let userId = props.userId;
     const [apps, setApps] = React.useState(undefined);
 
     const classes = useStyles();
@@ -218,11 +218,11 @@ export default function Applications(props) {
     useEffect(() => {
         //todo use iuliia-js to transliterate app name into id
 
-        // todo load info by username
-        console.log(username);
-        // todo if username !== logged in username => redirect
+        // todo load info by userId
+        console.log(userId);
+        // todo if userId !== logged in userId => redirect
 
-        // todo load applications list by username from server
+        // todo load applications list by userId from server
         // todo more complex classes in json
         const apps = {
             'sc222': [
@@ -321,8 +321,8 @@ export default function Applications(props) {
             'yakiy_pes': [],
         };
 
-        if (apps[username] !== undefined) {
-            console.log(apps[username]);
+        if (apps[userId] !== undefined) {
+            console.log(apps[userId]);
         }
         setApps(apps);
         //todo show "add new apps menu if no apps"
@@ -348,7 +348,7 @@ export default function Applications(props) {
                         </div>
                     </Paper>
                 </Grid>);
-        } else if (apps[username] !== undefined && apps[username].length === 0) {
+        } else if (apps[userId] !== undefined && apps[userId].length === 0) {
             return (
                 <Grid item xs={12}>
                     <Paper className={classes.paper}>
@@ -360,9 +360,9 @@ export default function Applications(props) {
                         </div>
                     </Paper>
                 </Grid>);
-            //todo check if logged in username == username in link
-        } else if (apps[username] !== undefined && apps[username].length !== 0) {
-            return apps[username].map(app => {
+            //todo check if logged in userId == userId in link
+        } else if (apps[userId] !== undefined && apps[userId].length !== 0) {
+            return apps[userId].map(app => {
                 return (<Grid key={app.id} item xs={12} md={6}>
                         <Paper className={classes.paperNoPadding}>
                             <ButtonBase className={classes.primaryRipple} component={RouterLink}
@@ -407,7 +407,7 @@ export default function Applications(props) {
                 );
             })
         }
-        // todo if apps[username] undefined - redirect (IN USER SECTION)
+        // todo if apps[userId] undefined - redirect (IN USER SECTION)
     }
 
     return (

@@ -219,7 +219,7 @@ const useFormSectionStyles = makeStyles((theme)=> FormSectionStyles(theme));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function NewApplications(props) {
-    let username = props.username;
+    let userId = props.userId;
     const [selectedMarkets, setSelectedMarkets] = React.useState([false, false, false]);
 
     const classes = useStyles();
@@ -240,8 +240,8 @@ export default function NewApplications(props) {
     }
 
     useEffect(() => {
-        // todo load info by username
-        console.log(username);
+        // todo load info by userId
+        console.log(userId);
     }, []);
 
 

@@ -27,7 +27,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 import Profile from "./Profile";
-import getUserId from "../Api/ApiTmpConstants";
 
 import {
     deleteAllNotifications as apiDeleteAllNotifications,
@@ -198,7 +197,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function UserSection() {
-    let {username} = useParams(); //todo simplify links and get username from cookies
+    let {userId} = useParams(); //todo simplify links and get userId from cookies
 
     const classes = useStyles();
 
@@ -248,7 +247,7 @@ export default function UserSection() {
 
     function deleteAllNotifications() {
         console.log("delete all notifications");
-        apiDeleteAllNotifications(getUserId(username))
+        apiDeleteAllNotifications(userId)
             .then(result => {
                 if (result.ok) {
                     setNotifications([]);
@@ -262,11 +261,10 @@ export default function UserSection() {
     }
 
     useEffect(() => {
-        // todo load info by username
-        console.log(username);
-        console.log(getUserId(username));
+        // todo load info by userId
+        console.log(userId);
 
-        getNotifications(getUserId(username))
+        getNotifications(userId)
             .then(result => {
                 console.log("set notifications");
                 setNotifications(result);
@@ -433,7 +431,7 @@ export default function UserSection() {
                                   onClick={() => setProfilePopoverAnchor(null)}
                                   button
                                   component={RouterLink}
-                                  to={`${HomepageUrl}/user/${username}/apps`}
+                                  to={`${HomepageUrl}/user/${userId}/apps`}
                         >
                             <ListItemText primary={'Приложения'}/>
                         </ListItem>
@@ -442,7 +440,7 @@ export default function UserSection() {
                                   onClick={() => setProfilePopoverAnchor(null)}
                                   button
                                   component={RouterLink}
-                                  to={`${HomepageUrl}/user/${username}/profile`}
+                                  to={`${HomepageUrl}/user/${userId}/profile`}
                         >
                             <ListItemText primary={'Настройки'}/>
                         </ListItem>
@@ -459,19 +457,19 @@ export default function UserSection() {
 
             <main className={classes.content}>
                 <RouteSwitch>
-                    <Route path={`${HomepageUrl}/user/:username/apps`}>
-                        <Applications username={username}/>
+                    <Route path={`${HomepageUrl}/user/:userId/apps`}>
+                        <Applications userId={userId}/>
                     </Route>
-                    <Route path={`${HomepageUrl}/user/:username/new-app`}>
-                        <NewApplication username={username}/>
+                    <Route path={`${HomepageUrl}/user/:userId/new-app`}>
+                        <NewApplication userId={userId}/>
                     </Route>
-                    <Route path={`${HomepageUrl}/user/:username/profile`}>
-                        <Profile username={username}/>
+                    <Route path={`${HomepageUrl}/user/:userId/profile`}>
+                        <Profile userId={userId}/>
                     </Route>
-                    <Route path={`${HomepageUrl}/user/:username/app/:appname`}>
-                        <ApplicationSection username={username} isDrawerOpen={isDrawerOpen}
+                    <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
+                        <ApplicationSection userId={userId} isDrawerOpen={isDrawerOpen}
                                             changeDrawerState={changeDrawerState}/>
-                        {/*todo if path is /${HomepageUrl}/user/:username/app/:appname (without dashboard|settings) -> redirect to dashboard*/}
+                        {/*todo if path is /${HomepageUrl}/user/:userId/app/:appId (without dashboard|settings) -> redirect to dashboard*/}
                     </Route>
                 </RouteSwitch>
             </main>
