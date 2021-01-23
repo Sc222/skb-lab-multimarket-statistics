@@ -20,7 +20,6 @@ namespace MultimarketStatistics.Controllers
             this.mapper = mapper;
         }
 
-        //[Authorize]
         [HttpPost("create")]
         public Guid Create([FromBody] UserContract webUser)
         {
