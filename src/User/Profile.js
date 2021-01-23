@@ -404,6 +404,7 @@ export default function Profile(props) {
     useEffect(() => {
         getUser(userId)
             .then(result => {
+                result.password=""; //add empty password as server doesn't return it
                 setCurrentUser(result);
                 setEnableNotifications(result.slackCredentials !== "");
 

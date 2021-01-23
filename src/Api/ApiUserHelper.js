@@ -10,6 +10,7 @@ export function getDefaultFieldsStateUser(){
 
 //TODO ADD CURRENT PASSWORD AFTER NEOEZOP UPDATE
 //TODO ADD PROFILE PHOTO CHANGES
+//TODO !!! IGNORE PASSWORD IN REQUEST IF IT IS EMPTY
 export function createNewUser(immutableUser, fieldsStateUser, enableNotifications){
     const user = getDefaultUser();
     user.id = immutableUser.id;
