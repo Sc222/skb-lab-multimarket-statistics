@@ -36,6 +36,8 @@ import {
 
 import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
+import {getUser} from "../Api/ApiUser";
+import {getDefaultUser} from "../Api/ApiUserHelper";
 
 const drawerWidth = 260;
 
@@ -213,6 +215,8 @@ export default function UserSection() {
     const [isDrawerOnPage, setIsDrawerOnPage] = React.useState(false);
 
     const [notifications, setNotifications] = React.useState(undefined);
+    const [user, setUser] = React.useState(getDefaultUser());
+
     const changeDrawerState = () => {
         setDrawerOpen(!isDrawerOpen);
     };
@@ -256,26 +260,20 @@ export default function UserSection() {
                     console.log("error deleting notifications");
                     //todo show error alert
                 }
-            })
-        ;
+            });
     }
 
     useEffect(() => {
         // todo load info by userId
         console.log(userId);
 
-        getNotifications(userId)
-            .then(result => {
-                console.log("set notifications");
-                setNotifications(result);
-                console.log(result);
+        Promise.all([getNotifications(userId), getUser(userId)])
+            .then(([notifications,user]) => {
+                setNotifications(notifications);
+                setUser(user);
+                //if one of values is empty -> TODO SHOW ERROR ALERT
             })
-            .catch(error => {
-                console.log("error notifications");
-                console.log(error);
-            });
-
-        // todo application route params
+            .catch(err=>console.log(err.message)); //todo if user is wrong -> redirect to homepage
     }, []);
 
     let location = useLocation();
@@ -420,7 +418,8 @@ export default function UserSection() {
                     <div className={classes.popoverContainer}>
                         <Typography variant='subtitle1' color='primary'>
                             <Box ml={0.5} fontWeight="fontWeightMedium">
-                                Sc222 </Box>
+                                {user.username}
+                            </Box>
                         </Typography>
                     </div>
                     <Divider className={classes.fullWidth}/>

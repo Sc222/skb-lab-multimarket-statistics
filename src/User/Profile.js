@@ -7,12 +7,20 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
+import update from "immutability-helper";
+
 //image imports
 import demoProfile from '../images/demo_profile.png';
 
-
 import {fade} from "@material-ui/core";
-import {AddAPhotoRounded, ClearRounded, DoneRounded} from "@material-ui/icons";
+import {
+    AddAPhotoRounded,
+    ClearRounded,
+    LockRounded,
+    MailRounded,
+    PersonRounded,
+    UpdateRounded
+} from "@material-ui/icons";
 import Fab from "@material-ui/core/Fab";
 import Divider from "@material-ui/core/Divider";
 import Hidden from "@material-ui/core/Hidden";
@@ -22,6 +30,17 @@ import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import {getUser, updateUser} from "../Api/ApiUser";
+import {createNewUser, getDefaultFieldsStateUser, getDefaultUser} from "../Api/ApiUserHelper";
+import {
+    getCurrentPasswordError,
+    getEmailError,
+    getNewPasswordError,
+    getSlackCredentialsError,
+    getUsernameError
+} from "../Helpers/ProfileErrorHelpers";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
 
 const useFormStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -205,6 +224,14 @@ const useStyles = makeStyles((theme) => ({
         marginRight: 0
     },
 
+
+    textWithIcon: {
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap'
+    },
+
+
     //profile settings
     avatarIconContainer: {
         position: 'relative',
@@ -212,7 +239,7 @@ const useStyles = makeStyles((theme) => ({
         height: theme.spacing(20),
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(2),
-        marginTop:theme.spacing(1.5)
+        marginTop: theme.spacing(1.5)
     },
     avatarIconLarge: {
         width: theme.spacing(20),
@@ -230,29 +257,157 @@ const useStyles = makeStyles((theme) => ({
         bottom: '0',
         left: '0'
     },
+
+    sectionMarginTop: {
+        marginTop: theme.spacing(1)
+    },
 }));
 
 export default function Profile(props) {
     let userId = props.userId;
 
-    //todo get this values from net
+    const [isStatusSuccessOpen, setStatusSuccessOpen] = React.useState(false);
+    const [shouldChangeLogin, setShouldChangeLogin] = React.useState(false);
     const [shouldChangeEmail, setShouldChangeEmail] = React.useState(false);
     const [shouldChangePassword, setShouldChangePassword] = React.useState(false);
-    const [enableNotifications, setEnableNotifications] = React.useState(true);
+    const [fieldsStateUser, setFieldsStateUser] = React.useState(getDefaultFieldsStateUser()); //fieldsStateUser from server that handles field states
+    const [currentUser, setCurrentUser] = React.useState(getDefaultUser()); //current user from server
+    const [enableNotifications, setEnableNotifications] = React.useState(false);
+    const [areErrorsVisible, setErrorsVisible] = React.useState(false);
+    const [currentPasswordServerError, setCurrentPasswordServerError] = React.useState("");
 
     const classes = useStyles();
     const formClasses = useFormStyles();
 
+
+    //TODO CHANGE PROFILE PHOTO LOGIC
     function editProfile() {
+        setErrorsVisible(true);
+
+        setCurrentPasswordServerError("");
+        console.log(getUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username)
+            + getEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email)
+            + getNewPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)
+            + getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, fieldsStateUser.currentPassword, currentPasswordServerError)
+            + getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials));
+        if (!hasErrors(true)) {
+            //make post request
+
+            console.log("SEND");
+
+            const newUser = createNewUser(currentUser, fieldsStateUser, enableNotifications);
+
+            updateUser(newUser)
+                .then(result => {
+                    console.log(result);
+                    setStatusSuccessOpen(true);
+
+                    //save success so current user is equal to new user
+                    setCurrentUser(newUser);
+                    //setEnableNotifications(result.slackCredentials !== "");
+
+                    //slackcredentials saved, other values are "" by default
+                    //reset fields
+                    const newFieldStateUser = getDefaultFieldsStateUser();
+                    newFieldStateUser.slackCredentials = fieldsStateUser.slackCredentials;
+                    setFieldsStateUser(newFieldStateUser);
+                    setErrorsVisible(false);
+                    setShouldChangeLogin(false);
+                    setShouldChangeEmail(false);
+                    setShouldChangePassword(false);
+                })
+                .catch(err => console.log(err.message));
+
+
+            //todo MAKE PUT REQUEST AND CHECK THAT NO ERRORS
+            //(or set error if there are any)
+            if (getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, fieldsStateUser.currentPassword, currentPasswordServerError) === "") {
+
+            }
+        }
         //todo validate input and check if userId is unique,
         //todo  make post request to edit profile and redirect to apps section if everything is ok
         //todo !!! TYPE CURRENT PASSWORD TO CHANGE EMAIL OR PASSWORD
         console.log('update profile');
     }
 
+    const handleStatusSuccessClose = (event, reason) => {
+        if (reason === 'clickaway')
+            return;
+        setStatusSuccessOpen(false);
+    };
+
+    const toggleLoginChange = (event) => {
+        setShouldChangeLogin(event.target.checked);
+    };
+
+    const toggleEmailChange = (event) => {
+        setShouldChangeEmail(event.target.checked);
+    };
+
+    const togglePasswordChange = (event) => {
+        setShouldChangePassword(event.target.checked);
+    };
+
+    const toggleNotificationChange = (event) => {
+        setEnableNotifications(event.target.checked);
+    };
+
+    const handleUsernameInput = (event) => {
+        const newUser = update(fieldsStateUser, {username: {$set: event.target.value}});
+        console.log("old: " + fieldsStateUser.username);
+        console.log("new: " + newUser.username);
+        setFieldsStateUser(newUser);
+    }
+
+    const handleEmailInput = (event) => {
+        const newUser = update(fieldsStateUser, {email: {$set: event.target.value}});
+        console.log("old: " + fieldsStateUser.email);
+        console.log("new: " + newUser.email);
+        setFieldsStateUser(newUser);
+    }
+
+    const handleNewPasswordInput = (event) => {
+        const newUser = update(fieldsStateUser, {password: {$set: event.target.value}});
+        console.log("old: " + fieldsStateUser.password);
+        console.log("new: " + newUser.password);
+        setFieldsStateUser(newUser);
+    }
+
+    const handleCurrentPasswordInput = (event) => {
+        const newUser = update(fieldsStateUser, {currentPassword: {$set: event.target.value}});
+        console.log("old: " + fieldsStateUser.currentPassword);
+        console.log("new: " + newUser.currentPassword);
+        setFieldsStateUser(newUser);
+    }
+
+    const handleSlackCredentialsInput = (event) => {
+        console.log("input slack notifications !!!");
+        const newUser = update(fieldsStateUser, {slackCredentials: {$set: event.target.value}});
+        console.log("old: " + fieldsStateUser.slackCredentials);
+        console.log("new: " + newUser.slackCredentials);
+        setFieldsStateUser(newUser);
+    };
+
+    function hasErrors(areErrorsVisible) {
+        return getUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username)
+            + getEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email)
+            + getNewPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)
+            + getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, fieldsStateUser.currentPassword, currentPasswordServerError)
+            + getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials) !== "";
+    }
+
     useEffect(() => {
-        // todo load info by userId
-        console.log(userId);
+        getUser(userId)
+            .then(result => {
+                setCurrentUser(result);
+                setEnableNotifications(result.slackCredentials !== "");
+
+                //slackcredentials from server, other values are "" by default
+                const stateUser = update(fieldsStateUser, {slackCredentials: {$set: result.slackCredentials}});
+                setFieldsStateUser(stateUser);
+            })
+            .catch(err => console.log(err.message)); //todo if fieldsStateUser is wrong -> redirect to homepage
     }, []);
 
 
@@ -286,15 +441,50 @@ export default function Profile(props) {
                             </div>
                             <Divider className={formClasses.fullWidthDivider}/>
 
-                                    <div className={classes.avatarIconContainer}>
-                                        <Avatar alt="Profile" src={demoProfile} className={classes.avatarIconLarge}>
-                                        </Avatar>
-                                        <Fab size='small' color="secondary"
-                                             className={classes.uploadAvatarIcon}><AddAPhotoRounded/></Fab>
-                                        {/* todo show delete button only if profile image is set */}
-                                        <Fab size='small' color="primary"
-                                             className={classes.removeAvatarIcon}><ClearRounded/></Fab>
-                                    </div>
+                            <div className={classes.avatarIconContainer}>
+                                <Avatar alt="Profile" src={demoProfile} className={classes.avatarIconLarge}>
+                                </Avatar>
+                                <Fab size='small' color="secondary"
+                                     className={classes.uploadAvatarIcon}><AddAPhotoRounded/>
+                                </Fab>
+                                {/* todo show delete button only if profile image is set */}
+                                <Fab size='small' color="primary"
+                                     className={classes.removeAvatarIcon}><ClearRounded/>
+                                </Fab>
+                            </div>
+                        </div>
+                    </Paper>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Paper elevation={1} className={classes.paper}>
+                        <div className={formClasses.cardContainer}>
+                            <div className={formClasses.container}>
+                                <Typography variant='h6'>
+                                    Информация о профиле
+                                </Typography>
+                                <Typography variant='body2'>
+                                    Текущие данные вашего профиля
+                                </Typography>
+                            </div>
+                            <Divider className={formClasses.fullWidthDivider}/>
+                            <Container maxWidth='sm' className={classes.containerNotCentered}>
+                                <Box className={classes.sectionMarginTop}>
+                                    <Typography variant='subtitle1' gutterBottom className={classes.textWithIcon}>
+                                        <PersonRounded className={classes.extendedIcon} color='primary'/>
+                                        {currentUser.username}
+                                    </Typography>
+                                    <Typography variant='subtitle1' gutterBottom className={classes.textWithIcon}>
+                                        <MailRounded className={classes.extendedIcon} color='primary'/>
+                                        {currentUser.email}
+                                    </Typography>
+                                    <Typography variant='subtitle1' gutterBottom className={classes.textWithIcon}>
+                                        <LockRounded className={classes.extendedIcon}
+                                                     color={currentUser.slackCredentials === "" ? 'action' : 'primary'}/>
+                                        {currentUser.slackCredentials === "" ? "Уведомления выключены" : currentUser.slackCredentials}
+                                    </Typography>
+                                </Box>
+                            </Container>
                         </div>
                     </Paper>
                 </Grid>
@@ -312,80 +502,79 @@ export default function Profile(props) {
                             </div>
                             <Divider className={formClasses.fullWidthDivider}/>
                             <Container maxWidth='sm' className={classes.containerNotCentered}>
-                                {/*todo use repeating technique*/}
-                                <TextField
-                                    variant="outlined"
-                                    margin="dense"
-                                    required
-                                    fullWidth
-                                    id="login"
-                                    label="Логин"
-                                    name="login"
-                                    autoComplete='username'
-                                >
-                                </TextField>
+                                <Box>
+                                    <FormControlLabel
+                                        label="Сменить логин?"
+                                        control={<Checkbox
+                                            checked={shouldChangeLogin}
+                                            onChange={toggleLoginChange}
+                                            value="change-login"
+                                            color="primary"/>}
+                                    />
+                                    {
+                                        shouldChangeLogin &&
+                                        <TextField
+                                            error={getUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username) !== ''}
+                                            helperText={getUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username)}
+                                            value={fieldsStateUser.username}
+                                            onChange={handleUsernameInput}
+                                            variant="outlined"
+                                            margin="dense"
+                                            required
+                                            fullWidth
+                                            id="login"
+                                            label="Новый логин"
+                                            name="login"
+                                            autoComplete='username'
+                                        />
+                                    }
+                                </Box>
 
                                 <Box>
                                     <FormControlLabel
-                                        control={<Checkbox value="change-mail" color="primary"/>}
                                         label="Сменить почту?"
-                                        checked={shouldChangeEmail}
-                                        onClick={() => setShouldChangeEmail(!shouldChangeEmail)}
+                                        control={<Checkbox
+                                            checked={shouldChangeEmail}
+                                            onChange={toggleEmailChange}
+                                            value="change-mail"
+                                            color="primary"/>}
                                     />
-                                </Box>
-                                {
-                                    shouldChangeEmail &&
-                                    <div>
+                                    {
+                                        shouldChangeEmail &&
                                         <TextField
+                                            error={getEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email) !== ''}
+                                            helperText={getEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email)}
+                                            value={fieldsStateUser.email}
+                                            onChange={handleEmailInput}
                                             variant="outlined"
                                             margin="dense"
                                             required
                                             fullWidth
                                             id="email"
-                                            label="Почта"
+                                            label="Новая почта"
                                             name="email"
                                             autoComplete="email"
                                         />
-                                        <TextField
-                                            variant="outlined"
-                                            margin="dense"
-                                            required
-                                            fullWidth
-                                            name="password-change-email"
-                                            label="Текущий пароль"
-                                            type="password"
-                                            id="password-change-email"
-                                            autoComplete="current-password"
-                                        />
-                                    </div>
-                                }
+                                    }
+                                </Box>
 
                                 <Box>
                                     <FormControlLabel
+                                        label="Сменить пароль?"
                                         control={
                                             <Checkbox
-                                                value="change-mail"
-                                                color="primary"
                                                 checked={shouldChangePassword}
-                                                onClick={() => setShouldChangePassword(!shouldChangePassword)}
-                                            />}
-                                        label="Сменить пароль?"
+                                                onChange={togglePasswordChange}
+                                                value="change-password"
+                                                color="primary"/>}
                                     />
-                                </Box>
-                                {
-                                    shouldChangePassword &&
-                                    <div>
+                                    {
+                                        shouldChangePassword &&
                                         <TextField
-                                            variant="outlined"
-                                            margin="dense"
-                                            required
-                                            fullWidth
-                                            id="password-change-password"
-                                            label="Текущий пароль"
-                                            name="password-change-password"
-                                            autoComplete="current-password"
-                                        />
-                                        <TextField
+                                            error={getNewPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password) !== ''}
+                                            helperText={getNewPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)}
+                                            value={fieldsStateUser.password}
+                                            onChange={handleNewPasswordInput}
                                             variant="outlined"
                                             margin="dense"
                                             required
@@ -396,19 +585,30 @@ export default function Profile(props) {
                                             id="new-password"
                                             autoComplete="new-password"
                                         />
-                                        <TextField
-                                            variant="outlined"
-                                            margin="dense"
-                                            required
-                                            fullWidth
-                                            name="prove-new-password"
-                                            label="Подтвердите пароль"
-                                            type="password"
-                                            id="prove-new-password"
-                                            autoComplete="new-password"
-                                        />
-                                    </div>
-                                }
+                                    }
+                                </Box>
+                                {(shouldChangeLogin || shouldChangeEmail || shouldChangePassword) &&
+                                <Box className={classes.sectionMarginTop}>
+                                    <Typography variant='subtitle1' gutterBottom className={classes.textWithIcon}>
+                                        <LockRounded className={classes.extendedIcon} color='primary'/>
+                                        Для смены данных требуется пароль
+                                    </Typography>
+                                    <TextField
+                                        error={getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, fieldsStateUser.currentPassword, currentPasswordServerError) !== ''}
+                                        helperText={getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, fieldsStateUser.currentPassword, currentPasswordServerError)}
+                                        value={fieldsStateUser.currentPassword}
+                                        onChange={handleCurrentPasswordInput}
+                                        variant="outlined"
+                                        margin="dense"
+                                        required
+                                        fullWidth
+                                        id="password-current-password"
+                                        label="Текущий пароль"
+                                        type="password"
+                                        name="password-current-password"
+                                        autoComplete="current-password"
+                                    />
+                                </Box>}
                             </Container>
                         </div>
                     </Paper>
@@ -427,27 +627,30 @@ export default function Profile(props) {
                             </div>
                             <Divider className={formClasses.fullWidthDivider}/>
                             <Container maxWidth='sm' className={classes.containerNotCentered}>
-                                    {/*todo use repeating technique*/}
-                                    <TextField
-                                        variant="outlined"
-                                        margin="dense"
-                                        required
-                                        fullWidth
-                                        id="slack-token"
-                                        label="OAuth-токен"
-                                        name="slack-token"
-                                    >
-                                    </TextField>
-
-                                    <Box>
-                                        <FormControlLabel
-                                            control={<Checkbox value="notifications-checkbox" color="primary"/>}
-                                            label="Включить уведомления от бота"
-                                            checked={enableNotifications}
-                                            onClick={() => setEnableNotifications(!enableNotifications)}
-                                        />
-                                    </Box>
-
+                                <Box>
+                                    <FormControlLabel
+                                        control={<Checkbox checked={enableNotifications}
+                                                           onChange={toggleNotificationChange}
+                                                           value="notifications-checkbox" color="primary"/>}
+                                        label="Включить уведомления от бота"
+                                    />
+                                    {
+                                        enableNotifications &&
+                                        <TextField
+                                            error={getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials) !== ''}
+                                            helperText={getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials)}
+                                            value={fieldsStateUser.slackCredentials}
+                                            onChange={handleSlackCredentialsInput}
+                                            variant="outlined"
+                                            margin="dense"
+                                            required
+                                            fullWidth
+                                            id="slack-token"
+                                            label="Slack-токен"
+                                            name="slack-token">
+                                        </TextField>
+                                    }
+                                </Box>
                             </Container>
                         </div>
                     </Paper>
@@ -463,8 +666,8 @@ export default function Profile(props) {
                     className={classes.fabBottom}
                     onClick={() => editProfile()}
                 >
-                    <DoneRounded className={classes.extendedIcon}/>
-                    Завершить
+                    <UpdateRounded className={classes.extendedIcon}/>
+                    Обновить
                 </Fab>
             </Hidden>
 
@@ -477,9 +680,15 @@ export default function Profile(props) {
                     className={classes.fabBottom}
                     onClick={() => editProfile()}
                 >
-                    <DoneRounded/>
+                    <UpdateRounded/>
                 </Fab>
             </Hidden>
+
+            <Snackbar open={isStatusSuccessOpen} autoHideDuration={1000} onClose={handleStatusSuccessClose}>
+                <Alert onClose={handleStatusSuccessClose} severity="success">
+                    Данные успешно обновлены
+                </Alert>
+            </Snackbar>
 
         </Container>
     );
