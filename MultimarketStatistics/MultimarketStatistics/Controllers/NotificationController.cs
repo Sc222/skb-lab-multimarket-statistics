@@ -22,6 +22,7 @@ namespace MultimarketStatistics.Controllers
             this.mapper = mapper;
         }
 
+        //[Authorize]
         [HttpGet("{userId}")]
         public NotificationContract[] GetUserNotifications(Guid userId)
         {
@@ -29,12 +30,14 @@ namespace MultimarketStatistics.Controllers
             return mapper.Map<NotificationContract[]>(notifications);
         }
 
+        //[Authorize]
         [HttpDelete]
         public void Delete([FromQuery(Name = "id")] IEnumerable<Guid> notificationIds)
         {
             notificationService.Delete(notificationIds.Select(id => new Notification {Id = id}));
         }
 
+        //[Authorize]
         [HttpDelete("{userId}")]
         public void DeleteByUser(Guid userId)
         {

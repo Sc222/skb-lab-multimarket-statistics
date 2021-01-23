@@ -20,6 +20,7 @@ namespace MultimarketStatistics.Controllers
             this.mapper = mapper;
         }
 
+        //[Authorize]
         [HttpGet("{appId}")]
         public SearchResult<ReviewContract[]> GetAppReviews(Guid appId, [FromQuery] int? skip, [FromQuery] int? take,
             [FromQuery] string market)

@@ -21,6 +21,7 @@ namespace MultimarketStatistics.Controllers
             this.mapper = mapper;
         }
 
+        //[Authorize]
         [HttpGet("{appId}")]
         public RatingContract[] GetAppRatings(Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to,
             [FromQuery] string market)
