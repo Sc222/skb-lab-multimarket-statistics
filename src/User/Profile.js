@@ -41,6 +41,9 @@ import {
 } from "../Helpers/ProfileErrorHelpers";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
+import {Link as RouterLink} from "react-router-dom";
+import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
+import IconButton from "@material-ui/core/IconButton";
 
 const useFormStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -169,6 +172,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         display: 'block',
     },
+
     searchCard: {
         display: 'block',
         borderRadius: theme.shape.borderRadius,
@@ -419,7 +423,16 @@ export default function Profile(props) {
                 <Grid item xs={12}>
                     <Paper elevation={1}>
                         <AppBar elevation={0} position="static" className={classes.extraToolbar}>
-                            <Toolbar variant="dense" className={classes.extraToolbar}>
+                            <Toolbar variant="dense" className={classes.extraToolbar} disableGutters>
+                                <IconButton
+                                    edge="start"
+                                    aria-label="back to apps"
+                                    component={RouterLink}
+                                    to={'./apps'}
+                                    className={classes.extraToolbarButtonBack}
+                                >
+                                    {<ArrowBackRoundedIcon color="action"/>}
+                                </IconButton>
                                 <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
                                     Настройки
                                 </Typography>

@@ -256,7 +256,7 @@ export default function NewApplications(props) {
                             <Toolbar variant="dense" className={classes.extraToolbar} disableGutters>
                                 <IconButton
                                     edge="start"
-                                    aria-label="change drawer state"
+                                    aria-label="back to apps"
                                     component={RouterLink}
                                     to={'./apps'}
                                     className={classes.extraToolbarButtonBack}
