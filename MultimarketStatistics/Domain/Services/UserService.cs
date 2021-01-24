@@ -55,9 +55,9 @@ namespace Domain.Services
             userRepository.Delete(user);
         }
 
-        public (User, string)? Authenticate(User model)
+        public (User, string)? Authenticate(string username, string password)
         {
-            var user = userRepository.SingleOrDefault(x => x.Username == model.Username && x.Password == model.Password);
+            var user = userRepository.SingleOrDefault(x => x.Username == username && x.Password == password);
 
             if (user == null) 
                 return null;
