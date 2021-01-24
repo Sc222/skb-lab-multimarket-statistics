@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Domain.Clients.AppGallery;
 using Domain.Clients.AppStore;
@@ -112,6 +113,19 @@ namespace Domain.Services
                 TwoStarsCount = scores[2],
                 OneStarsCount = scores[1]
             };
+        }
+
+        public async Task<string> FetchAppPicUrl(App app)
+        {
+            var picUrl = await appStore.GetAppPicUrl(app).ConfigureAwait(false);
+            if (picUrl != null)
+                return picUrl;
+
+            picUrl = await playMarket.GetAppPicUrl(app).ConfigureAwait(false);
+            if (picUrl != null)
+                return picUrl;
+
+            return await appStore.GetAppPicUrl(app).ConfigureAwait(false);
         }
     }
 }

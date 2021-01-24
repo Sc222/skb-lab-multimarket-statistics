@@ -2,11 +2,13 @@
 
 namespace Domain.Clients.PlayMarket
 {
-    public class PlayMarketRatings
+    public class PlayMarketApp
     {
         [JsonProperty("histogram")] public PlayMarketRating Rating { get; set; }
 
         [JsonProperty("ratings")] public int Total { get; set; }
+
+        [JsonProperty("icon")] public string IconUrl { get; set; }
     }
 
     public class PlayMarketRating

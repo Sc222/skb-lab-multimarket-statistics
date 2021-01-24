@@ -95,5 +95,12 @@ namespace MultimarketStatistics.Controllers
                 Token = response.Value.Item2
             });
         }
+
+        //[Authorize]
+        [HttpPost("upload")]
+        public ActionResult Upload(IFormFile image)
+        {
+
+        }
     }
 }

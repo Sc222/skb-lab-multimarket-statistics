@@ -35,13 +35,13 @@ namespace MultimarketStatistics.Controllers
 
         //[Authorize]
         [HttpPut("update/{userId}")]
-        public ActionResult Update(Guid userId, [FromBody] AppContract webApp)
+        public async Task<ActionResult> Update(Guid userId, [FromBody] AppContract webApp)
         {
             //if (!UserIdValidator.IsValidAction(HttpContext, userId))
             //    return StatusCode(StatusCodes.Status403Forbidden);
             var app = mapper.Map<App>(webApp);
             app.User = new User {Id = userId};
-            appService.Update(app);
+            await appService.Update(app).ConfigureAwait(false);
             return Ok();
         }
 
