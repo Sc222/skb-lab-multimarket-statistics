@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Domain.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultimarketStatistics.Models;
 using Storage.Entities;
@@ -23,8 +24,10 @@ namespace MultimarketStatistics.Controllers
 
         //[Authorize]
         [HttpPost("create/{userId}")]
-        public async Task<Guid> Create(Guid userId, [FromBody] AppContract webApp)
+        public async Task<ActionResult<Guid>> Create(Guid userId, [FromBody] AppContract webApp)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
             var app = mapper.Map<App>(webApp);
             app.User = new User {Id = userId};
             return await appService.Create(app).ConfigureAwait(false);
@@ -32,25 +35,32 @@ namespace MultimarketStatistics.Controllers
 
         //[Authorize]
         [HttpPut("update/{userId}")]
-        public void Update(Guid userId, [FromBody] AppContract webApp)
+        public ActionResult Update(Guid userId, [FromBody] AppContract webApp)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
             var app = mapper.Map<App>(webApp);
             app.User = new User {Id = userId};
             appService.Update(app);
+            return Ok();
         }
 
         //[Authorize]
         [HttpGet("{userId}/apps")]
-        public AppContract[] GetUserApps(Guid userId)
+        public ActionResult<AppContract[]> GetUserApps(Guid userId)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
             var apps = appService.GetAppsByUser(userId);
             return mapper.Map<AppContract[]>(apps);
         }
 
         //[Authorize]
         [HttpGet("{appId}")]
-        public AppContract Get(Guid appId)
+        public ActionResult<AppContract> Get(Guid appId)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
             var app = appService.Get(appId);
             return mapper.Map<AppContract>(app);
         }

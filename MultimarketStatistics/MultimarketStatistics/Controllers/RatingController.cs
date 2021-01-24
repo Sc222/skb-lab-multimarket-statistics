@@ -23,9 +23,11 @@ namespace MultimarketStatistics.Controllers
 
         //[Authorize]
         [HttpGet("{appId}")]
-        public RatingContract[] GetAppRatings(Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to,
+        public ActionResult<RatingContract[]> GetAppRatings(Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to,
             [FromQuery] string market)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
             var ratings = ratingService.GetRatingsByApp(appId, from, to);
 
             if (market != null)

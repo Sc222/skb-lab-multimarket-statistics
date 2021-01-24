@@ -22,9 +22,11 @@ namespace MultimarketStatistics.Controllers
 
         //[Authorize]
         [HttpGet("{appId}")]
-        public SearchResult<ReviewContract[]> GetAppReviews(Guid appId, [FromQuery] int? skip, [FromQuery] int? take,
+        public ActionResult<SearchResult<ReviewContract[]>> GetAppReviews(Guid appId, [FromQuery] int? skip, [FromQuery] int? take,
             [FromQuery] string market)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
             var searchResult = reviewService.GetAppReviews(appId, skip, take, market.ToMarketType());
             return new SearchResult<ReviewContract[]>(searchResult.Total, searchResult.Found,
                 mapper.Map<ReviewContract[]>(searchResult.FoundItem));
