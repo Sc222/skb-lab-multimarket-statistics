@@ -79,14 +79,21 @@ namespace MultimarketStatistics.Controllers
         }
 
         [HttpPost("authenticate")]
-        public ActionResult Authenticate([FromBody] UserContract user)
+        public ActionResult<AuthResult> Authenticate([FromBody] UserContract user)
         {
-            var response = userService.Authenticate(mapper.Map<User>(user));
+            var response = userService.Authenticate(user.Username, user.Password);
 
             if (response == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+                return BadRequest(new 
+                { 
+                    message = "Username or password is incorrect" 
+                });
 
-            return Ok(response);
+            return Ok(new AuthResult
+            {
+                User = mapper.Map<UserContract>(response.Value.Item1),
+                Token = response.Value.Item2
+            });
         }
     }
 }
