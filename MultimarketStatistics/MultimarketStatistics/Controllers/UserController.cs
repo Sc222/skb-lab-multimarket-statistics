@@ -47,14 +47,22 @@ namespace MultimarketStatistics.Controllers
             if (userToUpdate.Password != webUser.CurrentPassword)
                 return StatusCode(StatusCodes.Status403Forbidden);
 
+            var checkResult = userService.CheckForUniqueness(webUser.NewEmail, webUser.NewUsername);
+
+            if ((!checkResult.IsEmailUnique && !string.IsNullOrEmpty(webUser.NewEmail)) ||
+                (!checkResult.IsUsernameUnique && !string.IsNullOrEmpty(webUser.NewUsername)))
+                return Conflict(checkResult);
+
             var user = mapper.Map<User>(webUser);
+
             if (string.IsNullOrEmpty(user.Password))
                 user.Password = webUser.CurrentPassword;
 
-            var checkResult = userService.CheckForUniqueness(user.Email, user.Username);
+            if (!string.IsNullOrEmpty(webUser.NewEmail))
+                user.Email = webUser.NewEmail;
 
-            if (!checkResult.IsEmailUnique || !checkResult.IsUsernameUnique)
-                return Conflict(checkResult);
+            if (!string.IsNullOrEmpty(webUser.NewUsername))
+                user.Username = webUser.NewUsername;
 
             userService.Update(user);
             return Ok();
