@@ -13,8 +13,8 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import {
     getRegisterEmailError,
-    getRegisterPasswordError,
-    getRegisterUsernameError,
+    getPasswordError,
+    getUsernameError,
     getSlackCredentialsError,
     parseEmailServerError,
     parseUsernameServerError
@@ -35,9 +35,9 @@ export default function Register() {
     const [emailServerError, setEmailServerError] = React.useState("");
 
     function hasErrors(areErrorsVisible, usernameServerError, emailServerError) {
-        return getRegisterUsernameError(areErrorsVisible, newUser.username, usernameServerError)
+        return getUsernameError(areErrorsVisible, newUser.username, usernameServerError)
             + getRegisterEmailError(areErrorsVisible, newUser.email, emailServerError)
-            + getRegisterPasswordError(areErrorsVisible, newUser.password)
+            + getPasswordError(areErrorsVisible, newUser.password)
             + getSlackCredentialsError(areErrorsVisible, enableNotifications, newUser.slackCredentials) !== "";
     }
 
@@ -50,8 +50,7 @@ export default function Register() {
             createUser(userForCreate)
                 .then(result => {
                     console.log("successfully created user with id: " + result);
-                    //console.log(result);
-                    //TODO REQUEST AUTHENTIFICATION TOKEN
+                    //TODO REQUEST AUTHENTICATION TOKEN
                     //TODO REDIRECT TO DASHBOARD
                 })
                 .catch(err => {
@@ -82,7 +81,7 @@ export default function Register() {
             setEmailServerError("");
     }
 
-    const handleNewPasswordInput = (event) => {
+    const handlePasswordInput = (event) => {
         const newUserValue = update(newUser, {password: {$set: event.target.value}});
         setNewUser(newUserValue);
     }
@@ -106,8 +105,8 @@ export default function Register() {
             <div className={classes.container}>
                 <form noValidate>
                     <TextField
-                        error={getRegisterUsernameError(areErrorsVisible, newUser.username, usernameServerError) !== ''}
-                        helperText={getRegisterUsernameError(areErrorsVisible, newUser.username, usernameServerError)}
+                        error={getUsernameError(areErrorsVisible, newUser.username, usernameServerError) !== ''}
+                        helperText={getUsernameError(areErrorsVisible, newUser.username, usernameServerError)}
                         value={newUser.username}
                         onChange={handleUsernameInput}
                         variant="outlined"
@@ -134,10 +133,10 @@ export default function Register() {
                         autoComplete="email"
                     />
                     <TextField
-                        error={getRegisterPasswordError(areErrorsVisible, newUser.password) !== ''}
-                        helperText={getRegisterPasswordError(areErrorsVisible, newUser.password)}
+                        error={getPasswordError(areErrorsVisible, newUser.password) !== ''}
+                        helperText={getPasswordError(areErrorsVisible, newUser.password)}
                         value={newUser.password}
-                        onChange={handleNewPasswordInput}
+                        onChange={handlePasswordInput}
                         variant="outlined"
                         margin="dense"
                         required

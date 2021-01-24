@@ -17,14 +17,40 @@ export function getSlackCredentialsError(areErrorsVisible, enableNotifications, 
 }
 
 
+//Login + Register error
+export function getPasswordError(areErrorsVisible, password) {
+    if (!areErrorsVisible)
+        return "";
+    if (password === "")
+        return "Введите пароль";
+    return "";
+}
+
+//Login + Register error
+export function getUsernameError(areErrorsVisible, username, usernameServerError="") {
+    if (!areErrorsVisible)
+        return "";
+    if (username === "")
+        return "Введите логин";
+    return usernameServerError;
+}
+
+
+// Login errors
+
+export function parseLoginWrongCredentialsServerError(errorMessage) {
+    return errorMessage === "Username or password is incorrect";
+}
+
+
 // Register errors
 
 export function parseServerMailAndUsernameErrors(responseJson) {
-    if(!responseJson.isEmailUnique && !responseJson.isUsernameUnique)
+    if (!responseJson.isEmailUnique && !responseJson.isUsernameUnique)
         return ErrorNotUniqueUsernameAndEmail;
-    if(!responseJson.isEmailUnique)
+    if (!responseJson.isEmailUnique)
         return ErrorNotUniqueEmail;
-    if(!responseJson.isUsernameUnique)
+    if (!responseJson.isUsernameUnique)
         return ErrorNotUniqueUsername;
     return "";
 }
@@ -39,22 +65,6 @@ export function parseEmailServerError(errorCode) {
     if (errorCode === ErrorNotUniqueUsernameAndEmail || errorCode === ErrorNotUniqueEmail)
         return "Пользователь с такой почтой уже существует";
     return "";
-}
-
-export function getRegisterPasswordError(areErrorsVisible, password) {
-    if (!areErrorsVisible)
-        return "";
-    if (password === "")
-        return "Введите пароль";
-    return "";
-}
-
-export function getRegisterUsernameError(areErrorsVisible, username, usernameServerError) {
-    if (!areErrorsVisible)
-        return "";
-    if (username === "")
-        return "Введите логин";
-    return usernameServerError;
 }
 
 export function getRegisterEmailError(areErrorsVisible, email, emailServerError) {

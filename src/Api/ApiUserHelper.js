@@ -1,3 +1,7 @@
+export function getDefaultLoginCredentials(){
+    return {username:"",password:""};
+}
+
 export function getDefaultUserNoId(){
     return {username:"",password:"",email:"",slackCredentials:""};
 }
