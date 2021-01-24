@@ -19,7 +19,10 @@ export default function App() {
                     {/* TODO LANDING PAGE WITH LOGIN FORM ON TOP (LIKE GITHUB)*/}
                     <Route exact path={`${HomepageUrl}/`} component={Homepage}/>
                     <Route path={`${HomepageUrl}/user/:userId/`} component={UserSection}/>
-                    <Route path={`${HomepageUrl}/(login|register|password-reset)/`} component={FormSections}/>
+                    <Route path={`${HomepageUrl}/(login|register)/`} component={FormSections}/>
+                    {/* TODO: PASSWORD-RESET IN DEVELOPMENT
+                     <Route path={`${HomepageUrl}/(login|register|password-reset)/`} component={FormSections}/>
+                    }
 
                     {/* todo render 404 not found page*/}
                 </RouteSwitch>

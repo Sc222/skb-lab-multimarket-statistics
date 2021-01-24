@@ -45,7 +45,6 @@ export default function Login() {
                         label="Почта"
                         name="email"
                         autoComplete="email"
-                        //todo is autofocus convenient?
                     />
                     <TextField
                         variant="outlined"
@@ -58,19 +57,14 @@ export default function Login() {
                         id="password"
                         autoComplete="current-password"
                     />
-                    <Box ml={1.5}>
-                        <Link variant="body2" color='secondary'
-                              component={RouterLink} to={`./password-reset`}>
-                            {'Забыли пароль?'}
-                        </Link>
-                    </Box>
-                    {/*
-                            todo is remember me option needed?
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary"/>}
-                                label="Remember me"
-                            />
-                            */}
+                    {/* TODO: PASSWORD-RESET IN DEVELOPMENT
+                        <Box ml={1.5}>
+                            <Link variant="body2" color='secondary'
+                                  component={RouterLink} to={`./password-reset`}>
+                                {'Забыли пароль?'}
+                            </Link>
+                        </Box>
+                    */}
                     <Grid spacing={2} container className={classes.buttonGrid}>
                         <Grid xs item>
                             <Button

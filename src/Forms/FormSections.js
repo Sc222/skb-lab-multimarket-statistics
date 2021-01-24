@@ -12,7 +12,6 @@ import {HomepageUrl} from "../App";
 import FormSectionStyles from "../Styles/FormSectionStyles";
 import Login from "./Login";
 import Register from "./Register";
-import PasswordReset from "./PasswordReset";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -31,18 +30,20 @@ export default function FormSections() {
                     </Typography>
                 </Toolbar>
             </AppBar>
-        <main className={classes.content}>
-            <div className={classes.appBarSpacer}/>
-            <Container maxWidth="sm">
-                <Paper elevation={2} className={classes.paper}>
-                    <RouteSwitch>
-                        <Route path={`${HomepageUrl}/login/`} component={Login}/>
-                        <Route path={`${HomepageUrl}/register/`} component={Register}/>
-                        <Route path={`${HomepageUrl}/password-reset/`} component={PasswordReset}/>
-                    </RouteSwitch>
-                </Paper>
-            </Container>
-        </main>
+            <main className={classes.content}>
+                <div className={classes.appBarSpacer}/>
+                <Container maxWidth="sm">
+                    <Paper elevation={2} className={classes.paper}>
+                        <RouteSwitch>
+                            <Route path={`${HomepageUrl}/login/`} component={Login}/>
+                            <Route path={`${HomepageUrl}/register/`} component={Register}/>
+                            {/* TODO: PASSWORD-RESET IN DEVELOPMENT
+                            <Route path={`${HomepageUrl}/password-reset/`} component={PasswordReset}/>
+                            */}
+                        </RouteSwitch>
+                    </Paper>
+                </Container>
+            </main>
         </div>
     );
 }

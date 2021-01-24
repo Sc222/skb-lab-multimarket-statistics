@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -8,7 +8,6 @@ import Divider from "@material-ui/core/Divider";
 
 import {Link as RouterLink} from 'react-router-dom';
 
-import {HomepageUrl} from "../App";
 import FormSectionStyles from "../Styles/FormSectionStyles";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
@@ -44,7 +43,6 @@ export default function PasswordReset() {
                         label="Почта"
                         name="email"
                         autoComplete="email"
-                        //todo is autofocus convenient?
                     />
                     <Grid spacing={2} container className={classes.buttonGrid}>
                         <Grid xs item>
