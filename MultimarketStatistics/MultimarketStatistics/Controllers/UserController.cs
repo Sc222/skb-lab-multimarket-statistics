@@ -29,6 +29,14 @@ namespace MultimarketStatistics.Controllers
         }
 
         //[Authorize]
+        [HttpPut("check")]
+        public ActionResult<UserCheckResult> Check([FromBody] UserContract webUser)
+        {
+            var user = mapper.Map<User>(webUser);
+            return userService.CheckForUniqueness(user.Email, user.Username, user.SlackCredentials);
+        }
+
+        //[Authorize]
         [HttpPut("update")]
         public ActionResult Update([FromBody] UserUpdateContract webUser)
         {
