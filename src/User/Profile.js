@@ -308,8 +308,8 @@ export default function Profile(props) {
 
                     //save success so current user is equal to new user
                     setCurrentUser(newUser);
-                    //setEnableNotifications(result.slackCredentials !== "");
-
+                    props.updatePopoverUser(newUser);
+                    
                     //slackcredentials saved, other values are "" by default
                     //reset fields
                     const newFieldStateUser = getDefaultFieldsStateUser();

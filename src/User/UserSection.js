@@ -463,7 +463,7 @@ export default function UserSection() {
                         <NewApplication userId={userId}/>
                     </Route>
                     <Route path={`${HomepageUrl}/user/:userId/profile`}>
-                        <Profile userId={userId}/>
+                        <Profile userId={userId} updatePopoverUser={setUser}/>
                     </Route>
                     <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
                         <ApplicationSection userId={userId} isDrawerOpen={isDrawerOpen}
