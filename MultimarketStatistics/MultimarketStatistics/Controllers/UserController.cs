@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using Domain.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultimarketStatistics.Models;
 using Storage.Entities;
@@ -29,10 +30,19 @@ namespace MultimarketStatistics.Controllers
 
         //[Authorize]
         [HttpPut("update")]
-        public void Update([FromBody] UserContract webUser)
+        public ActionResult Update([FromBody] UserUpdateContract webUser)
         {
+            var userToUpdate = userService.Get(webUser.Id);
+
+            if (string.IsNullOrEmpty(webUser.CurrentPassword))
+                return BadRequest();
+
+            if (userToUpdate.Password != webUser.CurrentPassword)
+                return StatusCode(StatusCodes.Status403Forbidden);
+
             var user = mapper.Map<User>(webUser);
             userService.Update(user);
+            return Ok();
         }
 
         //[Authorize]
