@@ -43,6 +43,9 @@ namespace MultimarketStatistics.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden);
 
             var user = mapper.Map<User>(webUser);
+            if (string.IsNullOrEmpty(user.Password))
+                user.Password = webUser.CurrentPassword;
+
             userService.Update(user);
             return Ok();
         }
