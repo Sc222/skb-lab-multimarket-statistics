@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Storage.Entities;
 using Storage.Repositories;
+using System.Linq;
 
 namespace Domain.Services
 {
@@ -28,9 +29,16 @@ namespace Domain.Services
             return userRepository.Get(id);
         }
 
-        public User[] GetAll()
+        public UserCheckResult CheckForUniqueness(string email, string username, string slackCreds)
         {
-            return userRepository.GetAll();
+            var same = userRepository.Find(u => u.Email == email || u.Username == username || u.SlackCredentials == slackCreds);
+
+            return new UserCheckResult
+            {
+                IsEmailUnique = same.Any(u => u.Email == email),
+                IsUsernameUnique = same.Any(u => u.Username == username),
+                IsSlackCredentialsUnique = same.Any(u => u.SlackCredentials == slackCreds)
+            };
         }
 
         public User[] GetAllWithSlackCredentials()
