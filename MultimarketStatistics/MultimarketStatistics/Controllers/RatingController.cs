@@ -22,8 +22,8 @@ namespace MultimarketStatistics.Controllers
         }
 
         //[Authorize]
-        [HttpGet("{appId}")]
-        public ActionResult<RatingContract[]> GetAppRatings(Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to,
+        [HttpGet("{userId}/{appId}")]
+        public ActionResult<RatingContract[]> GetAppRatings(Guid userId, Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to,
             [FromQuery] string market)
         {
             //if (!UserIdValidator.IsValidAction(HttpContext, userId))

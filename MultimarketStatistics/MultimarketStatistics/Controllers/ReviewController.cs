@@ -21,8 +21,8 @@ namespace MultimarketStatistics.Controllers
         }
 
         //[Authorize]
-        [HttpGet("{appId}")]
-        public ActionResult<SearchResult<ReviewContract[]>> GetAppReviews(Guid appId, [FromQuery] int? skip, [FromQuery] int? take,
+        [HttpGet("{userId}/{appId}")]
+        public ActionResult<SearchResult<ReviewContract[]>> GetAppReviews(Guid userId, Guid appId, [FromQuery] int? skip, [FromQuery] int? take,
             [FromQuery] string market)
         {
             //if (!UserIdValidator.IsValidAction(HttpContext, userId))

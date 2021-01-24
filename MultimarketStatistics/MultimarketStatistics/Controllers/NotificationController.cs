@@ -33,8 +33,8 @@ namespace MultimarketStatistics.Controllers
         }
 
         //[Authorize]
-        [HttpDelete]
-        public ActionResult Delete([FromQuery(Name = "id")] IEnumerable<Guid> notificationIds)
+        [HttpDelete("{userId}")]
+        public ActionResult Delete(Guid userId, [FromQuery(Name = "id")] IEnumerable<Guid> notificationIds)
         {
             //if (!UserIdValidator.IsValidAction(HttpContext, userId))
             //    return StatusCode(StatusCodes.Status403Forbidden);
@@ -43,7 +43,7 @@ namespace MultimarketStatistics.Controllers
         }
 
         //[Authorize]
-        [HttpDelete("{userId}")]
+        [HttpDelete("{userId}/all")]
         public ActionResult DeleteByUser(Guid userId)
         {
             //if (!UserIdValidator.IsValidAction(HttpContext, userId))

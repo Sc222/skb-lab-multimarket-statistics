@@ -56,8 +56,8 @@ namespace MultimarketStatistics.Controllers
         }
 
         //[Authorize]
-        [HttpGet("{appId}")]
-        public ActionResult<AppContract> Get(Guid appId)
+        [HttpGet("{userId}/{appId}")]
+        public ActionResult<AppContract> Get(Guid userId, Guid appId)
         {
             //if (!UserIdValidator.IsValidAction(HttpContext, userId))
             //    return StatusCode(StatusCodes.Status403Forbidden);
