@@ -18,7 +18,7 @@ import {
     getSlackCredentialsError,
     parseEmailServerError,
     parseUsernameServerError
-} from "../Helpers/ProfileErrorHelper";
+} from "../Helpers/ErrorHelper";
 import {createUserForCreate, getDefaultUserNoId} from "../Api/ApiUserHelper";
 import update from "immutability-helper";
 import {createUser} from "../Api/ApiUser";

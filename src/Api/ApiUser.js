@@ -1,5 +1,5 @@
 import {ApiRoot, ErrorConflict} from "./ApiHelper";
-import {parseServerMailAndUsernameErrors} from "../Helpers/ProfileErrorHelper";
+import {parseServerMailAndUsernameErrors} from "../Helpers/ErrorHelper";
 
 export async function getUser(userId) {
     return fetch(`${ApiRoot}/api/User/${userId}`,

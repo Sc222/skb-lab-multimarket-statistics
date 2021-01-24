@@ -41,7 +41,7 @@ import {
     parseCurrentPasswordServerError,
     parseEmailServerError,
     parseUsernameServerError
-} from "../Helpers/ProfileErrorHelper";
+} from "../Helpers/ErrorHelper";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import {Link as RouterLink} from "react-router-dom";
