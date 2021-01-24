@@ -119,9 +119,11 @@ export default function Login() {
                         autoComplete="current-password"
                     />
 
+                    {wrongCredentials &&
                     <Typography variant="body2" color='error'>
-                        {wrongCredentials ? 'Неверный логин или пароль' : ''}
+                        Неверный логин или пароль
                     </Typography>
+                    }
 
                     {/* TODO: PASSWORD-RESET IN DEVELOPMENT
                         <Box ml={1.5}>
