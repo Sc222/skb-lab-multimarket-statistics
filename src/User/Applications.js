@@ -21,7 +21,13 @@ import Hidden from "@material-ui/core/Hidden";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import {Link as RouterLink} from "react-router-dom";
 import MarketChipStyles from "../Styles/MarketChipStyles";
-import {AppGalleryIndex, AppStoreIndex, createLinkFromId, MarketsInfoHelper, PlayStoreIndex} from "../Helpers/MarketsInfoHelper";
+import {
+    AppGalleryIndex,
+    AppStoreIndex,
+    createLinkFromId,
+    MarketsInfoHelper,
+    PlayStoreIndex
+} from "../Helpers/MarketsInfoHelper";
 import {getApps} from "../Api/ApiApp";
 
 const drawerWidth = 260;
@@ -117,9 +123,9 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.primary.light
     },
 
-    primaryRippleFillHeight:{
+    primaryRippleFillHeight: {
         color: theme.palette.primary.light,
-        height:'100%'
+        height: '100%'
     },
 
     appDescriptionContainer: {
@@ -217,144 +223,33 @@ const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 export default function Applications(props) {
     let userId = props.userId;
     const [apps, setApps] = React.useState(undefined);
+    const [appsNameFilter, setAppsNameFilter] = React.useState('');
 
     const classes = useStyles();
     const marketClasses = useMarketChipStyles();
 
+    const handleAppsNameFilterInput = (event) => {
+        setAppsNameFilter(event.target.value);
+    };
+
+    function isNameMatchesSearchFilter(app) {
+        return app.name.match(new RegExp(`^${appsNameFilter}.*`, 'i'));
+    }
 
     useEffect(() => {
-        //todo use iuliia-js to transliterate app name into id
-
-        // todo load info by userId
         console.log(userId);
         // todo if userId !== logged in userId => redirect
-
-        // todo load applications list by userId from server
-        // todo more complex classes in json
-
-        console.log(userId);
 
         getApps(userId)
             .then(apps => {
                 console.log("load apps");
                 console.log(apps);
                 setApps(apps);
-
-                //TODO !!!show no apps card when apps is []
-
             })
             .catch(err => console.log(err.message));
-
-        /*const apps = {
-            'sc222': [
-                {
-                    icon: demoAppIcon,
-                    title: "Pixel Fishing",
-                    id: "pixel-fishing",
-                    description: "Clicker game where you need to catch fish very fast",
-                    markets: [
-                        {disabled: false, link: "https://play.google.com/store/apps"},
-                        {disabled: true, link: "https://www.apple.com/app-store/"},
-                        {disabled: false, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                {
-                    icon: demoAppIcon,
-                    title: "Sesc Schedule",
-                    id: "sesc-schedule",
-                    description: "Application with class timetable of Specialized Educational Scientific Centre",
-                    markets: [
-                        {disabled: false, link: "https://play.google.com/store/apps"},
-                        {disabled: false, link: "https://www.apple.com/app-store/"},
-                        {disabled: true, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                {
-                    icon: demoAppIcon,
-                    title: "Volume Manager",
-                    id: "volume-manager",
-                    description: "Application to automate volume changes of your device",
-                    markets: [
-                        {disabled: true, link: "https://play.google.com/store/apps"},
-                        {disabled: false, link: "https://www.apple.com/app-store/"},
-                        {disabled: false, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                {
-                    icon: demoAppIcon,
-                    title: "One Ring",
-                    id: "one-ring",
-                    description: "Integrate your One Ring device with Samsung SmartThings smart home system",
-                    markets: [
-                        {disabled: false, link: "https://play.google.com/store/apps"},
-                        {disabled: false, link: "https://www.apple.com/app-store/"},
-                        {disabled: false, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-            ],
-            'neoezop': [
-                {
-                    icon: demoAppIcon,
-                    title: "Название приложения 1",
-                    id: "nazvanie-prilozhenia-1",
-                    description: "Достаточно длинное описание приложение длиной в две строки",
-                    markets: [
-                        {disabled: false, link: "https://play.google.com/store/apps"},
-                        {disabled: true, link: "https://www.apple.com/app-store/"},
-                        {disabled: true, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                {
-                    icon: demoAppIcon,
-                    title: "Название приложения 2",
-                    id: "nazvanie-prilozhenia-2",
-                    description: "Достаточно длинное описание приложение длиной в две строки",
-                    markets: [
-                        {disabled: true, link: "https://play.google.com/store/apps"},
-                        {disabled: false, link: "https://www.apple.com/app-store/"},
-                        {disabled: true, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                {
-                    icon: demoAppIcon,
-                    title: "Название приложения 3",
-                    id: "nazvanie-prilozhenia-3",
-                    description: "Достаточно длинное описание приложение длиной в две строки",
-                    markets: [
-                        {disabled: true, link: "https://play.google.com/store/apps"},
-                        {disabled: true, link: "https://www.apple.com/app-store/"},
-                        {disabled: false, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                {
-                    icon: demoAppIcon,
-                    title: "Название приложения 4",
-                    id: "nazvanie-prilozhenia-4",
-                    description: "Достаточно длинное описание приложение длиной в две строки",
-                    markets: [
-                        {disabled: false, link: "https://play.google.com/store/apps"},
-                        {disabled: false, link: "https://www.apple.com/app-store/"},
-                        {disabled: false, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-            ],
-            'refusedguy': [],
-            'yakiy_pes': [],
-        };
-
-        //if (apps[userId] !== undefined) {
-        //    console.log(apps[userId]);
-        //}
-        setApps(apps);*/
-        //todo show "add new apps menu if no apps"
-
-
-        // todo application route params
     }, []);
 
     function renderApplicationsGrid() {
-        // todo move to separate class and add loading indicator
-
         if (apps === undefined) {
             return (
                 <Grid item xs={12}>
@@ -382,14 +277,12 @@ export default function Applications(props) {
                         </div>
                     </Paper>
                 </Grid>);
-            //todo check if logged in userId == userId in link
         } else if (apps.length !== 0) {
-            return apps.map(app => {
+            return apps.filter(isNameMatchesSearchFilter).map(app => {
                 return (<Grid key={app.id} item xs={12} md={6}>
                         <Paper className={classes.paperNoPadding}>
                             <ButtonBase className={classes.primaryRippleFillHeight} component={RouterLink}
                                         to={`./app/${app.id}/dashboard/`}>
-
                                 <div className={classes.appDescriptionContainer}>
                                     <Grid container alignItems='center' spacing={2}>
                                         <Grid item xs={3} sm={2} md={3}>
@@ -455,14 +348,14 @@ export default function Applications(props) {
                 );
             })
         }
-        // todo if apps[userId] undefined - redirect (IN USER SECTION)
+
+        // TODO if apps[userId] undefined - redirect (IN USER SECTION)
     }
 
     return (
         <Container maxWidth="md" className={classes.container}>
             <div className={classes.appBarSpacer}/>
             <Grid container spacing={3}>
-                {/* App search toolbar */}
                 <Grid item xs={12}>
                     <Paper elevation={1}>
                         <AppBar elevation={0} position="static" className={classes.extraToolbar}>
@@ -474,9 +367,11 @@ export default function Applications(props) {
                                     <div className={classes.searchIcon}>
                                         <SearchRounded color='action'/>
                                     </div>
-                                    {/* todo filter apps list by search name*/}
                                     <InputBase
-                                        placeholder="Поиск…"
+                                        value={appsNameFilter}
+                                        onChange={handleAppsNameFilterInput}
+
+                                        placeholder="Поиск по названию…"
                                         classes={{
                                             root: classes.inputRoot,
                                             input: classes.inputInput,
@@ -521,7 +416,6 @@ export default function Applications(props) {
                     <AddRounded/>
                 </Fab>
             </Hidden>
-
         </Container>
     );
 }
