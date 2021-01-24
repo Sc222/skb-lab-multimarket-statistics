@@ -25,15 +25,12 @@ namespace MultimarketStatistics.Controllers
         public ActionResult<Guid> Create([FromBody] UserContract webUser)
         {
             var user = mapper.Map<User>(webUser);
-            return userService.Create(user);
-        }
+            var checkResult = userService.CheckForUniqueness(user.Email, user.Username);
 
-        //[Authorize]
-        [HttpPut("check")]
-        public ActionResult<UserCheckResult> Check([FromBody] UserContract webUser)
-        {
-            var user = mapper.Map<User>(webUser);
-            return userService.CheckForUniqueness(user.Email, user.Username, user.SlackCredentials);
+            if (!checkResult.IsEmailUnique || !checkResult.IsUsernameUnique)
+                return Conflict(checkResult);
+
+            return userService.Create(user);
         }
 
         //[Authorize]
@@ -53,6 +50,11 @@ namespace MultimarketStatistics.Controllers
             var user = mapper.Map<User>(webUser);
             if (string.IsNullOrEmpty(user.Password))
                 user.Password = webUser.CurrentPassword;
+
+            var checkResult = userService.CheckForUniqueness(user.Email, user.Username);
+
+            if (!checkResult.IsEmailUnique || !checkResult.IsUsernameUnique)
+                return Conflict(checkResult);
 
             userService.Update(user);
             return Ok();

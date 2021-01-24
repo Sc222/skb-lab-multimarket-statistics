@@ -29,15 +29,14 @@ namespace Domain.Services
             return userRepository.Get(id);
         }
 
-        public UserCheckResult CheckForUniqueness(string email, string username, string slackCreds)
+        public UserCheckResult CheckForUniqueness(string email, string username)
         {
-            var same = userRepository.Find(u => u.Email == email || u.Username == username || u.SlackCredentials == slackCreds);
+            var same = userRepository.Find(u => u.Email == email || u.Username == username);
 
             return new UserCheckResult
             {
-                IsEmailUnique = same.Any(u => u.Email == email),
-                IsUsernameUnique = same.Any(u => u.Username == username),
-                IsSlackCredentialsUnique = same.Any(u => u.SlackCredentials == slackCreds)
+                IsEmailUnique = !same.Any(u => u.Email == email),
+                IsUsernameUnique = !same.Any(u => u.Username == username)
             };
         }
 

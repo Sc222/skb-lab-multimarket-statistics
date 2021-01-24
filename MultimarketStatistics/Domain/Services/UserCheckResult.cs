@@ -9,7 +9,5 @@ namespace Domain.Services
         public bool IsEmailUnique { get; set; }
 
         public bool IsUsernameUnique { get; set; }
-
-        public bool IsSlackCredentialsUnique { get; set; }
     }
 }
