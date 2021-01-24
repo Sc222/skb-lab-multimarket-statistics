@@ -246,7 +246,7 @@ export default function UserSection() {
         let newNotifications = update(notifications, {$splice: [[index, 1]]});
         console.log(newNotifications);
         setNotifications(newNotifications);
-        deleteNotification(notificationId).then(result => console.log(result.status));
+        deleteNotification(userId, notificationId).then(result => console.log(result.status));
     }
 
     function deleteAllNotifications() {

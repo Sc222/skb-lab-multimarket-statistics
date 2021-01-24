@@ -16,23 +16,22 @@ export async function getNotifications(userId) {
         });
 }
 
-export async function deleteNotification(notificationId) {
-    return fetch(`${ApiRoot}/api/Notification/?id=${notificationId}`,
+export async function deleteNotification(userId, notificationId) {
+    return fetch(`${ApiRoot}/api/Notification/${userId}?id=${notificationId}`,
         {
+            headers: {
+                "Accept": "application/json"
+            },
             method: "DELETE"
         });
 }
 
 export async function deleteAllNotifications(userId) {
-    return fetch(`${ApiRoot}/api/Notification/${userId}`,
+    return fetch(`${ApiRoot}/api/Notification/${userId}/all`,
         {
-            method: "DELETE"
-        });
-}
-
-export async function deleteNotifications(notificationIds) {
-    return fetch(`${ApiRoot}/api/Notification/?id=${notificationIds.join("&id=")}`,
-        {
+            headers: {
+                "Accept": "application/json"
+            },
             method: "DELETE"
         });
 }
