@@ -23,14 +23,16 @@ export async function createUser(user){
         {
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
+                "Accept": "application/json"
             },
             body: JSON.stringify(user),
             method: "POST",
         })
         .then(result => {
             if (result.ok) //returns token
-                return result.text();
+                return result.json();
+            //if(result.status===111) //todo error to json
+            //    throw new Error(result.json());
             throw new Error(result.status.toString());
         });
 }

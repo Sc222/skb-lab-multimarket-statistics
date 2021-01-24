@@ -31,15 +31,15 @@ import Box from "@material-ui/core/Box";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import {getUser, updateUser} from "../Api/ApiUser";
-import {createNewUser, getDefaultFieldsStateUser, getDefaultUser} from "../Api/ApiUserHelper";
+import {createUserForUpdate, getDefaultFieldsStateUser, getDefaultUser} from "../Api/ApiUserHelper";
 import {
     getCurrentPasswordError,
-    getCurrentPasswordServerError,
-    getEmailError,
-    getNewPasswordError,
+    parseCurrentPasswordServerError,
+    getProfileEmailError,
+    getPasswordError,
     getSlackCredentialsError,
-    getUsernameError
-} from "../Helpers/ProfileErrorHelpers";
+    getProfileUsernameError
+} from "../Helpers/ProfileErrorHelper";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import {Link as RouterLink} from "react-router-dom";
@@ -289,7 +289,7 @@ export default function Profile(props) {
         setErrorsVisible(true);
         setCurrentPasswordServerError("");
         if (!hasErrors(true, "")) {
-            const newUser = createNewUser(currentUser, fieldsStateUser, enableNotifications);
+            const newUser = createUserForUpdate(currentUser, fieldsStateUser, enableNotifications);
             updateUser(newUser)
                 .then(result => {
                     console.log(result);
@@ -311,7 +311,7 @@ export default function Profile(props) {
                 })
                 .catch(err => {
                     console.log(err.message);
-                    setCurrentPasswordServerError(getCurrentPasswordServerError(err.message));
+                    setCurrentPasswordServerError(parseCurrentPasswordServerError(err.message));
                 });
         }
     }
@@ -364,9 +364,9 @@ export default function Profile(props) {
     };
 
     function hasErrors(areErrorsVisible, currentPasswordServerError) {
-        return getUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username)
-            + getEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email)
-            + getNewPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)
+        return getProfileUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username)
+            + getProfileEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email)
+            + getPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)
             + getCurrentPasswordError(areErrorsVisible, shouldTypeCurrentPassword(), fieldsStateUser.currentPassword, currentPasswordServerError)
             + getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials) !== "";
     }
@@ -502,8 +502,8 @@ export default function Profile(props) {
                                     {
                                         shouldChangeLogin &&
                                         <TextField
-                                            error={getUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username) !== ''}
-                                            helperText={getUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username)}
+                                            error={getProfileUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username) !== ''}
+                                            helperText={getProfileUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username)}
                                             value={fieldsStateUser.username}
                                             onChange={handleUsernameInput}
                                             variant="outlined"
@@ -530,8 +530,8 @@ export default function Profile(props) {
                                     {
                                         shouldChangeEmail &&
                                         <TextField
-                                            error={getEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email) !== ''}
-                                            helperText={getEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email)}
+                                            error={getProfileEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email) !== ''}
+                                            helperText={getProfileEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email)}
                                             value={fieldsStateUser.email}
                                             onChange={handleEmailInput}
                                             variant="outlined"
@@ -559,8 +559,8 @@ export default function Profile(props) {
                                     {
                                         shouldChangePassword &&
                                         <TextField
-                                            error={getNewPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password) !== ''}
-                                            helperText={getNewPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)}
+                                            error={getPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password) !== ''}
+                                            helperText={getPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)}
                                             value={fieldsStateUser.password}
                                             onChange={handleNewPasswordInput}
                                             variant="outlined"
