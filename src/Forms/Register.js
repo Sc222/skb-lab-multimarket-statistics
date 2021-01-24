@@ -9,15 +9,88 @@ import Divider from "@material-ui/core/Divider";
 import {Link as RouterLink} from 'react-router-dom';
 
 import FormSectionStyles from "../Styles/FormSectionStyles";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import {
+    getRegisterEmailError,
+    getRegisterPasswordError,
+    getRegisterUsernameError,
+    getSlackCredentialsError,
+    parseEmailServerError,
+    parseUsernameServerError
+} from "../Helpers/ProfileErrorHelper";
+import {createUserForCreate, getDefaultUserNoId} from "../Api/ApiUserHelper";
+import update from "immutability-helper";
+import {createUser} from "../Api/ApiUser";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
 export default function Register() {
     const classes = useStyles();
 
-    function submitRegister() {
-        //todo validate inputs, get inputs value and send server request
+    const [enableNotifications, setEnableNotifications] = React.useState(false);
+    const [areErrorsVisible, setErrorsVisible] = React.useState(false);
+    const [newUser, setNewUser] = React.useState(getDefaultUserNoId());
+    const [usernameServerError, setUsernameServerError] = React.useState("");
+    const [emailServerError, setEmailServerError] = React.useState("");
+
+    function hasErrors(areErrorsVisible, usernameServerError, emailServerError) {
+        return getRegisterUsernameError(areErrorsVisible, newUser.username, usernameServerError)
+            + getRegisterEmailError(areErrorsVisible, newUser.email, emailServerError)
+            + getRegisterPasswordError(areErrorsVisible, newUser.password)
+            + getSlackCredentialsError(areErrorsVisible, enableNotifications, newUser.slackCredentials) !== "";
     }
+
+    function submitRegister() {
+        setErrorsVisible(true);
+        setUsernameServerError("");
+        setEmailServerError("");
+        if (!hasErrors(true, "", "")) {
+            const userForCreate = createUserForCreate(newUser, enableNotifications);
+            createUser(userForCreate)
+                .then(result => {
+                    console.log("successfully created user with id: " + result);
+                    //console.log(result);
+                    //TODO REQUEST AUTHENTIFICATION TOKEN
+                    //TODO REDIRECT TO DASHBOARD
+                })
+                .catch(err => {
+                    console.log(err.message);
+                    setUsernameServerError(parseUsernameServerError(err.message));
+                    setEmailServerError(parseEmailServerError(err.message));
+                });
+        }
+    }
+
+    const toggleNotificationChange = (event) => {
+        setEnableNotifications(event.target.checked);
+    };
+
+    const handleUsernameInput = (event) => {
+        const newUserValue = update(newUser, {username: {$set: event.target.value}});
+        setNewUser(newUserValue);
+
+        if (usernameServerError !== "")
+            setUsernameServerError("");
+    }
+
+    const handleEmailInput = (event) => {
+        const newUserValue = update(newUser, {email: {$set: event.target.value}});
+        setNewUser(newUserValue);
+
+        if (emailServerError !== "")
+            setEmailServerError("");
+    }
+
+    const handleNewPasswordInput = (event) => {
+        const newUserValue = update(newUser, {password: {$set: event.target.value}});
+        setNewUser(newUserValue);
+    }
+
+    const handleSlackCredentialsInput = (event) => {
+        const newUserValue = update(newUser, {slackCredentials: {$set: event.target.value}});
+        setNewUser(newUserValue);
+    };
 
     return (
         <div className={classes.cardContainer}>
@@ -32,8 +105,11 @@ export default function Register() {
             <Divider className={classes.fullWidthDivider}/>
             <div className={classes.container}>
                 <form noValidate>
-                    {/*todo use repeating technique*/}
                     <TextField
+                        error={getRegisterUsernameError(areErrorsVisible, newUser.username, usernameServerError) !== ''}
+                        helperText={getRegisterUsernameError(areErrorsVisible, newUser.username, usernameServerError)}
+                        value={newUser.username}
+                        onChange={handleUsernameInput}
                         variant="outlined"
                         margin="dense"
                         required
@@ -41,21 +117,27 @@ export default function Register() {
                         id="login"
                         label="Логин"
                         name="login"
-                        autoComplete="username"
-                        //todo is autofocus convenient?
+                        autoComplete='username'
                     />
                     <TextField
+                        error={getRegisterEmailError(areErrorsVisible, newUser.email, emailServerError) !== ''}
+                        helperText={getRegisterEmailError(areErrorsVisible, newUser.email, emailServerError)}
+                        value={newUser.email}
+                        onChange={handleEmailInput}
                         variant="outlined"
                         margin="dense"
                         required
                         fullWidth
-                        name="email"
-                        label="Почта"
-                        type="email"
                         id="email"
+                        label="Почта"
+                        name="email"
                         autoComplete="email"
                     />
                     <TextField
+                        error={getRegisterPasswordError(areErrorsVisible, newUser.password) !== ''}
+                        helperText={getRegisterPasswordError(areErrorsVisible, newUser.password)}
+                        value={newUser.password}
+                        onChange={handleNewPasswordInput}
                         variant="outlined"
                         margin="dense"
                         required
@@ -66,17 +148,34 @@ export default function Register() {
                         id="password"
                         autoComplete="new-password"
                     />
-                    <TextField
-                        variant="outlined"
-                        margin="dense"
-                        required
-                        fullWidth
-                        name="prove-password"
-                        label="Подтвердите пароль"
-                        type="password"
-                        id="prove-password"
-                        autoComplete="new-password"
+                    <FormControlLabel
+                        control={<Checkbox checked={enableNotifications}
+                                           onChange={toggleNotificationChange}
+                                           value="notifications-checkbox" color="primary"/>}
+                        label="Включить уведомления от Slack-бота"
                     />
+                    {
+                        !enableNotifications &&
+                        <Typography variant="body2" color='textSecondary'>
+                            Можно включить позднее в разделе «Настройки»
+                        </Typography>
+                    }
+                    {
+                        enableNotifications &&
+                        <TextField
+                            error={getSlackCredentialsError(areErrorsVisible, enableNotifications, newUser.slackCredentials) !== ''}
+                            helperText={getSlackCredentialsError(areErrorsVisible, enableNotifications, newUser.slackCredentials)}
+                            value={newUser.slackCredentials}
+                            onChange={handleSlackCredentialsInput}
+                            variant="outlined"
+                            margin="dense"
+                            required
+                            fullWidth
+                            id="slack-token"
+                            label="Slack-токен"
+                            name="slack-token">
+                        </TextField>
+                    }
                     <Grid spacing={2} container className={classes.buttonGrid}>
                         <Grid xs item>
                             <Button

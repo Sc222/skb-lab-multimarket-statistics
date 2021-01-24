@@ -1,14 +1,10 @@
-import {ErrorBadRequest, ErrorForbidden} from "../Api/ApiHelper";
-
-export function getPasswordError(areErrorsVisible, shouldChangePassword, password) {
-    if (!areErrorsVisible)
-        return "";
-    if (!shouldChangePassword)
-        return "";
-    if (password === "")
-        return "Введите новый пароль";
-    return "";
-}
+import {
+    ErrorBadRequest,
+    ErrorForbidden,
+    ErrorNotUniqueEmail,
+    ErrorNotUniqueUsername,
+    ErrorNotUniqueUsernameAndEmail
+} from "../Api/ApiHelper";
 
 export function getSlackCredentialsError(areErrorsVisible, enableNotifications, slackCredentials) {
     if (!areErrorsVisible)
@@ -23,15 +19,33 @@ export function getSlackCredentialsError(areErrorsVisible, enableNotifications, 
 
 // Register errors
 
-export function parseUsernameServerError(responseStatus) {
-    if (responseStatus === ErrorBadRequest)
+export function parseServerMailAndUsernameErrors(responseJson) {
+    if(!responseJson.isEmailUnique && !responseJson.isUsernameUnique)
+        return ErrorNotUniqueUsernameAndEmail;
+    if(!responseJson.isEmailUnique)
+        return ErrorNotUniqueEmail;
+    if(!responseJson.isUsernameUnique)
+        return ErrorNotUniqueUsername;
+    return "";
+}
+
+export function parseUsernameServerError(errorCode) {
+    if (errorCode === ErrorNotUniqueUsernameAndEmail || errorCode === ErrorNotUniqueUsername)
         return "Пользователь с таким логином уже существует";
     return "";
 }
 
-export function parseEmailServerError(responseStatus) {
-    if (responseStatus === ErrorBadRequest)
+export function parseEmailServerError(errorCode) {
+    if (errorCode === ErrorNotUniqueUsernameAndEmail || errorCode === ErrorNotUniqueEmail)
         return "Пользователь с такой почтой уже существует";
+    return "";
+}
+
+export function getRegisterPasswordError(areErrorsVisible, password) {
+    if (!areErrorsVisible)
+        return "";
+    if (password === "")
+        return "Введите пароль";
     return "";
 }
 
@@ -39,7 +53,7 @@ export function getRegisterUsernameError(areErrorsVisible, username, usernameSer
     if (!areErrorsVisible)
         return "";
     if (username === "")
-        return "Введите новый логин";
+        return "Введите логин";
     return usernameServerError;
 }
 
@@ -47,26 +61,28 @@ export function getRegisterEmailError(areErrorsVisible, email, emailServerError)
     if (!areErrorsVisible)
         return "";
     if (email === "")
-        return "Введите новую почту";
+        return "Введите почту";
     if (!email.match(/^[\w\-\.]+@([\w\-]+\.)+[\w\-]+$/))
-        return "Введите новую почту в формате example@mail.com";
+        return "Введите почту в формате example@mail.com";
     return emailServerError;
 }
 
 
 // Profile errors
 
-export function getProfileUsernameError(areErrorsVisible, shouldChangeLogin, username) {
+export function getProfileUsernameError(areErrorsVisible, shouldChangeLogin, username, currentUsername, usernameServerError) {
     if (!areErrorsVisible)
         return "";
     if (!shouldChangeLogin)
         return "";
     if (username === "")
         return "Введите новый логин";
-    return "";
+    if (username === currentUsername)
+        return "Введите логин, отличный от текущего";
+    return usernameServerError;
 }
 
-export function getProfileEmailError(areErrorsVisible, shouldChangeEmail, email) {
+export function getProfileEmailError(areErrorsVisible, shouldChangeEmail, email, currentEmail, emailServerError) {
     if (!areErrorsVisible)
         return "";
     if (!shouldChangeEmail)
@@ -75,6 +91,18 @@ export function getProfileEmailError(areErrorsVisible, shouldChangeEmail, email)
         return "Введите новую почту";
     if (!email.match(/^[\w\-\.]+@([\w\-]+\.)+[\w\-]+$/))
         return "Введите новую почту в формате example@mail.com";
+    if (email === currentEmail)
+        return "Введите почту, отличную от текущей";
+    return emailServerError;
+}
+
+export function getProfilePasswordError(areErrorsVisible, shouldChangePassword, password) {
+    if (!areErrorsVisible)
+        return "";
+    if (!shouldChangePassword)
+        return "";
+    if (password === "")
+        return "Введите новый пароль";
     return "";
 }
 

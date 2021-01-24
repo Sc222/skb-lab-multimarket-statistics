@@ -1,3 +1,7 @@
+export function getDefaultUserNoId(){
+    return {username:"",password:"",email:"",slackCredentials:""};
+}
+
 export function getDefaultUser(){
     return {id:"",username:"",password:"",email:"",slackCredentials:""};
 }
@@ -8,9 +12,7 @@ export function getDefaultFieldsStateUser(){
     return user;
 }
 
-//TODO ADD CURRENT PASSWORD AFTER NEOEZOP UPDATE
 //TODO ADD PROFILE PHOTO CHANGES
-//TODO !!! IGNORE PASSWORD IN REQUEST IF IT IS EMPTY
 export function createUserForUpdate(immutableUser, fieldsStateUser, enableNotifications){
     const user = getDefaultUser();
     user.id = immutableUser.id;
@@ -33,3 +35,10 @@ export function createUserForUpdate(immutableUser, fieldsStateUser, enableNotifi
     //PROFILE-PHOTO
     return user;
 }
+
+export function createUserForCreate(user, enableNotifications) {
+    if (!enableNotifications)
+        user.slackCredentials = "";
+    return user;
+}
+

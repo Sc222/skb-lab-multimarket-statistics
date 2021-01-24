@@ -1,4 +1,5 @@
-import {ApiRoot} from "./ApiHelper";
+import {ApiRoot, ErrorConflict} from "./ApiHelper";
+import {parseServerMailAndUsernameErrors} from "../Helpers/ProfileErrorHelper";
 
 export async function getUser(userId) {
     return fetch(`${ApiRoot}/api/User/${userId}`,
@@ -10,7 +11,7 @@ export async function getUser(userId) {
         })
         .then(result => {
             if (result.ok) {
-                if(result.status===200)
+                if (result.status === 200)
                     return result.json();
                 throw new Error("User does not exist: " + result.status);
             }
@@ -18,7 +19,7 @@ export async function getUser(userId) {
         });
 }
 
-export async function createUser(user){
+export async function createUser(user) {
     return fetch(`${ApiRoot}/api/User/create`,
         {
             headers: {
@@ -31,18 +32,28 @@ export async function createUser(user){
         .then(result => {
             if (result.ok) //returns token
                 return result.json();
-            //if(result.status===111) //todo error to json
-            //    throw new Error(result.json());
+            if (result.status.toString() === ErrorConflict)
+                return result.json();
             throw new Error(result.status.toString());
+        })
+        .then(json => {
+
+            console.log("processing json");
+            console.log(json);
+
+            //it's error json
+            if (json.isEmailUnique !== undefined && json.isUsernameUnique !== undefined)
+                throw new Error(parseServerMailAndUsernameErrors(json));
+            return json;
         });
 }
 
-export async function updateUser(user){
+export async function updateUser(user) {
     return fetch(`${ApiRoot}/api/User/update`,
         {
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
+                "Accept": "application/json"
             },
             body: JSON.stringify(user),
             method: "PUT",
@@ -50,6 +61,17 @@ export async function updateUser(user){
         .then(result => {
             if (result.ok)
                 return result.text();
+            if (result.status.toString() === ErrorConflict)
+                return result.json();
             throw new Error(result.status.toString());
+        })
+        .then(json => {
+            console.log("processing json");
+            console.log(json);
+
+            //it's error json
+            if (json.isEmailUnique !== undefined && json.isUsernameUnique !== undefined)
+                throw new Error(parseServerMailAndUsernameErrors(json));
+            return json;
         });
 }
