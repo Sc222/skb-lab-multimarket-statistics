@@ -12,7 +12,7 @@ import Avatar from "@material-ui/core/Avatar";
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
-import {getChipChartColor, MarketsInfo} from "../../Constants/MarketsInfo";
+import {getChipChartColor, MarketsInfoHelper} from "../../Helpers/MarketsInfoHelper";
 import MarketChipStyles from "../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
@@ -317,7 +317,7 @@ export default function ApplicationDashboard(props) {
                                 return <Chip variant="outlined"
                                              clickable
                                              component='a'
-                                             label={MarketsInfo[index].name}
+                                             label={MarketsInfoHelper[index].name}
                                              href={market.link}
                                              target="_blank"
                                              rel='noreferrer'
@@ -325,7 +325,7 @@ export default function ApplicationDashboard(props) {
                                              color={market.disabled ? "default" : "primary"}
                                              avatar={<Avatar className={marketClasses.transparentBg}
                                                              variant='square'
-                                                             src={MarketsInfo[index].getIcon(market.disabled)}/>}/>
+                                                             src={MarketsInfoHelper[index].getIcon(market.disabled)}/>}/>
                             })
                         }
                     </div>
@@ -343,6 +343,9 @@ export default function ApplicationDashboard(props) {
                             <Typography variant="body2">
                                 Уведомления о новых отзывах и оценках
                             </Typography>
+
+                            {/*TODO SELECT APP NOTIFICATIONS FROM props.notifications (and reload them)*/}
+
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container maxWidth='sm' className={classes.containerNotCentered}>
@@ -409,12 +412,12 @@ export default function ApplicationDashboard(props) {
                                 return (!market.disabled &&
                                     <Chip
                                         clickable
-                                        key={MarketsInfo[index].name}
+                                        key={MarketsInfoHelper[index].name}
                                         component='a'
                                         color={selectedChartMarkets[index] ? "primary" : "default"}
                                         style={{backgroundColor: getChipChartColor(theme, index, selectedChartMarkets[index])}}
                                         onClick={() => toggleSelectedMarket(index)}
-                                        label={MarketsInfo[index].name}
+                                        label={MarketsInfoHelper[index].name}
                                     />)
                             })
                             }

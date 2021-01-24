@@ -5,10 +5,16 @@ import appStore from "../images/app-store.svg";
 import appGalleryDisabled from "../images/appgallery-disabled.svg";
 import appGallery from "../images/appgallery.svg";
 
+export const PlayStoreIndex = 0;
+export const AppStoreIndex = 1;
+export const AppGalleryIndex = 2;
+
+export const MarketsLinks = ["https://play.google.com/store/apps/details?id=","https://apps.apple.com/app/id","https://appgallery.huawei.com/#/app/"]
+
 export const MarketsKeys = ["playStore", "appStore", "appGallery"];
 
 // todo use key not index
-export const MarketsInfo = [
+export const MarketsInfoHelper = [
     {
         name: "Play Store",
         description: "Найдите свое приложение в Google Play Store",
@@ -44,5 +50,12 @@ export const MarketsInfo = [
 export function getChipChartColor(theme, index, isSelected) {
     if (!isSelected)
         return theme.palette.action.selected;
-    return MarketsInfo[index].getChartColor(theme);
+    return MarketsInfoHelper[index].getChartColor(theme);
+}
+
+export function createLinkFromId(marketIndex, id){
+    if (id===undefined) return "";
+    if(marketIndex>=0 && marketIndex<MarketsLinks.length)
+        return MarketsLinks[marketIndex]+id;
+    return "";
 }

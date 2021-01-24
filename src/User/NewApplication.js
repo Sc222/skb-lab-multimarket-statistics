@@ -23,7 +23,7 @@ import Avatar from "@material-ui/core/Avatar";
 import InputBase from "@material-ui/core/InputBase";
 import FormSectionStyles from "../Styles/FormSectionStyles";
 import MarketChipStyles from "../Styles/MarketChipStyles";
-import {MarketsInfo} from "../Constants/MarketsInfo";
+import {MarketsInfoHelper} from "../Helpers/MarketsInfoHelper";
 
 const drawerWidth = 260;
 
@@ -329,14 +329,14 @@ export default function NewApplications(props) {
                                     selectedMarkets.map((isSelected, index) => {
                                         return <Chip variant="outlined"
                                                      clickable
-                                                     key={MarketsInfo[index].name}
+                                                     key={MarketsInfoHelper[index].name}
                                                      component='a'
                                                      onClick={() => toggleMarket(index)}
-                                                     label={MarketsInfo[index].name}
+                                                     label={MarketsInfoHelper[index].name}
                                                      color={isSelected ? "primary" : "default"}
                                                      avatar={<Avatar className={marketClasses.transparentBg}
                                                                      variant='square'
-                                                                     src={MarketsInfo[index].getIcon(!isSelected)}/>}/>
+                                                                     src={MarketsInfoHelper[index].getIcon(!isSelected)}/>}/>
                                     })
                                 }
                             </div>
@@ -352,10 +352,10 @@ export default function NewApplications(props) {
                                     <div className={formClasses.cardContainer}>
                                         <div className={formClasses.container}>
                                             <Typography variant="h6">
-                                                {MarketsInfo[index].name}
+                                                {MarketsInfoHelper[index].name}
                                             </Typography>
                                             <Typography variant="body2">
-                                                {MarketsInfo[index].description}
+                                                {MarketsInfoHelper[index].description}
                                             </Typography>
                                         </div>
                                         <Divider className={formClasses.fullWidthDivider}/>

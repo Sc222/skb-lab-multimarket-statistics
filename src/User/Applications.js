@@ -21,7 +21,8 @@ import Hidden from "@material-ui/core/Hidden";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import {Link as RouterLink} from "react-router-dom";
 import MarketChipStyles from "../Styles/MarketChipStyles";
-import {MarketsInfo} from "../Constants/MarketsInfo";
+import {AppGalleryIndex, AppStoreIndex, createLinkFromId, MarketsInfoHelper, PlayStoreIndex} from "../Helpers/MarketsInfoHelper";
+import {getApps} from "../Api/ApiApp";
 
 const drawerWidth = 260;
 
@@ -114,6 +115,11 @@ const useStyles = makeStyles((theme) => ({
 
     primaryRipple: {
         color: theme.palette.primary.light
+    },
+
+    primaryRippleFillHeight:{
+        color: theme.palette.primary.light,
+        height:'100%'
     },
 
     appDescriptionContainer: {
@@ -215,6 +221,7 @@ export default function Applications(props) {
     const classes = useStyles();
     const marketClasses = useMarketChipStyles();
 
+
     useEffect(() => {
         //todo use iuliia-js to transliterate app name into id
 
@@ -224,7 +231,21 @@ export default function Applications(props) {
 
         // todo load applications list by userId from server
         // todo more complex classes in json
-        const apps = {
+
+        console.log(userId);
+
+        getApps(userId)
+            .then(apps => {
+                console.log("load apps");
+                console.log(apps);
+                setApps(apps);
+
+                //TODO !!!show no apps card when apps is []
+
+            })
+            .catch(err => console.log(err.message));
+
+        /*const apps = {
             'sc222': [
                 {
                     icon: demoAppIcon,
@@ -321,17 +342,17 @@ export default function Applications(props) {
             'yakiy_pes': [],
         };
 
-        if (apps[userId] !== undefined) {
-            console.log(apps[userId]);
-        }
-        setApps(apps);
+        //if (apps[userId] !== undefined) {
+        //    console.log(apps[userId]);
+        //}
+        setApps(apps);*/
         //todo show "add new apps menu if no apps"
 
 
         // todo application route params
     }, []);
 
-    function getApplicationsByUsername() {
+    function renderApplicationsGrid() {
         // todo move to separate class and add loading indicator
 
         if (apps === undefined) {
@@ -348,12 +369,13 @@ export default function Applications(props) {
                         </div>
                     </Paper>
                 </Grid>);
-        } else if (apps[userId] !== undefined && apps[userId].length === 0) {
+        } else if (apps.length === 0) {
             return (
                 <Grid item xs={12}>
                     <Paper className={classes.paper}>
                         <div className={classes.paperContainer}>
-                            <Typography component="h2" variant="h6" color="primary">У Вас еще нет приложений</Typography>
+                            <Typography component="h2" variant="h6" color="primary">У Вас еще нет
+                                приложений</Typography>
                             <Typography component="p" variant="body1">
                                 Нажмите на кнопку 'добавить' для того, чтобы создать новое приложение
                             </Typography>
@@ -361,21 +383,22 @@ export default function Applications(props) {
                     </Paper>
                 </Grid>);
             //todo check if logged in userId == userId in link
-        } else if (apps[userId] !== undefined && apps[userId].length !== 0) {
-            return apps[userId].map(app => {
+        } else if (apps.length !== 0) {
+            return apps.map(app => {
                 return (<Grid key={app.id} item xs={12} md={6}>
                         <Paper className={classes.paperNoPadding}>
-                            <ButtonBase className={classes.primaryRipple} component={RouterLink}
+                            <ButtonBase className={classes.primaryRippleFillHeight} component={RouterLink}
                                         to={`./app/${app.id}/dashboard/`}>
 
                                 <div className={classes.appDescriptionContainer}>
                                     <Grid container alignItems='center' spacing={2}>
                                         <Grid item xs={3} sm={2} md={3}>
-                                            <img alt='app icon' src={app.icon}
+                                            {/*TODO SRC = app.picUrl*/}
+                                            <img alt='app icon' src={demoAppIcon}
                                                  style={{maxWidth: "100%", maxHeight: '100%'}}/>
                                         </Grid>
                                         <Grid item xs={9} sm={10} md={9}>
-                                            <Typography component="h5" variant="h6">{app.title}</Typography>
+                                            <Typography component="h5" variant="h6">{app.name}</Typography>
                                             <Typography component="p" variant="body1">
                                                 {app.description}
                                             </Typography>
@@ -385,22 +408,47 @@ export default function Applications(props) {
                             </ButtonBase>
                             <Divider className={classes.fullWidthDivider}/>
                             <div className={marketClasses.marketsContainer}>
-                                {
-                                    app.markets.map((market, index) => {
-                                        return <Chip variant="outlined"
-                                                     clickable
-                                                     component='a'
-                                                     label={MarketsInfo[index].name}
-                                                     href={market.link}
-                                                     target="_blank"
-                                                     rel='noreferrer'
-                                                     disabled={market.disabled}
-                                                     color={market.disabled ? "default" : "primary"}
-                                                     avatar={<Avatar className={marketClasses.transparentBg}
-                                                                     variant='square'
-                                                                     src={MarketsInfo[index].getIcon(market.disabled)}/>}/>
-                                    })
-                                }
+                                {/*play store*/}
+                                <Chip variant="outlined"
+                                      clickable
+                                      component='a'
+                                      label={MarketsInfoHelper[PlayStoreIndex].name}
+                                      href={createLinkFromId(PlayStoreIndex, app.playMarketId)}
+                                      target="_blank"
+                                      rel='noreferrer'
+                                      disabled={app.playMarketId === undefined}
+                                      color={app.playMarketId === undefined ? "default" : "primary"}
+                                      avatar={<Avatar className={marketClasses.transparentBg}
+                                                      variant='square'
+                                                      src={MarketsInfoHelper[PlayStoreIndex].getIcon(app.playMarketId === undefined)}/>}/>
+
+                                {/*app store*/}
+                                <Chip variant="outlined"
+                                      clickable
+                                      component='a'
+                                      label={MarketsInfoHelper[AppStoreIndex].name}
+                                      href={createLinkFromId(AppStoreIndex, app.appStoreId)}
+                                      target="_blank"
+                                      rel='noreferrer'
+                                      disabled={app.appStoreId === undefined}
+                                      color={app.appStoreId === undefined ? "default" : "primary"}
+                                      avatar={<Avatar className={marketClasses.transparentBg}
+                                                      variant='square'
+                                                      src={MarketsInfoHelper[AppStoreIndex].getIcon(app.appStoreId === undefined)}/>}/>
+
+                                {/*appgallery*/}
+                                <Chip variant="outlined"
+                                      clickable
+                                      component='a'
+                                      label={MarketsInfoHelper[AppGalleryIndex].name}
+                                      href={createLinkFromId(AppGalleryIndex, app.appGalleryId)}
+                                      target="_blank"
+                                      rel='noreferrer'
+                                      disabled={app.appGalleryId === undefined}
+                                      color={app.appGalleryId === undefined ? "default" : "primary"}
+                                      avatar={<Avatar className={marketClasses.transparentBg}
+                                                      variant='square'
+                                                      src={MarketsInfoHelper[AppGalleryIndex].getIcon(app.appGalleryId === undefined)}/>}/>
                             </div>
                         </Paper>
                     </Grid>
@@ -441,7 +489,7 @@ export default function Applications(props) {
                     </Paper>
                 </Grid>
 
-                {getApplicationsByUsername()}
+                {renderApplicationsGrid()}
 
             </Grid>
 
