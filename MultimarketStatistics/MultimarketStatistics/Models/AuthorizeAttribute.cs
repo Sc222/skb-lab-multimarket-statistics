@@ -13,8 +13,8 @@ namespace MultimarketStatistics.Models
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var user = (User)context.HttpContext.Items["User"];
-            if (user == null)
+            var userId = (Guid?)context.HttpContext.Items["UserId"];
+            if (userId == null)
             {
                 context.Result = new JsonResult(new
                 {

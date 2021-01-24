@@ -24,24 +24,32 @@ namespace MultimarketStatistics.Controllers
 
         //[Authorize]
         [HttpGet("{userId}")]
-        public NotificationContract[] GetUserNotifications(Guid userId)
+        public ActionResult<NotificationContract[]> GetUserNotifications(Guid userId)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
             var notifications = notificationService.GetNotificationsByUser(userId);
             return mapper.Map<NotificationContract[]>(notifications);
         }
 
         //[Authorize]
-        [HttpDelete]
-        public void Delete([FromQuery(Name = "id")] IEnumerable<Guid> notificationIds)
+        [HttpDelete("{userId}")]
+        public ActionResult Delete(Guid userId, [FromQuery(Name = "id")] IEnumerable<Guid> notificationIds)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
             notificationService.Delete(notificationIds.Select(id => new Notification {Id = id}));
+            return new OkResult();
         }
 
         //[Authorize]
-        [HttpDelete("{userId}")]
-        public void DeleteByUser(Guid userId)
+        [HttpDelete("{userId}/all")]
+        public ActionResult DeleteByUser(Guid userId)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
             notificationService.DeleteByUser(userId);
+            return new OkResult();
         }
     }
 }

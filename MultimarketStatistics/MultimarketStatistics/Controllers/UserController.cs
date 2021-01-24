@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using Domain.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultimarketStatistics.Models;
 using Storage.Entities;
@@ -21,7 +22,7 @@ namespace MultimarketStatistics.Controllers
         }
 
         [HttpPost("create")]
-        public Guid Create([FromBody] UserContract webUser)
+        public ActionResult<Guid> Create([FromBody] UserContract webUser)
         {
             var user = mapper.Map<User>(webUser);
             return userService.Create(user);
@@ -29,22 +30,35 @@ namespace MultimarketStatistics.Controllers
 
         //[Authorize]
         [HttpPut("update")]
-        public void Update([FromBody] UserContract webUser)
+        public ActionResult Update([FromBody] UserUpdateContract webUser)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
+            var userToUpdate = userService.Get(webUser.Id);
+
+            if (string.IsNullOrEmpty(webUser.CurrentPassword))
+                return BadRequest();
+
+            if (userToUpdate.Password != webUser.CurrentPassword)
+                return StatusCode(StatusCodes.Status403Forbidden);
+
             var user = mapper.Map<User>(webUser);
             userService.Update(user);
+            return Ok();
         }
 
         //[Authorize]
         [HttpGet("{userId}")]
-        public UserContract Get(Guid userId)
+        public ActionResult<UserContract> Get(Guid userId)
         {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
             var user = userService.Get(userId);
             return mapper.Map<UserContract>(user);
         }
 
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] UserContract user)
+        public ActionResult Authenticate([FromBody] UserContract user)
         {
             var response = userService.Authenticate(mapper.Map<User>(user));
 

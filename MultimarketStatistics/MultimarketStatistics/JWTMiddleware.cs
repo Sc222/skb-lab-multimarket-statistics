@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Domain.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MultimarketStatistics
@@ -20,22 +17,22 @@ namespace MultimarketStatistics
             this.next = next;
         }
 
-        public async Task Invoke(HttpContext context, UserService userService)
+        public async Task Invoke(HttpContext context)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-
             if (token != null)
-                AttachUserToContext(context, userService, token);
+                AttachUserToContext(context, token);
 
             await next(context).ConfigureAwait(false);
         }
 
-        private void AttachUserToContext(HttpContext context, UserService userService, string token)
+        private void AttachUserToContext(HttpContext context, string token)
         {
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes("absolutelysecretkey)))");
+                
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
@@ -48,7 +45,7 @@ namespace MultimarketStatistics
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
 
-                context.Items["User"] = userService.Get(userId);
+                context.Items["UserId"] = userId;
             }
             catch
             {
