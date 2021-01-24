@@ -264,7 +264,6 @@ export default function UserSection() {
     }
 
     useEffect(() => {
-        // todo load info by userId
         console.log(userId);
 
         Promise.all([getNotifications(userId), getUser(userId)])
@@ -307,7 +306,6 @@ export default function UserSection() {
                         Multimarket Statistics
                     </Typography>
 
-                    {/*todo show notifications menu on click*/}
                     <IconButton color="inherit" onClick={(event) => toggleNotificationsPopover(event)}
                                 aria-describedby='notification-popover'>
                         <Badge badgeContent={notifications?.length} color="secondary">
@@ -340,7 +338,6 @@ export default function UserSection() {
                 }}
             >
                 <div className={classes.popover}>
-                    {/* todo add button to mark notifications as viewed \ delete it */}
                     {
                         notifications?.map((notification, index) => {
                             return (
@@ -424,7 +421,6 @@ export default function UserSection() {
                     </div>
                     <Divider className={classes.fullWidth}/>
                     <List dense>
-                        {/* todo use repeating technique */}
                         <ListItem classes={{selected: classes.mainItemSelected}}
                                   className={classes.mainItem}
                                   onClick={() => setProfilePopoverAnchor(null)}

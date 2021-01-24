@@ -31,8 +31,8 @@ export default function FormSections() {
                 </Toolbar>
             </AppBar>
             <main className={classes.content}>
-                <div className={classes.appBarSpacer}/>
-                <Container maxWidth="sm">
+                <Container maxWidth="sm" className={classes.containerWithYPadding}>
+                    <div className={classes.appBarSpacer}/>
                     <Paper elevation={2} className={classes.paper}>
                         <RouteSwitch>
                             <Route path={`${HomepageUrl}/login/`} component={Login}/>

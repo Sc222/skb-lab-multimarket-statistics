@@ -32,6 +32,15 @@ export default function FormSectionStyles(theme) {
             paddingRight: theme.spacing(2),
             width: '100%'
         },
+
+        containerWithYPadding:{
+            paddingTop: theme.spacing(2),
+            paddingBottom: theme.spacing(2),
+            paddingLeft: theme.spacing(2),
+            paddingRight: theme.spacing(2),
+            width: '100%'
+        },
+
         cardContainer: {
             width: '100%'
         },
