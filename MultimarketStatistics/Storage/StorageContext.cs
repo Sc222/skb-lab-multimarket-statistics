@@ -33,7 +33,7 @@ namespace Storage
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.SlackCredentials)
-                .IsUnique();
+                .IsUnique(false);
 
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.App)
