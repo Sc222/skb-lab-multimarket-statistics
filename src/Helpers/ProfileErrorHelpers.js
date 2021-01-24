@@ -1,3 +1,5 @@
+import {ErrorBadRequest, ErrorForbidden} from "../Api/ApiHelper";
+
 export function getUsernameError(areErrorsVisible, shouldChangeLogin, username) {
     if(!areErrorsVisible)
         return "";
@@ -30,10 +32,18 @@ export function getNewPasswordError(areErrorsVisible, shouldChangePassword, pass
     return "";
 }
 
-export function getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, currentPassword, currentPasswordServerError) {
+export function getCurrentPasswordServerError(responseStatus){
+    if(responseStatus===ErrorBadRequest)
+        return "Введите текущий пароль";
+    if(responseStatus===ErrorForbidden)
+        return "Неверный пароль";
+    return "";
+}
+
+export function getCurrentPasswordError(areErrorsVisible, shouldTypeCurrentPassword, currentPassword, currentPasswordServerError) {
     if(!areErrorsVisible)
         return "";
-    if (!shouldChangePassword && !shouldChangeEmail && !shouldChangeLogin)
+    if (!shouldTypeCurrentPassword)
         return "";
     if(currentPassword==="")
         return "Введите текущий пароль";

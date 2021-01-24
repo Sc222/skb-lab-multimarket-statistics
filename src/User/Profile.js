@@ -34,6 +34,7 @@ import {getUser, updateUser} from "../Api/ApiUser";
 import {createNewUser, getDefaultFieldsStateUser, getDefaultUser} from "../Api/ApiUserHelper";
 import {
     getCurrentPasswordError,
+    getCurrentPasswordServerError,
     getEmailError,
     getNewPasswordError,
     getSlackCredentialsError,
@@ -274,8 +275,8 @@ export default function Profile(props) {
     const [shouldChangeLogin, setShouldChangeLogin] = React.useState(false);
     const [shouldChangeEmail, setShouldChangeEmail] = React.useState(false);
     const [shouldChangePassword, setShouldChangePassword] = React.useState(false);
-    const [fieldsStateUser, setFieldsStateUser] = React.useState(getDefaultFieldsStateUser()); //fieldsStateUser from server that handles field states
-    const [currentUser, setCurrentUser] = React.useState(getDefaultUser()); //current user from server
+    const [fieldsStateUser, setFieldsStateUser] = React.useState(getDefaultFieldsStateUser());  // fieldsStateUser from server that handles field states
+    const [currentUser, setCurrentUser] = React.useState(getDefaultUser());                     // current user from server
     const [enableNotifications, setEnableNotifications] = React.useState(false);
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
     const [currentPasswordServerError, setCurrentPasswordServerError] = React.useState("");
@@ -283,24 +284,12 @@ export default function Profile(props) {
     const classes = useStyles();
     const formClasses = useFormStyles();
 
-
     //TODO CHANGE PROFILE PHOTO LOGIC
     function editProfile() {
         setErrorsVisible(true);
-
         setCurrentPasswordServerError("");
-        console.log(getUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username)
-            + getEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email)
-            + getNewPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)
-            + getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, fieldsStateUser.currentPassword, currentPasswordServerError)
-            + getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials));
-        if (!hasErrors(true)) {
-            //make post request
-
-            console.log("SEND");
-
+        if (!hasErrors(true, "")) {
             const newUser = createNewUser(currentUser, fieldsStateUser, enableNotifications);
-
             updateUser(newUser)
                 .then(result => {
                     console.log(result);
@@ -309,7 +298,7 @@ export default function Profile(props) {
                     //save success so current user is equal to new user
                     setCurrentUser(newUser);
                     props.updatePopoverUser(newUser);
-                    
+
                     //slackcredentials saved, other values are "" by default
                     //reset fields
                     const newFieldStateUser = getDefaultFieldsStateUser();
@@ -320,19 +309,11 @@ export default function Profile(props) {
                     setShouldChangeEmail(false);
                     setShouldChangePassword(false);
                 })
-                .catch(err => console.log(err.message));
-
-
-            //todo MAKE PUT REQUEST AND CHECK THAT NO ERRORS
-            //(or set error if there are any)
-            if (getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, fieldsStateUser.currentPassword, currentPasswordServerError) === "") {
-
-            }
+                .catch(err => {
+                    console.log(err.message);
+                    setCurrentPasswordServerError(getCurrentPasswordServerError(err.message));
+                });
         }
-        //todo validate input and check if userId is unique,
-        //todo  make post request to edit profile and redirect to apps section if everything is ok
-        //todo !!! TYPE CURRENT PASSWORD TO CHANGE EMAIL OR PASSWORD
-        console.log('update profile');
     }
 
     const handleStatusSuccessClose = (event, reason) => {
@@ -359,52 +340,41 @@ export default function Profile(props) {
 
     const handleUsernameInput = (event) => {
         const newUser = update(fieldsStateUser, {username: {$set: event.target.value}});
-        console.log("old: " + fieldsStateUser.username);
-        console.log("new: " + newUser.username);
         setFieldsStateUser(newUser);
     }
 
     const handleEmailInput = (event) => {
         const newUser = update(fieldsStateUser, {email: {$set: event.target.value}});
-        console.log("old: " + fieldsStateUser.email);
-        console.log("new: " + newUser.email);
         setFieldsStateUser(newUser);
     }
 
     const handleNewPasswordInput = (event) => {
         const newUser = update(fieldsStateUser, {password: {$set: event.target.value}});
-        console.log("old: " + fieldsStateUser.password);
-        console.log("new: " + newUser.password);
         setFieldsStateUser(newUser);
     }
 
     const handleCurrentPasswordInput = (event) => {
         const newUser = update(fieldsStateUser, {currentPassword: {$set: event.target.value}});
-        console.log("old: " + fieldsStateUser.currentPassword);
-        console.log("new: " + newUser.currentPassword);
         setFieldsStateUser(newUser);
     }
 
     const handleSlackCredentialsInput = (event) => {
-        console.log("input slack notifications !!!");
         const newUser = update(fieldsStateUser, {slackCredentials: {$set: event.target.value}});
-        console.log("old: " + fieldsStateUser.slackCredentials);
-        console.log("new: " + newUser.slackCredentials);
         setFieldsStateUser(newUser);
     };
 
-    function hasErrors(areErrorsVisible) {
+    function hasErrors(areErrorsVisible, currentPasswordServerError) {
         return getUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username)
             + getEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email)
             + getNewPasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)
-            + getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, fieldsStateUser.currentPassword, currentPasswordServerError)
+            + getCurrentPasswordError(areErrorsVisible, shouldTypeCurrentPassword(), fieldsStateUser.currentPassword, currentPasswordServerError)
             + getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials) !== "";
     }
 
     useEffect(() => {
         getUser(userId)
             .then(result => {
-                result.password=""; //add empty password as server doesn't return it
+                result.password = ""; //add empty password as server doesn't return it
                 setCurrentUser(result);
                 setEnableNotifications(result.slackCredentials !== "");
 
@@ -415,6 +385,10 @@ export default function Profile(props) {
             .catch(err => console.log(err.message)); //todo if fieldsStateUser is wrong -> redirect to homepage
     }, []);
 
+
+    function shouldTypeCurrentPassword() {
+        return shouldChangeLogin || shouldChangeEmail || shouldChangePassword || enableNotifications || (currentUser.slackCredentials !== "" && !enableNotifications);
+    }
 
     return (
         <Container maxWidth="md" className={classes.container}>
@@ -508,17 +482,17 @@ export default function Profile(props) {
                         <div className={formClasses.cardContainer}>
                             <div className={formClasses.container}>
                                 <Typography variant="h6">
-                                    Данные для входа
+                                    Редактирование профиля
                                 </Typography>
                                 <Typography variant="body2">
-                                    Настройте логин, смените почту или пароль
+                                    Настройте данные вашего профиля
                                 </Typography>
                             </div>
                             <Divider className={formClasses.fullWidthDivider}/>
                             <Container maxWidth='sm' className={classes.containerNotCentered}>
                                 <Box>
                                     <FormControlLabel
-                                        label="Сменить логин?"
+                                        label="Сменить логин"
                                         control={<Checkbox
                                             checked={shouldChangeLogin}
                                             onChange={toggleLoginChange}
@@ -546,7 +520,7 @@ export default function Profile(props) {
 
                                 <Box>
                                     <FormControlLabel
-                                        label="Сменить почту?"
+                                        label="Сменить почту"
                                         control={<Checkbox
                                             checked={shouldChangeEmail}
                                             onChange={toggleEmailChange}
@@ -574,7 +548,7 @@ export default function Profile(props) {
 
                                 <Box>
                                     <FormControlLabel
-                                        label="Сменить пароль?"
+                                        label="Сменить пароль"
                                         control={
                                             <Checkbox
                                                 checked={shouldChangePassword}
@@ -601,46 +575,6 @@ export default function Profile(props) {
                                         />
                                     }
                                 </Box>
-                                {(shouldChangeLogin || shouldChangeEmail || shouldChangePassword) &&
-                                <Box className={classes.sectionMarginTop}>
-                                    <Typography variant='subtitle1' gutterBottom className={classes.textWithIcon}>
-                                        <LockRounded className={classes.extendedIcon} color='primary'/>
-                                        Для смены данных требуется пароль
-                                    </Typography>
-                                    <TextField
-                                        error={getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, fieldsStateUser.currentPassword, currentPasswordServerError) !== ''}
-                                        helperText={getCurrentPasswordError(areErrorsVisible, shouldChangePassword, shouldChangeEmail, shouldChangeLogin, fieldsStateUser.currentPassword, currentPasswordServerError)}
-                                        value={fieldsStateUser.currentPassword}
-                                        onChange={handleCurrentPasswordInput}
-                                        variant="outlined"
-                                        margin="dense"
-                                        required
-                                        fullWidth
-                                        id="password-current-password"
-                                        label="Текущий пароль"
-                                        type="password"
-                                        name="password-current-password"
-                                        autoComplete="current-password"
-                                    />
-                                </Box>}
-                            </Container>
-                        </div>
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Paper elevation={1} className={classes.paper}>
-                        <div className={formClasses.cardContainer}>
-                            <div className={formClasses.container}>
-                                <Typography variant="h6">
-                                    Slack уведомления
-                                </Typography>
-                                <Typography variant="body2">
-                                    Настройте Slack-бота для получения уведомлений
-                                </Typography>
-                            </div>
-                            <Divider className={formClasses.fullWidthDivider}/>
-                            <Container maxWidth='sm' className={classes.containerNotCentered}>
                                 <Box>
                                     <FormControlLabel
                                         control={<Checkbox checked={enableNotifications}
@@ -665,6 +599,28 @@ export default function Profile(props) {
                                         </TextField>
                                     }
                                 </Box>
+                                {shouldTypeCurrentPassword() &&
+                                <Box className={classes.sectionMarginTop}>
+                                    <Typography variant='subtitle1' gutterBottom className={classes.textWithIcon}>
+                                        <LockRounded className={classes.extendedIcon} color='primary'/>
+                                        Для смены данных требуется пароль
+                                    </Typography>
+                                    <TextField
+                                        error={getCurrentPasswordError(areErrorsVisible, shouldTypeCurrentPassword(), fieldsStateUser.currentPassword, currentPasswordServerError) !== ''}
+                                        helperText={getCurrentPasswordError(areErrorsVisible, shouldTypeCurrentPassword(), fieldsStateUser.currentPassword, currentPasswordServerError)}
+                                        value={fieldsStateUser.currentPassword}
+                                        onChange={handleCurrentPasswordInput}
+                                        variant="outlined"
+                                        margin="dense"
+                                        required
+                                        fullWidth
+                                        id="password-current-password"
+                                        label="Текущий пароль"
+                                        type="password"
+                                        name="password-current-password"
+                                        autoComplete="current-password"
+                                    />
+                                </Box>}
                             </Container>
                         </div>
                     </Paper>

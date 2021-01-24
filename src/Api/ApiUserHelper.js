@@ -21,7 +21,7 @@ export function createNewUser(immutableUser, fieldsStateUser, enableNotification
         user.slackCredentials = fieldsStateUser.slackCredentials!==""? fieldsStateUser.slackCredentials : immutableUser.slackCredentials;
     else
         user.slackCredentials = "";
-    //user.currentPassword=fieldsStateUser.currentPassword
+    user.currentPassword=fieldsStateUser.currentPassword;
     //PROFILE-PHOTO
     return user;
 }

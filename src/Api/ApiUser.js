@@ -18,12 +18,29 @@ export async function getUser(userId) {
         });
 }
 
+export async function createUser(user){
+    return fetch(`${ApiRoot}/api/User/create`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            },
+            body: JSON.stringify(user),
+            method: "POST",
+        })
+        .then(result => {
+            if (result.ok) //returns token
+                return result.text();
+            throw new Error(result.status.toString());
+        });
+}
+
 export async function updateUser(user){
     return fetch(`${ApiRoot}/api/User/update`,
         {
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "application/json"
+                "Accept": "text/plain"
             },
             body: JSON.stringify(user),
             method: "PUT",
@@ -31,6 +48,6 @@ export async function updateUser(user){
         .then(result => {
             if (result.ok)
                 return result.text();
-            throw new Error("User update error: " + result.status);
+            throw new Error(result.status.toString());
         });
 }
