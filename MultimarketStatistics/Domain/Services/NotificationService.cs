@@ -17,7 +17,15 @@ namespace Domain.Services
 
         public Notification[] GetNotificationsByUser(Guid userId)
         {
-            return notificationRepository.Find(n => n.User.Id == userId);
+            return notificationRepository.Find(n => n.User.Id == userId)
+                .OrderByDescending(n => n.Date)
+                .ToArray();
+        }
+
+        public Dictionary<Guid, Notification[]> GetAllByApps(IEnumerable<App> apps)
+        {
+            return notificationRepository.Find(n => apps.Contains(n.App)).GroupBy(n => n.App.Id)
+                .ToDictionary(g => g.Key, g => g.ToArray());
         }
 
         public Notification[] GetNotCheckedNotificationsByUsers(Guid[] userIds)
@@ -49,7 +57,8 @@ namespace Domain.Services
                     App = app,
                     User = app.User,
                     Title = $"New {g.Key.ToStringMarket()} reviews!",
-                    Text = $"New {g.Count()} reviews for {app.Name}"
+                    Text = $"New {g.Count()} reviews for {app.Name}",
+                    Date = DateTime.Now
                 });
         }
     }

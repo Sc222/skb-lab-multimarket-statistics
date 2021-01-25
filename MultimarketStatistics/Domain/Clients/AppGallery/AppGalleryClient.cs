@@ -102,7 +102,7 @@ namespace Domain.Clients.AppGallery
             {
                 var uri = GetAppInfoRequestUri(app.AppGalleryId);
                 var appInfo = await RestClient.GetAsync<Root>(client, uri).ConfigureAwait(false);
-                return appInfo.LayoutData.First().DataList.First().Icon;
+                return appInfo.LayoutData.First().DataList.First().Icon ?? appInfo.LayoutData.First().DataList.First().IcoUri;
             }
             catch (Exception e)
             {

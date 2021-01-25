@@ -78,6 +78,16 @@ namespace MultimarketStatistics.Controllers
             return mapper.Map<UserContract>(user);
         }
 
+        //[Authorize]
+        [HttpDelete("{userId}")]
+        public ActionResult Delete(Guid userId)
+        {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
+            userService.Delete(userId);
+            return Ok();
+        }
+
         [HttpPost("authenticate")]
         public ActionResult<AuthResult> Authenticate([FromBody] UserContract user)
         {

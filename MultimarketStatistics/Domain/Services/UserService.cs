@@ -12,10 +12,12 @@ namespace Domain.Services
     public class UserService
     {
         private readonly IRepository<User> userRepository;
+        private readonly AppService appService;
 
-        public UserService(IRepository<User> userRepository)
+        public UserService(IRepository<User> userRepository, AppService appService)
         {
             this.userRepository = userRepository;
+            this.appService = appService;
         }
 
         public Guid Create(User user)
@@ -50,9 +52,11 @@ namespace Domain.Services
             userRepository.Update(user);
         }
 
-        public void Delete(User user)
+        public void Delete(Guid userId)
         {
-            userRepository.Delete(user);
+            var apps = appService.GetAppsByUser(userId);
+            appService.DeleteRange(apps);
+            userRepository.Delete(userId);
         }
 
         public (User, string)? Authenticate(string username, string password)

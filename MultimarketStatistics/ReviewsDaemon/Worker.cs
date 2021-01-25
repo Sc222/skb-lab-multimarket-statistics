@@ -38,12 +38,12 @@ namespace ReviewsDaemon
 
                 var apps = appService.GetAll();
                 var reviews = reviewService.GetAllByApps(apps);
-                var lastRecordedReviewsIds = reviews.ToDictionary(kvp => kvp.Key.Id, kvp => kvp.Value
+                var lastRecordedReviewsIds = reviews.ToDictionary(kvp => kvp.Key, kvp => kvp.Value
                     .GroupBy(r => r.Market)
                     .ToDictionary(g => g.Key, g => g
                         .OrderByDescending(r => r.Date)
                         .First()));
-                var appStoreReviewsByApp = reviews.ToDictionary(kvp => kvp.Key.Id,
+                var appStoreReviewsByApp = reviews.ToDictionary(kvp => kvp.Key,
                     kvp => kvp.Value.Where(r => r.Market == MarketType.AppStore).ToArray());
 
                 var reviewsToAdd = new List<Review>();
