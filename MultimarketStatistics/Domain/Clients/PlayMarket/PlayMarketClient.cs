@@ -9,7 +9,7 @@ namespace Domain.Clients.PlayMarket
 {
     public class PlayMarketClient : IMarketClient
     {
-        private const string playMarketApiUri = "http://localhost:3000/api/playMarket/apps/";
+        private const string apiUrl = "http://localhost:3000/api/playMarket/apps/";
         private const int maxPages = 4;
         private const int ReviewsPerPage = 150;
 
@@ -43,8 +43,8 @@ namespace Domain.Clients.PlayMarket
             try
             {
                 using var client = RestClient.GetClient();
-                var uri = CreateRatingUri(app.PlayMarketId);
-                var ratings = await RestClient.GetAsync<PlayMarketRatings>(client, uri).ConfigureAwait(false);
+                var uri = CreateAppInfoUri(app.PlayMarketId);
+                var ratings = await RestClient.GetAsync<PlayMarketApp>(client, uri).ConfigureAwait(false);
                 return ConvertToRating(ratings, app);
             }
             catch (Exception e)
@@ -63,7 +63,7 @@ namespace Domain.Clients.PlayMarket
 
         private string CreateReviewUri(string appId, string locale, string pageToken = null)
         {
-            return playMarketApiUri +
+            return apiUrl +
                    $"{appId}/reviews?lang={locale}&paginate=true&{(pageToken == null ? "" : "nextPaginationToken=" + pageToken)}";
         }
 
@@ -81,12 +81,12 @@ namespace Domain.Clients.PlayMarket
             });
         }
 
-        private string CreateRatingUri(string appId)
+        private string CreateAppInfoUri(string appId)
         {
-            return playMarketApiUri + appId;
+            return apiUrl + appId;
         }
 
-        private Rating ConvertToRating(PlayMarketRatings ratings, App app)
+        private Rating ConvertToRating(PlayMarketApp ratings, App app)
         {
             var rating = ratings.Rating;
             return new Rating
@@ -101,6 +101,22 @@ namespace Domain.Clients.PlayMarket
                 TwoStarsCount = rating.TwoStars,
                 OneStarsCount = rating.OneStars
             };
+        }
+
+        public async Task<string> GetAppPicUrl(App app)
+        {
+            using var client = RestClient.GetClient();
+            try
+            {
+                var requestUri = CreateAppInfoUri(app.PlayMarketId);
+                var appInfo = await RestClient.GetAsync<PlayMarketApp>(client, requestUri).ConfigureAwait(false);
+                return appInfo.IconUrl;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
     }
 }

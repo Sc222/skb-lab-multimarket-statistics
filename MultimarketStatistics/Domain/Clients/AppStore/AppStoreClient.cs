@@ -8,7 +8,8 @@ namespace Domain.Clients.AppStore
 {
     public class AppStoreClient : IMarketClient
     {
-        private const string iTunesApiUrl = "https://itunes.apple.com/ru/rss/customerreviews";
+        private const string reviewApiUrl = "https://itunes.apple.com/ru/rss/customerreviews";
+        private const string appInfoUrl = "https://itunes.apple.com/lookup";
         private const int MaxITunesRssPages = 10;
         private const int ReviewsPerPage = 50;
 
@@ -42,7 +43,7 @@ namespace Domain.Clients.AppStore
 
         private string CreateReviewUri(int page, string appId, string locale)
         {
-            return iTunesApiUrl + $"/{locale}/rss/customerreviews/page={page}/id={appId}/sortby=mostrecent/xml";
+            return reviewApiUrl + $"/{locale}/rss/customerreviews/page={page}/id={appId}/sortby=mostrecent/xml";
         }
 
         private IEnumerable<Review> ConvertToReviews(AppStoreFeed reviewsList, App app)
@@ -59,5 +60,24 @@ namespace Domain.Clients.AppStore
                 Version = r.Version
             });
         }
+
+        public async Task<string> GetAppPicUrl(App app)
+        {
+            using var client = RestClient.GetClient();
+            try
+            {
+                var uri = GetAppInfoRequestUri(app.AppStoreId);
+                var info = await RestClient.GetAsync<AppStoreAppResult>(client, uri).ConfigureAwait(false);
+                return info.Result.First().PicUrl;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        private string GetAppInfoRequestUri(string appId) =>
+            appInfoUrl + $"?id={appId}";
     }
 }

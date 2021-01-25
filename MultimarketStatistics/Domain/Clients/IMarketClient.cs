@@ -9,5 +9,7 @@ namespace Domain
         Task<List<Review>> GetAppReviewsAsync(App app, int requestedPagesNumber);
 
         Task<Rating> GetAppRatingAsync(App app);
+
+        Task<string> GetAppPicUrl(App app);
     }
 }

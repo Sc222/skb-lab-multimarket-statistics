@@ -8,8 +8,11 @@ namespace Domain.Clients.AppGallery
 {
     public class AppGalleryClient : IMarketClient
     {
-        private const string apiUrl =
+        private const string reviewApiUrl =
             "https://web-drru.hispace.dbankcloud.cn/uowap/index?method=internal.user.commenList3";
+
+        private const string appInfoApiUrl =
+            "https://web-drru.hispace.dbankcloud.cn/uowap/index?method=internal.getTabDetail";
 
         private const int MaxReviewPages = 4;
         private const int ReviewsPerPage = 25;
@@ -42,7 +45,7 @@ namespace Domain.Clients.AppGallery
             using var client = RestClient.GetClient();
             try
             {
-                var uri = apiUrl + $"&appid={app.AppGalleryId}&page=1";
+                var uri = reviewApiUrl + $"&appid={app.AppGalleryId}&page=1";
                 var ratingsList = await RestClient.GetAsync<AppGalleryRatingList>(client, uri).ConfigureAwait(false);
                 return ConvertToRating(ratingsList, app);
             }
@@ -55,7 +58,7 @@ namespace Domain.Clients.AppGallery
 
         private string CreateReviewUri(int page, string appId)
         {
-            return apiUrl + $"&reqPageNum={page}&maxResults=25&appid={appId}";
+            return reviewApiUrl + $"&reqPageNum={page}&maxResults=25&appid={appId}";
         }
 
         //Вынести в отдельный класс??
@@ -91,5 +94,24 @@ namespace Domain.Clients.AppGallery
                 Market = MarketType.AppGallery
             };
         }
+
+        public async Task<string> GetAppPicUrl(App app)
+        {
+            using var client = RestClient.GetClient();
+            try
+            {
+                var uri = GetAppInfoRequestUri(app.AppGalleryId);
+                var appInfo = await RestClient.GetAsync<Root>(client, uri).ConfigureAwait(false);
+                return appInfo.LayoutData.First().DataList.First().Icon;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        private string GetAppInfoRequestUri(string appId) =>
+            appInfoApiUrl + $"&uri=app|{appId}";
     }
 }
