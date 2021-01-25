@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Storage.Entities
 {
@@ -13,5 +14,7 @@ namespace Storage.Entities
         public bool IsChecked { get; set; }
 
         public string Title { get; set; }
+
+        public DateTime Date { get; set; }
     }
 }

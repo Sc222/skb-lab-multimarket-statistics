@@ -13,5 +13,7 @@ namespace MultimarketStatistics.Models
         public Guid AppId { get; set; }
 
         public Guid Id { get; set; }
+
+        public DateTime Date { get; set; }
     }
 }
