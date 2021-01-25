@@ -21,7 +21,6 @@ import ApplicationSection from "./Application/ApplicationSection";
 import NewApplication from "./NewApplication";
 import Popover from "@material-ui/core/Popover";
 import Divider from "@material-ui/core/Divider";
-import {NewReleasesRounded} from "@material-ui/icons";
 import Box from "@material-ui/core/Box";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItem from "@material-ui/core/ListItem";
@@ -190,10 +189,12 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: theme.spacing(1.5),
         paddingLeft: theme.spacing(1.5),
         paddingTop: theme.spacing(1),
-        paddingBottom: theme.spacing(1),
+        paddingBottom: theme.spacing(1)
     },
 
-
+    marginLeftSmall: {
+        marginLeft: theme.spacing(1.5)
+    }
 }));
 
 export default function UserSection() {
@@ -267,12 +268,14 @@ export default function UserSection() {
 
         //TODO LINKS TO APP ON NOTIFICATION CLICK
         Promise.all([getNotifications(userId), getUser(userId)])
-            .then(([notifications,user]) => {
+            .then(([notifications, user]) => {
+                console.log("load notifications");
+                console.log(notifications);
                 setNotifications(notifications);
                 setUser(user);
                 //if one of values is empty -> TODO SHOW ERROR ALERT
             })
-            .catch(err=>console.log(err.message)); //todo if user is wrong -> redirect to homepage
+            .catch(err => console.log(err.message)); //todo if user is wrong -> redirect to homepage
     }, []);
 
     let location = useLocation();
@@ -344,21 +347,32 @@ export default function UserSection() {
                                 <div key={notification.id}>
                                     <div className={classes.popoverContainer}>
                                         <div className={classes.flex}>
-                                            <Typography variant='body1'
-                                                        color={notification.isChecked ? 'primary' : 'inherit'}>
+                                            <Typography variant='body1' color='textPrimary'>
                                                 {notification.title}
                                             </Typography>
-                                            {notification.isChecked && <NewReleasesRounded color='primary'/>}
+                                            {/*notification.isChecked && <NewReleasesRounded color='primary'/>*/}
                                         </div>
-                                        <Typography variant='body2'>{notification.text}</Typography>
+                                        <Typography variant='body2'
+                                                    color='textSecondary'>{notification.text}</Typography>
                                         {/*<Typography variant='caption'>Удалить</Typography>*/}
-                                        <Link
-                                            component="button"
-                                            variant="body2"
-                                            onClick={() => updateNotifications(notification.id, index)}
-                                        >
-                                            Удалить
-                                        </Link>
+                                        <Typography>
+                                            <Link
+                                                component={RouterLink}
+                                                variant="body2"
+                                                to={`/user/${userId}/app/${notification.appId}/dashboard/`}
+                                            >
+                                                Посмотреть
+                                            </Link>
+                                            <Link
+                                                className={classes.marginLeftSmall}
+                                                component="button"
+                                                variant="body2"
+                                                color='error'
+                                                onClick={() => updateNotifications(notification.id, index)}
+                                            >
+                                                Удалить
+                                            </Link>
+                                        </Typography>
                                     </div>
                                     <Divider className={classes.fullWidth}/>
                                 </div>

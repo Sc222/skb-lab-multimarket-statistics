@@ -216,7 +216,7 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(0.5),
     },
 
-    applicationIcon:{
+    applicationIcon: {
         borderRadius: "1.5em",
         maxWidth: "100%",
         maxHeight: '100%'
@@ -291,10 +291,11 @@ export default function Applications(props) {
                                 <div className={classes.appDescriptionContainer}>
                                     <Grid container alignItems='center' spacing={2}>
                                         <Grid item xs={3} sm={2} md={3}>
-                                            {/*TODO SRC = app.picUrl*/}
                                             <Box borderRadius={16}>
-                                            <img alt='app icon' className={classes.applicationIcon} src={app.picUrl!==undefined?app.picUrl: defaultAppIcon}
-                                                 />
+                                                <img alt='app icon'
+                                                     className={classes.applicationIcon}
+                                                     src={app.picUrl !== undefined ? app.picUrl : defaultAppIcon}
+                                                />
                                             </Box>
                                         </Grid>
                                         <Grid item xs={9} sm={10} md={9}>
@@ -377,7 +378,6 @@ export default function Applications(props) {
                                     <InputBase
                                         value={appsNameFilter}
                                         onChange={handleAppsNameFilterInput}
-
                                         placeholder="Поиск по названию…"
                                         classes={{
                                             root: classes.inputRoot,
