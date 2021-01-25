@@ -5,20 +5,13 @@ namespace MultimarketStatistics.Models
 {
     public class RatingContract
     {
-        public int Total { get; set; }
+        public double AppStoreRating { get; set; }
 
-        public int FiveStarsCount { get; set; }
+        public double PlayMarketRating { get; set; }
 
-        public int FourStarsCount { get; set; }
-
-        public int ThreeStarsCount { get; set; }
-
-        public int TwoStarsCount { get; set; }
-
-        public int OneStarsCount { get; set; }
+        public double AppGalleryRating { get; set; }
 
         public DateTime Date { get; set; }
 
-        public MarketType Market { get; set; }
     }
 }
