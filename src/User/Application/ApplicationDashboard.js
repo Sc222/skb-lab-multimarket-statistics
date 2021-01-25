@@ -51,10 +51,8 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         flexGrow: 1,
-        /*textAlign:"center" todo toolbar title styles here*/
     },
 
-    /*TODO FIX SMOOTH PERSISTENT DRAWER OPEN ANIMATION*/
     drawerPaper: {
         position: 'relative',
         whiteSpace: 'nowrap',

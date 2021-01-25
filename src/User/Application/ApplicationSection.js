@@ -13,7 +13,7 @@ import DrawerMenu from "./DrawerMenu";
 import {Link as RouterLink, Route, Switch as RouteSwitch, useParams} from "react-router-dom";
 import {HomepageUrl} from "../../App";
 import ApplicationDashboard from "./ApplicationDashboard";
-import demoAppIcon from "../../images/demo_app_icon.png";
+import demoAppIcon from "../../images/default_app_icon.png";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
 import {CloseRounded} from "@material-ui/icons";
@@ -57,7 +57,6 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         flexGrow: 1,
-        /*textAlign:"center" todo toolbar title styles here*/
     },
 
     /*TODO FIX SMOOTH PERSISTENT DRAWER OPEN ANIMATION*/

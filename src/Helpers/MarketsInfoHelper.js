@@ -15,11 +15,6 @@ export const MarketsLinks = [
     "https://appgallery.huawei.com/#/app/"
 ];
 
-export const MarketsLinksRegex = [
-    /^https:\/\/play\.google\.com\/store\/apps\/details\/?[^\s\/]*$/,
-    /^https:\/\/apps\.apple\.com\/?[^\s\/]*\/app\/?[^\s\/]*\/id([\d]+)\/?[^\s\/]*$/,
-    /^https:\/\/appgallery\.huawei\.com\/#\/app\/(C[\d]+)(\?[^\s\/]*)?$/
-];
 /*
 usual valid examples:
 https://play.google.com/store/apps/details?id=com.snapchat.android
@@ -30,10 +25,15 @@ hard valid examples:
 https://play.google.com/store/apps/details?gl=US&id=com.snapchat.android&hl=de
 https://apps.apple.com/ru/app/вконтакте-общение-и-музыка/id564177498
 */
+export const MarketsLinksRegex = [
+    /^https:\/\/play\.google\.com\/store\/apps\/details\/?[^\s\/]*$/,
+    /^https:\/\/apps\.apple\.com\/?[^\s\/]*\/app\/?[^\s\/]*\/id([\d]+)\/?[^\s\/]*$/,
+    /^https:\/\/appgallery\.huawei\.com\/#\/app\/(C[\d]+)(\?[^\s\/]*)?$/
+];
+
 
 export const MarketsKeys = ["playStore", "appStore", "appGallery"];
 
-// todo use key not index
 export const MarketsInfo = [
     {
         name: "Play Store",
@@ -85,7 +85,7 @@ export function createLinkFromId(marketIndex, id) {
 
 //returns "" if no appId
 export function getAppIdFromUrl(marketIndex, link) {
-    console.log("get app id: "+marketIndex +"link: "+link);
+    console.log("get app id: " + marketIndex + "link: " + link);
     let url;
     try {
         url = new URL(link);

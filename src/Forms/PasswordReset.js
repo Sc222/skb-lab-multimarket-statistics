@@ -33,7 +33,6 @@ export default function PasswordReset() {
             <Divider className={classes.fullWidthDivider}/>
             <div className={classes.container}>
                 <form noValidate>
-                    {/*todo use repeating technique*/}
                     <TextField
                         variant="outlined"
                         margin="dense"

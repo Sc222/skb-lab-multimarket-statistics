@@ -8,7 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
 //image imports
-import demoAppIcon from "../images/demo_app_icon.png";
+import defaultAppIcon from "../images/default_app_icon.png";
 
 import {fade} from "@material-ui/core";
 import {AddRounded, SearchRounded} from "@material-ui/icons";
@@ -29,6 +29,7 @@ import {
     PlayStoreIndex
 } from "../Helpers/MarketsInfoHelper";
 import {getApps} from "../Api/ApiApp";
+import Box from "@material-ui/core/Box";
 
 const drawerWidth = 260;
 
@@ -66,10 +67,8 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         flexGrow: 1,
-        /*textAlign:"center" todo toolbar title styles here*/
     },
 
-    /*TODO FIX SMOOTH PERSISTENT DRAWER OPEN ANIMATION*/
     drawerPaper: {
         position: 'relative',
         whiteSpace: 'nowrap',
@@ -217,6 +216,12 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(0.5),
     },
 
+    applicationIcon:{
+        borderRadius: "1.5em",
+        maxWidth: "100%",
+        maxHeight: '100%'
+    }
+
 }));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
@@ -287,8 +292,10 @@ export default function Applications(props) {
                                     <Grid container alignItems='center' spacing={2}>
                                         <Grid item xs={3} sm={2} md={3}>
                                             {/*TODO SRC = app.picUrl*/}
-                                            <img alt='app icon' src={demoAppIcon}
-                                                 style={{maxWidth: "100%", maxHeight: '100%'}}/>
+                                            <Box borderRadius={16}>
+                                            <img alt='app icon' className={classes.applicationIcon} src={app.picUrl!==undefined?app.picUrl: defaultAppIcon}
+                                                 />
+                                            </Box>
                                         </Grid>
                                         <Grid item xs={9} sm={10} md={9}>
                                             <Typography component="h5" variant="h6">{app.name}</Typography>

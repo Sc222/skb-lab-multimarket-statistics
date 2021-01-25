@@ -88,7 +88,6 @@ export default function Login() {
             <Divider className={classes.fullWidthDivider}/>
             <div className={classes.container}>
                 <form noValidate>
-                    {/*todo use repeating technique*/}
                     <TextField
                         error={getUsernameError(areErrorsVisible, loginCredentials.username) !== ''}
                         helperText={getUsernameError(areErrorsVisible, loginCredentials.username)}

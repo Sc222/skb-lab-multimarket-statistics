@@ -73,7 +73,6 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
 
-    /*TODO FIX SMOOTH PERSISTENT DRAWER OPEN ANIMATION*/
     drawerPaper: {
         position: 'relative',
         whiteSpace: 'nowrap',
@@ -286,6 +285,7 @@ export default function NewApplications(props) {
                     console.log("successfully created app with id: " + result);
                     //TODO !!! REDIRECT TO APPLICATION DASHBOARD AFTER APP CREATED
                     //TODO ПОЧЕМУ-ТО ЗАПРОСЫ НА СЕРВАК ВЛАДА МЕДЛЕННЫЕ
+                    //TODO !!! ADD POSSIBILITY TO ADD APP ICON URL YOURSELF
                 })
                 .catch(err => {
                     console.log(err.message);
@@ -447,7 +447,7 @@ export default function NewApplications(props) {
                     </Paper>
                 </Grid>
 
-                {   //todo move to function ??
+                {
                     selectedMarkets.map((isSelected, index) => {
                         return isSelected &&
                             <Grid item xs={12}>
