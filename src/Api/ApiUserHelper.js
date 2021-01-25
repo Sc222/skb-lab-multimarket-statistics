@@ -7,7 +7,9 @@ export function getDefaultUserNoId(){
 }
 
 export function getDefaultUser(){
-    return {id:"",username:"",password:"",email:"",slackCredentials:""};
+    const user = getDefaultUserNoId();
+    user.id="";
+    return user;
 }
 
 export function getDefaultFieldsStateUser(){

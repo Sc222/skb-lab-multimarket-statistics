@@ -266,6 +266,8 @@ export default function UserSection() {
     useEffect(() => {
         console.log(userId);
 
+
+        //TODO LINKS TO APP ON NOTIFICATION CLICK
         Promise.all([getNotifications(userId), getUser(userId)])
             .then(([notifications,user]) => {
                 setNotifications(notifications);

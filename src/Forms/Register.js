@@ -50,8 +50,8 @@ export default function Register() {
             createUser(userForCreate)
                 .then(result => {
                     console.log("successfully created user with id: " + result);
-                    //TODO REQUEST AUTHENTICATION TOKEN
-                    //TODO REDIRECT TO DASHBOARD
+                    //TODO !!! REQUEST AUTHENTICATION TOKEN
+                    //TODO !!! REDIRECT TO USER APPS LIST
                 })
                 .catch(err => {
                     console.log(err.message);

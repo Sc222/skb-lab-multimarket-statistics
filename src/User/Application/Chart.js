@@ -1,7 +1,7 @@
 import React from 'react';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip as ChartTooltip, XAxis, YAxis} from 'recharts';
-import {MarketsInfoHelper, MarketsKeys} from "../../Helpers/MarketsInfoHelper";
+import {MarketsInfo, MarketsKeys} from "../../Helpers/MarketsInfoHelper";
 
 const useChartStyles = makeStyles(() => ({
     disableScroll: {
@@ -37,8 +37,8 @@ export default function Chart(props) {
                 {/* todo OPTION epic charts animation can be turned on */}
                 {props.selectedMarkets.map((selectedMarket,index)=>
                 { return selectedMarket &&
-                    <Line isAnimationActive={false} type="monotone" dataKey={MarketsKeys[index]} name={MarketsInfoHelper[index].name}
-                          stroke={MarketsInfoHelper[index].getChartColor(theme)}/>
+                    <Line isAnimationActive={false} type="monotone" dataKey={MarketsKeys[index]} name={MarketsInfo[index].name}
+                          stroke={MarketsInfo[index].getChartColor(theme)}/>
                 })
                 }
             </LineChart>

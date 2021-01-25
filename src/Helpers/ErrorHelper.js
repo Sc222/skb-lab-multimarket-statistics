@@ -5,6 +5,7 @@ import {
     ErrorNotUniqueUsername,
     ErrorNotUniqueUsernameAndEmail
 } from "../Api/ApiHelper";
+import {MarketsInfo} from "./MarketsInfoHelper";
 
 export function getSlackCredentialsError(areErrorsVisible, enableNotifications, slackCredentials) {
     if (!areErrorsVisible)
@@ -13,6 +14,38 @@ export function getSlackCredentialsError(areErrorsVisible, enableNotifications, 
         return "";
     if (slackCredentials === "")
         return "Введите Slack-токен";
+    return "";
+}
+
+
+//NewApplication errors
+
+export function getAppNameError(areErrorsVisible, name){
+    if (!areErrorsVisible)
+        return "";
+    if (name === "")
+        return "Введите название приложения";
+    return "";
+}
+
+export function getAppDescriptionError(areErrorsVisible, description){
+    if (!areErrorsVisible)
+        return "";
+    if (description === "")
+        return "Введите описание приложения";
+    return "";
+}
+
+export function getAppMarketError(areErrorsVisible, marketIndex, isSelected, marketLink, marketId){
+    console.log("app market error: "+areErrorsVisible+" "+marketIndex+" "+isSelected+" "+marketLink+" "+marketId)
+    if (!areErrorsVisible)
+        return "";
+    if (!isSelected)
+        return "";
+    if (marketLink === "")
+        return `Укажите ссылку на приложение в ${MarketsInfo[marketIndex].name}`;
+    if (marketLink !== "" && marketId==="")
+        return `Ссылка должна иметь формат: ${MarketsInfo[marketIndex].demoFormat}`;
     return "";
 }
 

@@ -25,7 +25,7 @@ import {
     AppGalleryIndex,
     AppStoreIndex,
     createLinkFromId,
-    MarketsInfoHelper,
+    MarketsInfo,
     PlayStoreIndex
 } from "../Helpers/MarketsInfoHelper";
 import {getApps} from "../Api/ApiApp";
@@ -305,7 +305,7 @@ export default function Applications(props) {
                                 <Chip variant="outlined"
                                       clickable
                                       component='a'
-                                      label={MarketsInfoHelper[PlayStoreIndex].name}
+                                      label={MarketsInfo[PlayStoreIndex].name}
                                       href={createLinkFromId(PlayStoreIndex, app.playMarketId)}
                                       target="_blank"
                                       rel='noreferrer'
@@ -313,13 +313,13 @@ export default function Applications(props) {
                                       color={app.playMarketId === undefined ? "default" : "primary"}
                                       avatar={<Avatar className={marketClasses.transparentBg}
                                                       variant='square'
-                                                      src={MarketsInfoHelper[PlayStoreIndex].getIcon(app.playMarketId === undefined)}/>}/>
+                                                      src={MarketsInfo[PlayStoreIndex].getIcon(app.playMarketId === undefined)}/>}/>
 
                                 {/*app store*/}
                                 <Chip variant="outlined"
                                       clickable
                                       component='a'
-                                      label={MarketsInfoHelper[AppStoreIndex].name}
+                                      label={MarketsInfo[AppStoreIndex].name}
                                       href={createLinkFromId(AppStoreIndex, app.appStoreId)}
                                       target="_blank"
                                       rel='noreferrer'
@@ -327,13 +327,13 @@ export default function Applications(props) {
                                       color={app.appStoreId === undefined ? "default" : "primary"}
                                       avatar={<Avatar className={marketClasses.transparentBg}
                                                       variant='square'
-                                                      src={MarketsInfoHelper[AppStoreIndex].getIcon(app.appStoreId === undefined)}/>}/>
+                                                      src={MarketsInfo[AppStoreIndex].getIcon(app.appStoreId === undefined)}/>}/>
 
                                 {/*appgallery*/}
                                 <Chip variant="outlined"
                                       clickable
                                       component='a'
-                                      label={MarketsInfoHelper[AppGalleryIndex].name}
+                                      label={MarketsInfo[AppGalleryIndex].name}
                                       href={createLinkFromId(AppGalleryIndex, app.appGalleryId)}
                                       target="_blank"
                                       rel='noreferrer'
@@ -341,7 +341,7 @@ export default function Applications(props) {
                                       color={app.appGalleryId === undefined ? "default" : "primary"}
                                       avatar={<Avatar className={marketClasses.transparentBg}
                                                       variant='square'
-                                                      src={MarketsInfoHelper[AppGalleryIndex].getIcon(app.appGalleryId === undefined)}/>}/>
+                                                      src={MarketsInfo[AppGalleryIndex].getIcon(app.appGalleryId === undefined)}/>}/>
                             </div>
                         </Paper>
                     </Grid>
