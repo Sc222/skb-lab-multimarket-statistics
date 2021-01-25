@@ -64,5 +64,15 @@ namespace MultimarketStatistics.Controllers
             var app = appService.Get(appId);
             return mapper.Map<AppContract>(app);
         }
+
+        //[Authorize]
+        [HttpDelete("{userId}/{appId}")]
+        public ActionResult Delete(Guid userId, Guid appId)
+        {
+            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
+            appService.Delete(appId);
+            return Ok();
+        }
     }
 }

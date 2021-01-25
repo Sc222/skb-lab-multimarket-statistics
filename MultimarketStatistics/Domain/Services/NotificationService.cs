@@ -20,6 +20,12 @@ namespace Domain.Services
             return notificationRepository.Find(n => n.User.Id == userId);
         }
 
+        public Dictionary<Guid, Notification[]> GetAllByApps(IEnumerable<App> apps)
+        {
+            return notificationRepository.Find(n => apps.Contains(n.App)).GroupBy(n => n.App.Id)
+                .ToDictionary(g => g.Key, g => g.ToArray());
+        }
+
         public Notification[] GetNotCheckedNotificationsByUsers(Guid[] userIds)
         {
             return notificationRepository.Find(n => userIds.Contains(n.User.Id) && !n.IsChecked);

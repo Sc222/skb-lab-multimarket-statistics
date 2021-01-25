@@ -9,16 +9,25 @@ namespace Domain.Services
     {
         private readonly IRepository<App> appRepository;
         private readonly FetcherService fetcherService;
+        private readonly NotificationService notificationService;
+        private readonly RatingService ratingService;
+        private readonly ReviewService reviewService;
         private readonly IRepository<Rating> ratingRepository;
         private readonly IRepository<Review> reviewRepository;
+        private readonly IRepository<Notification> notificationRepository;
 
         public AppService(IRepository<App> appRepository, FetcherService fetcherService,
-            IRepository<Review> reviewRepository, IRepository<Rating> ratingRepository)
+            IRepository<Review> reviewRepository, IRepository<Rating> ratingRepository, ReviewService reviewService,
+            RatingService ratingService, NotificationService notificationService, IRepository<Notification> notificationRepository)
         {
             this.appRepository = appRepository;
             this.fetcherService = fetcherService;
             this.reviewRepository = reviewRepository;
             this.ratingRepository = ratingRepository;
+            this.reviewService = reviewService;
+            this.ratingService = ratingService;
+            this.notificationService = notificationService;
+            this.notificationRepository = notificationRepository;
         }
 
         public async Task<Guid> Create(App app)
@@ -73,9 +82,16 @@ namespace Domain.Services
             appRepository.Update(app);
         }
 
-        public void Delete(App app)
+        public void Delete(Guid appId)
         {
-            appRepository.Delete(app);
+            var app = new App {Id = appId};
+            var notifications = notificationService.GetAllByApps(new []{app});
+            var reviews = reviewService.GetAllByApps(new[] {app});
+            var ratings = ratingService.GetAllByApps(new[] {app});
+            notificationRepository.DeleteRange(notifications[appId]);
+            reviewRepository.DeleteRange(reviews[appId]);
+            ratingRepository.DeleteRange(ratings[appId]);
+            appRepository.Delete(appId);
         }
     }
 }
