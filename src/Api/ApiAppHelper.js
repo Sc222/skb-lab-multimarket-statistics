@@ -38,3 +38,16 @@ export function createAppForCreate(app, selectedMarkets) {
         appResult.playMarketId=app.playMarketId;
     return appResult;
 }
+
+//if app doesn't have such market undefined is returned
+export function getMarketIdByStoreIndex(app, storeIndex){
+    switch (storeIndex){
+        case PlayStoreIndex:
+            return app.playMarketId;
+        case AppStoreIndex:
+            return app.appStoreId;
+        case AppGalleryIndex:
+            return app.appGalleryId;
+    }
+    return undefined;
+}

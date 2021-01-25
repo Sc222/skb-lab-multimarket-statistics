@@ -31,3 +31,21 @@ export async function getApps(userId) {
             throw new Error("Apps error: " + result.status);
         });
 }
+
+export async function getApp(userId, appId) {
+    return fetch(`${ApiRoot}/api/App/${userId}/${appId}`,
+        {
+            headers: {
+                "Accept": "application/json"
+            },
+            method: "GET",
+        })
+        .then(result => {
+            if (result.ok) {
+                if (result.status === 200)
+                    return result.json();
+                throw new Error("App does not exist: " + result.status);
+            }
+            throw new Error("App get error: " + result.status);
+        });
+}

@@ -21,15 +21,9 @@ import Hidden from "@material-ui/core/Hidden";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import {Link as RouterLink} from "react-router-dom";
 import MarketChipStyles from "../Styles/MarketChipStyles";
-import {
-    AppGalleryIndex,
-    AppStoreIndex,
-    createLinkFromId,
-    MarketsInfo,
-    PlayStoreIndex
-} from "../Helpers/MarketsInfoHelper";
+import {createLinkFromId, MarketsIndexes, MarketsInfo} from "../Helpers/MarketsInfoHelper";
 import {getApps} from "../Api/ApiApp";
-import Box from "@material-ui/core/Box";
+import {getMarketIdByStoreIndex} from "../Api/ApiAppHelper";
 
 const drawerWidth = 260;
 
@@ -291,12 +285,9 @@ export default function Applications(props) {
                                 <div className={classes.appDescriptionContainer}>
                                     <Grid container alignItems='center' spacing={2}>
                                         <Grid item xs={3} sm={2} md={3}>
-                                            <Box borderRadius={16}>
-                                                <img alt='app icon'
-                                                     className={classes.applicationIcon}
-                                                     src={app.picUrl !== undefined ? app.picUrl : defaultAppIcon}
-                                                />
-                                            </Box>
+                                            <img alt='app icon'
+                                                 className={classes.applicationIcon}
+                                                 src={app.picUrl !== undefined ? app.picUrl : defaultAppIcon}/>
                                         </Grid>
                                         <Grid item xs={9} sm={10} md={9}>
                                             <Typography component="h5" variant="h6">{app.name}</Typography>
@@ -309,47 +300,25 @@ export default function Applications(props) {
                             </ButtonBase>
                             <Divider className={classes.fullWidthDivider}/>
                             <div className={marketClasses.marketsContainer}>
-                                {/*play store*/}
-                                <Chip variant="outlined"
-                                      clickable
-                                      component='a'
-                                      label={MarketsInfo[PlayStoreIndex].name}
-                                      href={createLinkFromId(PlayStoreIndex, app.playMarketId)}
-                                      target="_blank"
-                                      rel='noreferrer'
-                                      disabled={app.playMarketId === undefined}
-                                      color={app.playMarketId === undefined ? "default" : "primary"}
-                                      avatar={<Avatar className={marketClasses.transparentBg}
-                                                      variant='square'
-                                                      src={MarketsInfo[PlayStoreIndex].getIcon(app.playMarketId === undefined)}/>}/>
+                                {
+                                    MarketsIndexes.map(marketIndex => {
+                                        let marketId = getMarketIdByStoreIndex(app, marketIndex);
+                                        return <Chip variant="outlined"
+                                                     clickable
+                                                     component='a'
+                                                     label={MarketsInfo[marketIndex].name}
+                                                     href={createLinkFromId(marketIndex, marketId)}
+                                                     target="_blank"
+                                                     rel='noreferrer'
+                                                     disabled={marketId === undefined}
+                                                     color={marketId === undefined ? "default" : "primary"}
+                                                     avatar={<Avatar className={marketClasses.transparentBg}
+                                                                     variant='square'
+                                                                     src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
 
-                                {/*app store*/}
-                                <Chip variant="outlined"
-                                      clickable
-                                      component='a'
-                                      label={MarketsInfo[AppStoreIndex].name}
-                                      href={createLinkFromId(AppStoreIndex, app.appStoreId)}
-                                      target="_blank"
-                                      rel='noreferrer'
-                                      disabled={app.appStoreId === undefined}
-                                      color={app.appStoreId === undefined ? "default" : "primary"}
-                                      avatar={<Avatar className={marketClasses.transparentBg}
-                                                      variant='square'
-                                                      src={MarketsInfo[AppStoreIndex].getIcon(app.appStoreId === undefined)}/>}/>
 
-                                {/*appgallery*/}
-                                <Chip variant="outlined"
-                                      clickable
-                                      component='a'
-                                      label={MarketsInfo[AppGalleryIndex].name}
-                                      href={createLinkFromId(AppGalleryIndex, app.appGalleryId)}
-                                      target="_blank"
-                                      rel='noreferrer'
-                                      disabled={app.appGalleryId === undefined}
-                                      color={app.appGalleryId === undefined ? "default" : "primary"}
-                                      avatar={<Avatar className={marketClasses.transparentBg}
-                                                      variant='square'
-                                                      src={MarketsInfo[AppGalleryIndex].getIcon(app.appGalleryId === undefined)}/>}/>
+                                    })
+                                }
                             </div>
                         </Paper>
                     </Grid>

@@ -13,10 +13,10 @@ import DrawerMenu from "./DrawerMenu";
 import {Link as RouterLink, Route, Switch as RouteSwitch, useParams} from "react-router-dom";
 import {HomepageUrl} from "../../App";
 import ApplicationDashboard from "./ApplicationDashboard";
-import demoAppIcon from "../../images/default_app_icon.png";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
 import {CloseRounded} from "@material-ui/icons";
+import {getApp} from "../../Api/ApiApp";
 
 const drawerWidth = 260;
 
@@ -59,7 +59,6 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
 
-    /*TODO FIX SMOOTH PERSISTENT DRAWER OPEN ANIMATION*/
     drawerPaper: {
         zIndex: theme.zIndex.drawer,
 
@@ -118,111 +117,17 @@ export default function ApplicationSection(props) {
     const [app, setApp] = React.useState(undefined);
 
     useEffect(() => {
-
-        // todo temporary
-        const apps = {
-            'sc222': {
-                "pixel-fishing": {
-                    icon: demoAppIcon,
-                    title: "Pixel Fishing",
-                    id: "pixel-fishing",
-                    description: "Clicker game where you need to catch fish very fast",
-                    markets: [
-                        {disabled: false, link: "https://play.google.com/store/apps"},
-                        {disabled: true, link: "https://www.apple.com/app-store/"},
-                        {disabled: false, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                "sesc-schedule": {
-                    icon: demoAppIcon,
-                    title: "Sesc Schedule",
-                    id: "sesc-schedule",
-                    description: "Application with class timetable of Specialized Educational Scientific Centre",
-                    markets: [
-                        {disabled: false, link: "https://play.google.com/store/apps"},
-                        {disabled: false, link: "https://www.apple.com/app-store/"},
-                        {disabled: true, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                "volume-manager": {
-                    icon: demoAppIcon,
-                    title: "Volume Manager",
-                    id: "volume-manager",
-                    description: "Application to automate volume changes of your device",
-                    markets: [
-                        {disabled: true, link: "https://play.google.com/store/apps"},
-                        {disabled: false, link: "https://www.apple.com/app-store/"},
-                        {disabled: false, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                "one-ring": {
-                    icon: demoAppIcon,
-                    title: "One Ring",
-                    id: "one-ring",
-                    description: "Integrate your One Ring device with Samsung SmartThings smart home system",
-                    markets: [
-                        {disabled: false, link: "https://play.google.com/store/apps"},
-                        {disabled: false, link: "https://www.apple.com/app-store/"},
-                        {disabled: false, link: "https://appgallery.huawei.com/"}
-                    ]
-                }
-            },
-            'neoezop': {
-                "nazvanie-prilozhenia-1": {
-                    icon: demoAppIcon,
-                    title: "Название приложения 1",
-                    id: "nazvanie-prilozhenia-1",
-                    description: "Достаточно длинное описание приложение длиной в две строки",
-                    markets: [
-                        {disabled: false, link: "https://play.google.com/store/apps"},
-                        {disabled: true, link: "https://www.apple.com/app-store/"},
-                        {disabled: true, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                "nazvanie-prilozhenia-2": {
-                    icon: demoAppIcon,
-                    title: "Название приложения 2",
-                    id: "nazvanie-prilozhenia-2",
-                    description: "Достаточно длинное описание приложение длиной в две строки",
-                    markets: [
-                        {disabled: true, link: "https://play.google.com/store/apps"},
-                        {disabled: false, link: "https://www.apple.com/app-store/"},
-                        {disabled: true, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                "nazvanie-prilozhenia-3": {
-                    icon: demoAppIcon,
-                    title: "Название приложения 3",
-                    id: "nazvanie-prilozhenia-3",
-                    description: "Достаточно длинное описание приложение длиной в две строки",
-                    markets: [
-                        {disabled: true, link: "https://play.google.com/store/apps"},
-                        {disabled: true, link: "https://www.apple.com/app-store/"},
-                        {disabled: false, link: "https://appgallery.huawei.com/"}
-                    ]
-                },
-                "nazvanie-prilozhenia-4": {
-                    icon: demoAppIcon,
-                    title: "Название приложения 4",
-                    id: "nazvanie-prilozhenia-4",
-                    description: "Достаточно длинное описание приложение длиной в две строки",
-                    markets: [
-                        {disabled: false, link: "https://play.google.com/store/apps"},
-                        {disabled: false, link: "https://www.apple.com/app-store/"},
-                        {disabled: false, link: "https://appgallery.huawei.com/"}
-                    ]
-                }
-            },
-            'refusedguy': [],
-            'yakiy_pes': []
-        };
-
-        console.log(apps[userId][appId]);
-        console.log(userId + "" + appId);
-
-        setApp(apps[userId][appId]);
-
-    }, []);
+        console.log(userId);
+        console.log(appId);
+        getApp(userId,appId)
+            .then(app => {
+                console.log("load app");
+                console.log(app);
+                setApp(app);
+                //TODO IF APP 204 -> REDIRECT TO CURRENT USER
+            })
+            .catch(err => console.log(err.message)); //todo if app is wrong -> redirect to homepage
+    }, [userId, appId]);
 
     return (
         <div className={classes.root}>
@@ -293,6 +198,7 @@ export default function ApplicationSection(props) {
                         {/*<Route path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
                                 <Applications userId={userId}/>
                             </Route>*/}
+                        {/*TODO ADD REDIRECT TO APP DASHBOARD IF WRONG ROUTE*/}
                     </RouteSwitch>
                 </Container>
             </main>

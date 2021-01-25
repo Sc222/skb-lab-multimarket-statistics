@@ -12,7 +12,7 @@ import Avatar from "@material-ui/core/Avatar";
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
-import {getChipChartColor, MarketsInfo} from "../../Helpers/MarketsInfoHelper";
+import {createLinkFromId, getChipChartColor, MarketsIndexes, MarketsInfo} from "../../Helpers/MarketsInfoHelper";
 import MarketChipStyles from "../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
@@ -21,6 +21,8 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import update from "immutability-helper";
+import defaultAppIcon from "../../images/default_app_icon.png";
+import {getMarketIdByStoreIndex} from "../../Api/ApiAppHelper";
 
 const drawerWidth = 260;
 
@@ -198,6 +200,13 @@ const useStyles = makeStyles((theme) => ({
             },
         },
     },
+
+    applicationIcon: {
+        borderRadius: "1.5em",
+        maxWidth: "100%",
+        maxHeight: '100%'
+    },
+
     extendedIcon: {
         marginRight: theme.spacing(1),
     },
@@ -208,7 +217,7 @@ const useStyles = makeStyles((theme) => ({
     chartSelectsContainer: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
-    }
+    },
 }));
 const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
@@ -232,14 +241,14 @@ export default function ApplicationDashboard(props) {
     useEffect(() => {
         if (props.app) {
             setSelectedChartMarkets([
-                !props.app.markets[0].disabled,
-                !props.app.markets[1].disabled,
-                !props.app.markets[2].disabled
+                props.app.playMarketId !== undefined,
+                props.app.appStoreId !== undefined,
+                props.app.appGalleryId !== undefined
             ]);
             console.log([
-                !props.app.markets[0].disabled,
-                !props.app.markets[1].disabled,
-                !props.app.markets[2].disabled
+                props.app.playMarketId !== undefined,
+                props.app.appStoreId !== undefined,
+                props.app.appGalleryId !== undefined
             ]);
         }
     }, [props.app]);
@@ -266,7 +275,7 @@ export default function ApplicationDashboard(props) {
 
         setChartData(demoData);
 
-    }, [props.userId, props.app, chartAverageRatingType, chartAverageRatingInterval]);
+    }, [props.app, chartAverageRatingType, chartAverageRatingInterval]);
 
     function toggleSelectedMarket(index) {
         console.log('toggle market: ' + index);
@@ -290,6 +299,7 @@ export default function ApplicationDashboard(props) {
             </Grid>
 
             {/* todo lg = {6} TEST   */}
+            {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
             <Grid item xs={12}>
                 {/* TODO !!! IMPORTANT show app not found card when app not found */}
                 {props.app &&
@@ -297,11 +307,12 @@ export default function ApplicationDashboard(props) {
                     <div className={classes.appDescriptionContainer}>
                         <Grid container alignItems='center' spacing={2}>
                             <Grid item xs={3} sm={2} md={1}>
-                                <img alt='app icon' src={props.app.icon}
-                                     style={{maxWidth: "100%", maxHeight: '100%'}}/>
+                                <img alt='app icon'
+                                     src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
+                                     className={classes.applicationIcon}/>
                             </Grid>
                             <Grid item xs={9} sm={10} md={11}>
-                                <Typography component="h5" variant="h6">{props.app.title}</Typography>
+                                <Typography component="h5" variant="h6">{props.app.name}</Typography>
                                 <Typography component="p" variant="body1">
                                     {props.app.description}
                                 </Typography>
@@ -311,19 +322,22 @@ export default function ApplicationDashboard(props) {
                     <Divider className={classes.fullWidthDivider}/>
                     <div className={marketClasses.marketsContainer}>
                         {
-                            props.app.markets.map((market, index) => {
+                            MarketsIndexes.map(marketIndex => {
+                                let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
                                 return <Chip variant="outlined"
                                              clickable
                                              component='a'
-                                             label={MarketsInfo[index].name}
-                                             href={market.link}
+                                             label={MarketsInfo[marketIndex].name}
+                                             href={createLinkFromId(marketIndex, marketId)}
                                              target="_blank"
                                              rel='noreferrer'
-                                             disabled={market.disabled}
-                                             color={market.disabled ? "default" : "primary"}
+                                             disabled={marketId === undefined}
+                                             color={marketId === undefined ? "default" : "primary"}
                                              avatar={<Avatar className={marketClasses.transparentBg}
                                                              variant='square'
-                                                             src={MarketsInfo[index].getIcon(market.disabled)}/>}/>
+                                                             src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
+
+
                             })
                         }
                     </div>
@@ -406,17 +420,17 @@ export default function ApplicationDashboard(props) {
                         <Divider className={formClasses.fullWidthDivider}/>
                         <div className={marketClasses.marketsContainer}>
                             {props.app &&
-                            props.app.markets.map((market, index) => {
-                                return (!market.disabled &&
+                            MarketsIndexes.map(marketIndex => {
+                                let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
+                                return marketId !== undefined &&
                                     <Chip
                                         clickable
-                                        key={MarketsInfo[index].name}
                                         component='a'
-                                        color={selectedChartMarkets[index] ? "primary" : "default"}
-                                        style={{backgroundColor: getChipChartColor(theme, index, selectedChartMarkets[index])}}
-                                        onClick={() => toggleSelectedMarket(index)}
-                                        label={MarketsInfo[index].name}
-                                    />)
+                                        label={MarketsInfo[marketIndex].name}
+                                        color={selectedChartMarkets[marketIndex] ? "primary" : "default"}
+                                        style={{backgroundColor: getChipChartColor(theme, marketIndex, selectedChartMarkets[marketIndex])}}
+                                        onClick={() => toggleSelectedMarket(marketIndex)}
+                                    />
                             })
                             }
                         </div>
@@ -435,7 +449,7 @@ export default function ApplicationDashboard(props) {
                             <Typography variant="body2">
                                 Читайте и анализируйте отзывы о вашем приложении
                             </Typography>
-                            
+
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container maxWidth='sm' className={classes.containerNotCentered}>

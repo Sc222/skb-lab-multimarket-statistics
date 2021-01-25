@@ -265,14 +265,13 @@ export default function UserSection() {
     useEffect(() => {
         console.log(userId);
 
-
-        //TODO LINKS TO APP ON NOTIFICATION CLICK
         Promise.all([getNotifications(userId), getUser(userId)])
             .then(([notifications, user]) => {
                 console.log("load notifications");
                 console.log(notifications);
                 setNotifications(notifications);
                 setUser(user);
+                //TODO IF USER 204 -> REDIRECT TO CURRENT USER
                 //if one of values is empty -> TODO SHOW ERROR ALERT
             })
             .catch(err => console.log(err.message)); //todo if user is wrong -> redirect to homepage
@@ -354,11 +353,11 @@ export default function UserSection() {
                                         </div>
                                         <Typography variant='body2'
                                                     color='textSecondary'>{notification.text}</Typography>
-                                        {/*<Typography variant='caption'>Удалить</Typography>*/}
                                         <Typography>
                                             <Link
                                                 component={RouterLink}
                                                 variant="body2"
+                                                onClick={()=>setNotificationPopoverAnchor(null)}
                                                 to={`/user/${userId}/app/${notification.appId}/dashboard/`}
                                             >
                                                 Посмотреть
@@ -384,7 +383,6 @@ export default function UserSection() {
                         <Link
                             component="button"
                             onClick={() => deleteAllNotifications()}
-
                         >
                             Удалить все уведомления
                         </Link>

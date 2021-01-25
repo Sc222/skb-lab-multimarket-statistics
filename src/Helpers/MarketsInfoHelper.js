@@ -31,6 +31,7 @@ export const MarketsLinksRegex = [
     /^https:\/\/appgallery\.huawei\.com\/#\/app\/(C[\d]+)(\?[^\s\/]*)?$/
 ];
 
+export const MarketsIndexes = [PlayStoreIndex,AppStoreIndex,AppGalleryIndex];
 
 export const MarketsKeys = ["playStore", "appStore", "appGallery"];
 
