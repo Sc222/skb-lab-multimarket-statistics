@@ -23,8 +23,12 @@ namespace Domain.Services
 
         public async Task<Guid> Create(App app)
         {
-            var picUrl = await fetcherService.FetchAppPicUrl(app).ConfigureAwait(false);
-            app.PicUrl = picUrl;
+            if (string.IsNullOrEmpty(app.PicUrl))
+            {
+                var picUrl = await fetcherService.FetchAppPicUrl(app).ConfigureAwait(false);
+                app.PicUrl = picUrl;
+            }
+
             appRepository.Create(app);
 
             try
@@ -59,8 +63,13 @@ namespace Domain.Services
 
         public async Task Update(App app)
         {
-            var picUrl = await fetcherService.FetchAppPicUrl(app).ConfigureAwait(false);
-            app.PicUrl = picUrl;
+            var dbApp = appRepository.Get(app.Id);
+            if (app.PicUrl != dbApp.PicUrl)
+            {
+                var picUrl = await fetcherService.FetchAppPicUrl(app).ConfigureAwait(false);
+                app.PicUrl = picUrl;
+            }
+
             appRepository.Update(app);
         }
 
