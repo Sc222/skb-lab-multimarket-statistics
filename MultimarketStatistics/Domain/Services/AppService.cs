@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Storage.Entities;
 using Storage.Repositories;
@@ -92,6 +93,17 @@ namespace Domain.Services
             reviewRepository.DeleteRange(reviews[appId]);
             ratingRepository.DeleteRange(ratings[appId]);
             appRepository.Delete(appId);
+        }
+
+        public void DeleteRange(App[] apps)
+        {
+            var notifications = notificationService.GetAllByApps(apps);
+            var reviews = reviewService.GetAllByApps(apps);
+            var ratings = ratingService.GetAllByApps(apps);
+            notificationRepository.DeleteRange(notifications.Values.SelectMany(n => n));
+            reviewRepository.DeleteRange(reviews.Values.SelectMany(r => r));
+            ratingRepository.DeleteRange(ratings.Values.SelectMany(r => r));
+            appRepository.DeleteRange(apps);
         }
     }
 }
