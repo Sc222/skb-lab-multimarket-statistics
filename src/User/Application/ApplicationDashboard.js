@@ -16,9 +16,11 @@ import Chip from "@material-ui/core/Chip";
 import {
     createLinkFromId,
     getChipChartColor,
+    getFirstExistingMarketRequestKey,
     MarketRatingPrecision,
     MarketsIndexes,
-    MarketsInfo
+    MarketsInfo,
+    MarketsRequestKeys
 } from "../../Helpers/MarketsInfoHelper";
 import MarketChipStyles from "../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
@@ -38,7 +40,14 @@ import {getAppNotificationsAlert} from "../../Helpers/AlertsHelper";
 import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
-import Pagination from "@material-ui/lab/Pagination";
+import {getReviews} from "../../Api/ApiReview";
+import TablePagination from "@material-ui/core/TablePagination";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import {StarBorderRounded, StarRounded} from "@material-ui/icons";
+import green from "@material-ui/core/colors/green";
 
 const drawerWidth = 260;
 
@@ -97,6 +106,15 @@ const useStyles = makeStyles((theme) => ({
         marginRight: 0
     },
 
+    containerApps: {
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(2),
+        paddingTop: theme.spacing(2),
+        paddingBottom: theme.spacing(2),
+        width: '100%',
+        marginLeft: 0,
+        marginRight: 0
+    },
 
     content: {
         flexGrow: 1,
@@ -107,6 +125,7 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: theme.spacing(4),
         paddingBottom: theme.spacing(4),
     },
+
     paper: {
         paddingTop: theme.spacing(1.5),
         paddingBottom: theme.spacing(1.5),
@@ -147,6 +166,15 @@ const useStyles = makeStyles((theme) => ({
         width: '100%'
     },
 
+    containerTopPadded: {
+        flexGrow: 1,
+        textAlign: "left",
+        paddingTop: theme.spacing(1.5),
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(2),
+        width: '100%'
+    },
+
     primaryRipple: {
         color: theme.palette.primary.light
     },
@@ -161,6 +189,7 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: theme.spacing(1),
         width: '100%'
     },
+
 
     appIcon: {
         width: 128,
@@ -217,7 +246,6 @@ const useStyles = makeStyles((theme) => ({
             },
         },
     },
-
     applicationIcon: {
         borderRadius: "1.5em",
         maxWidth: "100%",
@@ -237,6 +265,44 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1)
     },
+
+    selectStyle: {
+        minWidth: '200px',
+    },
+
+    textWithIcon: {
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap'
+    },
+
+    reviewAvatar: {
+        color: theme.palette.white,
+        backgroundColor: theme.palette.primary.light,
+        width: theme.spacing(7),
+        height: theme.spacing(7),
+        fontSize: "32px"
+    },
+
+    reviewRating: {
+        fill: green[400]
+    },
+
+    /*
+    paperNoPadding: {
+        display: 'flex',
+        overflow: 'auto',
+        flexDirection: 'column',
+        height: '100%',
+    },
+    * */
+    reviewCard: {
+        height: '100%',
+        paddingTop: theme.spacing(1.5),
+        paddingLeft: theme.spacing(1.5),
+        paddingRight: theme.spacing(1.5),
+        paddingBottom: theme.spacing(1)
+    }
 }));
 const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
@@ -260,7 +326,30 @@ export default function ApplicationDashboard(props) {
     const [chartDateFromError, setChartDateFromError] = React.useState('');
     const [chartDateToError, setChartDateToError] = React.useState('');
 
+    //for reviews
+    const [reviews, setReviews] = React.useState(undefined);
+    const [reviewsCurrentPage, setReviewsPage] = React.useState(0);
+    const [reviewsPerPage, setReviewsPerPage] = React.useState(10);
+    const [reviewsSelectedMarket, setReviewsSelectedMarket] = React.useState(MarketsRequestKeys[0]);
 
+    const handleChangeReviewsCurrentPage = (event, newPage) => {
+        setReviewsPage(newPage);
+        loadNextReviewsPage(newPage, reviewsPerPage, reviewsSelectedMarket);
+    };
+
+    const handleReviewsSelectedMarketChange = (event) => {
+        const selectedMarket = event.target.value;
+        setReviewsSelectedMarket(selectedMarket);
+        setReviewsPage(0);
+        loadNextReviewsPage(0, reviewsPerPage, selectedMarket);
+    };
+
+    const handleChangeReviewsPerPage = (event) => {
+        const newReviewsPerPage = parseInt(event.target.value, 10);
+        setReviewsPerPage(newReviewsPerPage);
+        setReviewsPage(0);
+        loadNextReviewsPage(0, newReviewsPerPage, reviewsSelectedMarket);
+    };
 
     function hasChartErrors() {
         return !chartDateFrom || !chartDateTo ||
@@ -278,9 +367,10 @@ export default function ApplicationDashboard(props) {
 
             Promise.all([
                 getNotifications(props.userId),
-                getRatings(props.userId, props.app.id, new Date().setDate(new Date().getDate() - 1), new Date())
+                getRatings(props.userId, props.app.id, new Date().setDate(new Date().getDate() - 1), new Date()),
+                getReviews(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, getFirstExistingMarketRequestKey(props.app))
             ])
-                .then(([notifications, ratings]) => {
+                .then(([notifications, ratings, reviews]) => {
 
                     //update global notifications
                     props.updateUserNotifications(notifications);
@@ -291,6 +381,10 @@ export default function ApplicationDashboard(props) {
                     setAppNotifications(newAppNotifications)
 
                     fillChartDataWithRatings(ratings);
+
+                    console.log("reviews: ");
+                    console.log(reviews);
+                    setReviews(reviews);
 
                 })
                 .catch(err => console.log(err.message));
@@ -311,13 +405,21 @@ export default function ApplicationDashboard(props) {
         setChartData(ratings);
     }
 
+    function loadNextReviewsPage(page, perPage, selectedMarket) {
+        getReviews(props.userId, props.app.id, (page) * perPage, perPage, selectedMarket)
+            .then(reviews => {
+                console.log("reviews next page: ");
+                console.log(reviews);
+                setReviews(reviews);
+
+            }).catch(err => console.log(err.message));
+
+    }
+
     function loadChartRatingsData() {
-        console.log("SERVER RATINGS...");
         if (!hasChartErrors()) {
-            console.log("SERVER RATINGS REQUEST");
             getRatings(props.userId, props.app.id, chartDateFrom, chartDateTo)
                 .then(ratings => {
-                    //TODO !!!! if interval was changed BUT CHART NOT -> MAKE SMALL TEXT ON BOTTOM
                     setChartsStatusSuccessOpen(true);
                     fillChartDataWithRatings(ratings);
                 }).catch(err => console.log(err.message));
@@ -375,7 +477,6 @@ export default function ApplicationDashboard(props) {
     const handleChartDateToInput = (date) => {
         setChartDateTo(date);
     };
-
 
     return (
         <Grid container spacing={3}>
@@ -524,7 +625,7 @@ export default function ApplicationDashboard(props) {
 
             <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paperNoPadding}>
-                    <div className={formClasses.container}>
+                    <div className={classes.containerTopPadded}>
                         <Typography variant="h6">
                             Средняя оценка
                         </Typography>
@@ -549,7 +650,7 @@ export default function ApplicationDashboard(props) {
                                         onChange={handleChartDateFromInput}
                                         maxDate={chartDateTo}
                                         onError={handleChartDateFromError}
-                                        error={!chartDateFrom || chartDateFromError}
+                                        error={!chartDateFrom || chartDateFromError !== ""}
                                         helperText={!chartDateFrom
                                             ? "Укажите начальную дату"
                                             : chartDateFromError
@@ -576,7 +677,7 @@ export default function ApplicationDashboard(props) {
                                         onChange={handleChartDateToInput}
                                         minDate={chartDateFrom}
                                         onError={handleChartDateToError}
-                                        error={!chartDateTo || chartDateToError}
+                                        error={!chartDateTo || chartDateToError !== ""}
                                         helperText={!chartDateTo
                                             ? "Укажите конечную дату"
                                             : chartDateToError
@@ -606,7 +707,7 @@ export default function ApplicationDashboard(props) {
                     </Container>
 
                     <Chart data={chartData} selectedMarkets={selectedChartMarkets}/>
-                    {chartData && chartData.length!==0&&selectedChartMarkets.some(isSelected=>isSelected) &&
+                    {chartData && chartData.length !== 0 && selectedChartMarkets.some(isSelected => isSelected) &&
                     <div className={formClasses.container}>
                         <Typography variant="caption" color='primary'>
                             Если диапазон графика меньше указанного, это значит, что отзывы есть не на всем исходном
@@ -641,9 +742,9 @@ export default function ApplicationDashboard(props) {
             </Grid>
 
             <Grid item xs={12}>
-                <Paper elevation={1} className={classes.paper}>
+                <Paper elevation={1} className={classes.paperNoPadding}>
                     <div className={formClasses.cardContainer}>
-                        <div className={formClasses.container}>
+                        <div className={classes.containerTopPadded}>
                             <Typography variant="h6">
                                 Отзывы
                             </Typography>
@@ -653,10 +754,110 @@ export default function ApplicationDashboard(props) {
 
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
-                        <Container maxWidth='sm' className={classes.containerNotCentered}>
+                        <Container maxWidth='md' className={classes.containerApps}>
+                            <Grid container alignItems='center' spacing={1} justify='space-between'>
 
-                            <Pagination count={10} />
+                                <Grid item >
+                            <FormControl variant="outlined" className={classes.selectStyle}>
+                                <InputLabel id="demo-simple-select-outlined-label">Магазин приложений</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label"
+                                    id="demo-simple-select-outlined"
+                                    value={reviewsSelectedMarket}
+                                    onChange={handleReviewsSelectedMarketChange}
+                                    label="Магазин приложений"
+                                >
+                                    {
+                                        MarketsRequestKeys.map((key, index) =>
+                                            <MenuItem value={key}>{MarketsInfo[index].name}</MenuItem>
+                                        )
+                                    }
+                                </Select>
+                            </FormControl>
+                                </Grid>
+                                <Grid item >
+                                    <Box border={1} mt={1} mb={1} borderRadius={4} borderColor="grey.400">
+                            <TablePagination
+                                component="div"
+                                labelRowsPerPage='На странице'
+                                count={!reviews ? 0 : reviews.total}
+                                page={reviewsCurrentPage}
+                                rowsPerPageOptions={[10, 25, 50, 100, 250]}
+                                onChangePage={handleChangeReviewsCurrentPage}
+                                rowsPerPage={reviewsPerPage}
+                                onChangeRowsPerPage={handleChangeReviewsPerPage}
+                            />
+                                    </Box>
+                                </Grid>
+
+                            </Grid>
+                            <Grid container alignItems='stretch' spacing={2}>
+                                {reviews && reviews.foundItem.length !== 0 &&
+                                reviews.foundItem.map(review =>
+                                    <Grid xs={12} sm={12} md={6} item key={review.text + review.date}>
+                                        <Box border={1} borderRadius={8} borderColor="grey.300"
+                                             className={classes.reviewCard}>
+                                            <Grid container alignItems='center' spacing={1}>
+
+                                                <Grid item>
+                                                    <Avatar
+                                                        className={classes.reviewAvatar}>{
+                                                        review.reviewerUsername === undefined
+                                                            ? "?"
+                                                            : review.reviewerUsername.match(/[a-zA-Zа-яА-Я]/)
+                                                            ? review.reviewerUsername.charAt(0).toUpperCase()
+                                                            : "!"
+                                                    }
+                                                    </Avatar>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Box pl={0.5}>
+                                                    <Typography variant="body1">
+                                                        <b>
+                                                            {review.reviewerUsername === undefined
+                                                            ? "Имя неизвестно"
+                                                            : review.reviewerUsername}
+                                                        </b>
+                                                    </Typography>
+
+                                                    <Typography variant="caption" noWrap>
+                                                        {format(new Date(review.date), "dd/MM/yyyy HH:mm")} | Версия: {review.version}
+                                                    </Typography>
+                                                        <br/>
+                                                    <Typography variant="caption" noWrap>
+
+                                                    </Typography>
+                                                    </Box>
+                                                    <Typography variant="h6">
+                                                        {[1, 2, 3, 4, 5].map(value => {
+                                                            if (review.rating < value)
+                                                                return (<StarBorderRounded fontSize='inherit'
+                                                                    className={classes.reviewRating}/>)
+                                                            return (<StarRounded fontSize='inherit' className={classes.reviewRating}/>)
+                                                        })
+                                                        }
+                                                    </Typography>
+
+                                                </Grid>
+                                            </Grid>
+
+
+                                            <Typography variant="body2">
+                                                {review.text}
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+                                )
+                                }
+                            </Grid>
+
                         </Container>
+
+
+                        <Divider className={formClasses.fullWidthDivider}/>
+                        {/* <Grid container  justify = "center"> </Grid>*/}
+
+
                     </div>
                 </Paper>
             </Grid>

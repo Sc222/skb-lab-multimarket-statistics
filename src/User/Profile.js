@@ -299,7 +299,6 @@ export default function Profile(props) {
             updateUser(newUser)
                 .then(result => {
                     console.log(result);
-                    setStatusSuccessOpen(true);
 
                     //save success so current user is equal to new user
                     setCurrentUser(newUser);
@@ -473,7 +472,7 @@ export default function Profile(props) {
                                 </Typography>
                             </div>
                             <Divider className={formClasses.fullWidthDivider}/>
-                            <Container maxWidth='sm' className={classes.containerNotCentered}>
+                            <Container className={classes.containerNotCentered}>
                                 <Box className={classes.sectionMarginTop}>
                                     <Typography variant='subtitle1' gutterBottom className={classes.textWithIcon}>
                                         <PersonRounded className={classes.extendedIcon} color='primary'/>

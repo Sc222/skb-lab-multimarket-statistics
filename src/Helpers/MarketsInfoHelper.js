@@ -9,7 +9,9 @@ export const PlayStoreIndex = 0;
 export const AppStoreIndex = 1;
 export const AppGalleryIndex = 2;
 
+//utility constants
 export const MarketRatingPrecision = 3;
+export const ReviewsPerPage = 20;
 
 export const MarketsLinks = [
     "https://play.google.com/store/apps/details?id=",
@@ -117,4 +119,14 @@ export function getAppIdFromUrl(marketIndex, link) {
             return match[1];
     }
     return "";
+}
+
+export function getFirstExistingMarketRequestKey(app){
+    if(app.playMarketId!==undefined)
+        return MarketsRequestKeys[PlayStoreIndex];
+    if(app.appStoreId!==undefined)
+        return MarketsRequestKeys[AppStoreIndex];
+    if(app.appGalleryId!==undefined)
+        return MarketsRequestKeys[AppGalleryIndex];
+    return MarketsRequestKeys[PlayStoreIndex];
 }
