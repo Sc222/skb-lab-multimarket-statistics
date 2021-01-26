@@ -31,7 +31,7 @@ import {
     deleteAllNotifications as apiDeleteAllNotifications,
     deleteNotification,
     getNotifications
-} from "../Api/ApiNotifications";
+} from "../Api/ApiNotification";
 
 import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";

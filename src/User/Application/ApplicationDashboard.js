@@ -33,9 +33,12 @@ import {format} from 'date-fns';
 import {KeyboardDateTimePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import Button from "@material-ui/core/Button";
 import {getRatings} from "../../Api/ApiRating";
-import {deleteNotification, deleteNotifications, getNotifications} from "../../Api/ApiNotifications";
+import {deleteNotifications, getNotifications} from "../../Api/ApiNotification";
 import {getAppNotificationsAlert} from "../../Helpers/AlertsHelper";
 import Box from "@material-ui/core/Box";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+import Pagination from "@material-ui/lab/Pagination";
 
 const drawerWidth = 260;
 
@@ -247,29 +250,22 @@ export default function ApplicationDashboard(props) {
 
     const [selectedChartMarkets, setSelectedChartMarkets] = React.useState([false, false, false]);
     const [appNotifications, setAppNotifications] = React.useState(undefined);
-
     const [chartData, setChartData] = React.useState(undefined);
-    //const [ratings, setRatings] = React.useState(undefined);
+
+    //for status snackbars
+    const [isChartsStatusSuccessOpen, setChartsStatusSuccessOpen] = React.useState(false);
+
     const [chartDateFrom, setChartDateFrom] = React.useState(new Date().setDate(new Date().getDate() - 1));
     const [chartDateTo, setChartDateTo] = React.useState(new Date());
     const [chartDateFromError, setChartDateFromError] = React.useState('');
     const [chartDateToError, setChartDateToError] = React.useState('');
 
+    
+
     function hasChartErrors() {
         return !chartDateFrom || !chartDateTo ||
             chartDateFromError + chartDateToError !== "";
     }
-
-    function createData(date, playStore, appStore, appGallery) {
-        return {date, playStore, appStore, appGallery};
-    }
-
-    function updateNotifications(notificationId, index) {
-        let newNotifications = update(appNotifications, {$splice: [[index, 1]]});
-        setAppNotifications(newNotifications);
-        deleteNotification(props.userId, notificationId).then(result => console.log(result.status));
-    }
-
 
     useEffect(() => {
 
@@ -322,6 +318,7 @@ export default function ApplicationDashboard(props) {
             getRatings(props.userId, props.app.id, chartDateFrom, chartDateTo)
                 .then(ratings => {
                     //TODO !!!! if interval was changed BUT CHART NOT -> MAKE SMALL TEXT ON BOTTOM
+                    setChartsStatusSuccessOpen(true);
                     fillChartDataWithRatings(ratings);
                 }).catch(err => console.log(err.message));
         }
@@ -356,6 +353,12 @@ export default function ApplicationDashboard(props) {
             });
     }
 
+    const handleChartsStatusSuccessClose = (event, reason) => {
+        if (reason === 'clickaway')
+            return;
+        setChartsStatusSuccessOpen(false);
+    };
+
 
     const handleChartDateFromError = (error, _) => {
         setChartDateFromError(error);
@@ -376,7 +379,6 @@ export default function ApplicationDashboard(props) {
 
     return (
         <Grid container spacing={3}>
-
             <Grid item xs={12}>
                 <Paper elevation={1}>
                     <AppBar elevation={0} position="static" className={classes.extraToolbar}>
@@ -521,116 +523,121 @@ export default function ApplicationDashboard(props) {
             </Grid>
 
             <Grid item xs={12}>
-                <Paper elevation={1} className={classes.paper}>
-                    <div className={formClasses.cardContainer}>
-                        <div className={formClasses.container}>
-                            <Typography variant="h6">
-                                Средняя оценка
-                            </Typography>
-                            <Typography variant="body2">
-                                Как меняется средняя оценка приложения со временем
-                            </Typography>
-                        </div>
-                        <Divider className={formClasses.fullWidthDivider}/>
+                <Paper elevation={1} className={classes.paperNoPadding}>
+                    <div className={formClasses.container}>
+                        <Typography variant="h6">
+                            Средняя оценка
+                        </Typography>
+                        <Typography variant="body2">
+                            Как меняется средняя оценка приложения со временем
+                        </Typography>
+                    </div>
+                    <Divider className={formClasses.fullWidthDivider}/>
 
-                        <Container maxWidth='md' className={classes.containerNotCentered}>
+                    <Container maxWidth='md' className={classes.containerNotCentered}>
 
-                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                <Grid container spacing={2} justify='flex-start' alignItems='stretch'
-                                      className={classes.chartSelectsContainer}>
-                                    <Grid item xs={7} sm={3}>
-
-                                        {/*TODO MIN AND MAX DATE IGNORE HOURS AND MINUTES :(*/}
-
-                                        <KeyboardDateTimePicker
-                                            fullWidth
-                                            size="small"
-                                            disableFuture
-                                            value={chartDateFrom}
-                                            onChange={handleChartDateFromInput}
-                                            maxDate={chartDateTo}
-                                            onError={handleChartDateFromError}
-                                            error={!chartDateFrom || chartDateFromError}
-                                            helperText={!chartDateFrom
-                                                ? "Укажите начальную дату"
-                                                : chartDateFromError
-                                            }
-                                            format="dd/MM/yyyy HH:mm"
-                                            inputVariant="outlined"
-                                            ampm={false}
-                                            label="От"
-                                            id="date-picker-from"
-                                            variant="inline"
-                                            KeyboardButtonProps={{
-                                                'aria-label': 'change date',
-                                            }}
-                                            invalidDateMessage='Неверный формат даты'
-                                            maxDateMessage='Дата не может быть позднее даты в поле «До»'
-                                        />
-                                    </Grid>
-
-
-                                    <Grid item xs={7} sm={3}>
-                                        <KeyboardDateTimePicker
-                                            fullWidth
-                                            size="small"
-                                            disableFuture
-                                            value={chartDateTo}
-                                            onChange={handleChartDateToInput}
-                                            minDate={chartDateFrom}
-                                            onError={handleChartDateToError}
-                                            error={!chartDateTo || chartDateToError}
-                                            helperText={!chartDateTo
-                                                ? "Укажите конечную дату"
-                                                : chartDateToError
-                                            }
-                                            format="dd/MM/yyyy HH:mm"
-                                            inputVariant="outlined"
-                                            ampm={false}
-                                            label="До"
-                                            id="date-picker-to"
-                                            variant="inline"
-                                            KeyboardButtonProps={{
-                                                'aria-label': 'change date',
-                                            }}
-                                            invalidDateMessage='Неверный формат даты'
-                                            maxDateMessage='Дата не может быть позднее текущего времени'
-                                            minDateMessage='Дата не может быть раньше даты в поле «От»'
-                                        />
-                                    </Grid>
-                                    <Grid item xs={7} sm={4}>
-                                        <Button disableElevation variant="contained" color="primary" size='medium'
-                                                onClick={() => loadChartRatingsData()}>
-                                            Показать
-                                        </Button>
-                                    </Grid>
-
-                                </Grid>
-                            </MuiPickersUtilsProvider>
-                        </Container>
-
-                        <Chart data={chartData} selectedMarkets={selectedChartMarkets}/>
-
-                        <Divider className={formClasses.fullWidthDivider}/>
-                        <div className={marketClasses.marketsContainer}>
-                            {props.app &&
-                            MarketsIndexes.map(marketIndex => {
-                                let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
-                                return marketId !== undefined &&
-                                    <Chip
-                                        clickable
-                                        component='a'
-                                        label={MarketsInfo[marketIndex].name}
-                                        color={selectedChartMarkets[marketIndex] ? "primary" : "default"}
-                                        style={{backgroundColor: getChipChartColor(theme, marketIndex, selectedChartMarkets[marketIndex])}}
-                                        onClick={() => toggleSelectedMarket(marketIndex)}
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <Grid container spacing={2} justify='flex-start' alignItems='stretch'
+                                  className={classes.chartSelectsContainer}>
+                                <Grid item xs={7} sm={10} md={3}>
+                                    {/*TODO MIN AND MAX DATE IGNORE HOURS AND MINUTES :(*/}
+                                    <KeyboardDateTimePicker
+                                        fullWidth
+                                        size="small"
+                                        disableFuture
+                                        value={chartDateFrom}
+                                        onChange={handleChartDateFromInput}
+                                        maxDate={chartDateTo}
+                                        onError={handleChartDateFromError}
+                                        error={!chartDateFrom || chartDateFromError}
+                                        helperText={!chartDateFrom
+                                            ? "Укажите начальную дату"
+                                            : chartDateFromError
+                                        }
+                                        format="dd/MM/yyyy HH:mm"
+                                        inputVariant="outlined"
+                                        ampm={false}
+                                        label="От"
+                                        id="date-picker-from"
+                                        variant="inline"
+                                        KeyboardButtonProps={{
+                                            'aria-label': 'change date',
+                                        }}
+                                        invalidDateMessage='Неверный формат даты'
+                                        maxDateMessage='Дата не может быть позднее даты в поле «До»'
                                     />
-                            })
-                            }
-                        </div>
+                                </Grid>
+                                <Grid item xs={7} sm={10} md={3}>
+                                    <KeyboardDateTimePicker
+                                        fullWidth
+                                        size="small"
+                                        disableFuture
+                                        value={chartDateTo}
+                                        onChange={handleChartDateToInput}
+                                        minDate={chartDateFrom}
+                                        onError={handleChartDateToError}
+                                        error={!chartDateTo || chartDateToError}
+                                        helperText={!chartDateTo
+                                            ? "Укажите конечную дату"
+                                            : chartDateToError
+                                        }
+                                        format="dd/MM/yyyy HH:mm"
+                                        inputVariant="outlined"
+                                        ampm={false}
+                                        label="До"
+                                        id="date-picker-to"
+                                        variant="inline"
+                                        KeyboardButtonProps={{
+                                            'aria-label': 'change date',
+                                        }}
+                                        invalidDateMessage='Неверный формат даты'
+                                        maxDateMessage='Дата не может быть позднее текущего времени'
+                                        minDateMessage='Дата не может быть раньше даты в поле «От»'
+                                    />
+                                </Grid>
+                                <Grid item xs={7} sm={8} md={4}>
+                                    <Button disableElevation variant="contained" color="primary" size='medium'
+                                            onClick={() => loadChartRatingsData()}>
+                                        Показать
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </MuiPickersUtilsProvider>
+                    </Container>
 
+                    <Chart data={chartData} selectedMarkets={selectedChartMarkets}/>
+                    {chartData && chartData.length!==0&&selectedChartMarkets.some(isSelected=>isSelected) &&
+                    <div className={formClasses.container}>
+                        <Typography variant="caption" color='primary'>
+                            Если диапазон графика меньше указанного, это значит, что отзывы есть не на всем исходном
+                            диапазоне
+                        </Typography>
+                    </div>}
+
+                    <Divider className={formClasses.fullWidthDivider}/>
+                    <div className={marketClasses.marketsContainer}>
+                        {props.app &&
+                        MarketsIndexes.map(marketIndex => {
+                            let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
+                            return marketId !== undefined &&
+                                <Chip
+                                    clickable
+                                    component='a'
+                                    label={MarketsInfo[marketIndex].name}
+                                    color={selectedChartMarkets[marketIndex] ? "primary" : "default"}
+                                    style={{backgroundColor: getChipChartColor(theme, marketIndex, selectedChartMarkets[marketIndex])}}
+                                    onClick={() => toggleSelectedMarket(marketIndex)}
+                                />
+                        })
+                        }
                     </div>
                 </Paper>
+                <Snackbar open={isChartsStatusSuccessOpen} autoHideDuration={1000}
+                          onClose={handleChartsStatusSuccessClose}>
+                    <Alert onClose={handleChartsStatusSuccessClose} severity="success">
+                        График успешно обновлён
+                    </Alert>
+                </Snackbar>
             </Grid>
 
             <Grid item xs={12}>
@@ -647,6 +654,8 @@ export default function ApplicationDashboard(props) {
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container maxWidth='sm' className={classes.containerNotCentered}>
+
+                            <Pagination count={10} />
                         </Container>
                     </div>
                 </Paper>
