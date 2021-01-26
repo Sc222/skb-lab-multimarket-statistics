@@ -77,7 +77,8 @@ namespace Domain.Clients.PlayMarket
                 MarketReviewId = r.Id,
                 Rating = r.Score,
                 Text = r.Text,
-                Version = r.Version
+                Version = r.Version,
+                ReviewerUsername = r.Username
             });
         }
 

@@ -22,55 +22,55 @@ namespace MultimarketStatistics.Controllers
             this.mapper = mapper;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost("create/{userId}")]
         public async Task<ActionResult<Guid>> Create(Guid userId, [FromBody] AppContract webApp)
         {
-            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
-            //    return StatusCode(StatusCodes.Status403Forbidden);
+            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+                return StatusCode(StatusCodes.Status403Forbidden);
             var app = mapper.Map<App>(webApp);
-            app.User = new User {Id = userId};
+            app.User = new User { Id = userId };
             return await appService.Create(app).ConfigureAwait(false);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPut("update/{userId}")]
         public async Task<ActionResult> Update(Guid userId, [FromBody] AppContract webApp)
         {
-            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
-            //    return StatusCode(StatusCodes.Status403Forbidden);
+            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+                return StatusCode(StatusCodes.Status403Forbidden);
             var app = mapper.Map<App>(webApp);
-            app.User = new User {Id = userId};
+            app.User = new User { Id = userId };
             await appService.Update(app).ConfigureAwait(false);
             return Ok();
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("{userId}/apps")]
         public ActionResult<AppContract[]> GetUserApps(Guid userId)
         {
-            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
-            //    return StatusCode(StatusCodes.Status403Forbidden);
+            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+                return StatusCode(StatusCodes.Status403Forbidden);
             var apps = appService.GetAppsByUser(userId);
             return mapper.Map<AppContract[]>(apps);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("{userId}/{appId}")]
         public ActionResult<AppContract> Get(Guid userId, Guid appId)
         {
-            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
-            //    return StatusCode(StatusCodes.Status403Forbidden);
+            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+                return StatusCode(StatusCodes.Status403Forbidden);
             var app = appService.Get(appId);
             return mapper.Map<AppContract>(app);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpDelete("{userId}/{appId}")]
         public ActionResult Delete(Guid userId, Guid appId)
         {
-            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
-            //    return StatusCode(StatusCodes.Status403Forbidden);
+            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+                return StatusCode(StatusCodes.Status403Forbidden);
             appService.Delete(appId);
             return Ok();
         }
