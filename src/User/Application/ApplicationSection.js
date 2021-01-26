@@ -193,7 +193,7 @@ export default function ApplicationSection(props) {
 
                     <RouteSwitch>
                         <Route path={`${HomepageUrl}/user/:userId/app/:appId/dashboard`}>
-                            <ApplicationDashboard userId={userId} app={app}/>
+                            <ApplicationDashboard userId={userId} app={app} updateUserNotifications ={props.updateUserNotifications}/>
                         </Route>
                         {/*<Route path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
                                 <Applications userId={userId}/>

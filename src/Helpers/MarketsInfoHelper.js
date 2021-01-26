@@ -9,6 +9,8 @@ export const PlayStoreIndex = 0;
 export const AppStoreIndex = 1;
 export const AppGalleryIndex = 2;
 
+export const MarketRatingPrecision = 3;
+
 export const MarketsLinks = [
     "https://play.google.com/store/apps/details?id=",
     "https://apps.apple.com/app/id",
@@ -33,7 +35,7 @@ export const MarketsLinksRegex = [
 
 export const MarketsIndexes = [PlayStoreIndex,AppStoreIndex,AppGalleryIndex];
 
-export const MarketsKeys = ["playStore", "appStore", "appGallery"];
+export const MarketsKeys = ["playMarketRating", "appStoreRating", "appGalleryRating"];
 
 export const MarketsInfo = [
     {

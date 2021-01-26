@@ -8,21 +8,34 @@ import Paper from '@material-ui/core/Paper';
 import Chart from './Chart';
 import Avatar from "@material-ui/core/Avatar";
 
+
 //image imports
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
-import {createLinkFromId, getChipChartColor, MarketsIndexes, MarketsInfo} from "../../Helpers/MarketsInfoHelper";
+import {
+    createLinkFromId,
+    getChipChartColor,
+    MarketRatingPrecision,
+    MarketsIndexes,
+    MarketsInfo
+} from "../../Helpers/MarketsInfoHelper";
 import MarketChipStyles from "../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
 import update from "immutability-helper";
 import defaultAppIcon from "../../images/default_app_icon.png";
 import {getMarketIdByStoreIndex} from "../../Api/ApiAppHelper";
+
+import DateFnsUtils from '@date-io/date-fns';
+import {format} from 'date-fns';
+
+import {KeyboardDateTimePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
+import Button from "@material-ui/core/Button";
+import {getRatings} from "../../Api/ApiRating";
+import {deleteNotification, deleteNotifications, getNotifications} from "../../Api/ApiNotifications";
+import {getAppNotificationsAlert} from "../../Helpers/AlertsHelper";
+import Box from "@material-ui/core/Box";
 
 const drawerWidth = 260;
 
@@ -80,6 +93,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 0,
         marginRight: 0
     },
+
 
     content: {
         flexGrow: 1,
@@ -217,6 +231,8 @@ const useStyles = makeStyles((theme) => ({
     chartSelectsContainer: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1)
     },
 }));
 const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
@@ -225,63 +241,138 @@ const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 export default function ApplicationDashboard(props) {
 
     const theme = useTheme();
-
     const classes = useStyles();
     const formClasses = useFormSectionStyles();
     const marketClasses = useMarketChipStyles();
 
     const [selectedChartMarkets, setSelectedChartMarkets] = React.useState([false, false, false]);
+    const [appNotifications, setAppNotifications] = React.useState(undefined);
 
-    console.log(selectedChartMarkets);
-
-    const [chartAverageRatingType, setAverageRatingType] = React.useState('day'); //all time or by day
-    const [chartAverageRatingInterval, setAverageRatingInterval] = React.useState('day'); //daily, weekly, monthly
     const [chartData, setChartData] = React.useState(undefined);
+    //const [ratings, setRatings] = React.useState(undefined);
+    const [chartDateFrom, setChartDateFrom] = React.useState(new Date().setDate(new Date().getDate() - 1));
+    const [chartDateTo, setChartDateTo] = React.useState(new Date());
+    const [chartDateFromError, setChartDateFromError] = React.useState('');
+    const [chartDateToError, setChartDateToError] = React.useState('');
+
+    function hasChartErrors() {
+        return !chartDateFrom || !chartDateTo ||
+            chartDateFromError + chartDateToError !== "";
+    }
+
+    function createData(date, playStore, appStore, appGallery) {
+        return {date, playStore, appStore, appGallery};
+    }
+
+    function updateNotifications(notificationId, index) {
+        let newNotifications = update(appNotifications, {$splice: [[index, 1]]});
+        setAppNotifications(newNotifications);
+        deleteNotification(props.userId, notificationId).then(result => console.log(result.status));
+    }
+
 
     useEffect(() => {
+
         if (props.app) {
             setSelectedChartMarkets([
                 props.app.playMarketId !== undefined,
                 props.app.appStoreId !== undefined,
                 props.app.appGalleryId !== undefined
             ]);
-            console.log([
-                props.app.playMarketId !== undefined,
-                props.app.appStoreId !== undefined,
-                props.app.appGalleryId !== undefined
-            ]);
+
+            Promise.all([
+                getNotifications(props.userId),
+                getRatings(props.userId, props.app.id, new Date().setDate(new Date().getDate() - 1), new Date())
+            ])
+                .then(([notifications, ratings]) => {
+
+                    //update global notifications
+                    props.updateUserNotifications(notifications);
+
+                    /*TODO IS NOTIFICATION SECTION IN APPS NEEDED?*/
+                    //select current app notifications
+                    const newAppNotifications = notifications.filter(notification => notification.appId === props.app.id);
+                    setAppNotifications(newAppNotifications)
+
+                    fillChartDataWithRatings(ratings);
+
+                })
+                .catch(err => console.log(err.message));
         }
     }, [props.app]);
 
-    useEffect(() => {
+    function fillChartDataWithRatings(ratings) {
+        console.log("load ratings");
+        console.log(ratings);
 
-        //todo API: load chart data from server
+        //replace 0 ratings with 0
+        ratings.forEach(r => {
+            r.date = format(new Date(r.date), "dd/MM/yyyy HH:mm");
+            r.playMarketRating = !r.playMarketRating ? null : parseFloat(r.playMarketRating).toPrecision(MarketRatingPrecision);
+            r.appStoreRating = !r.appStoreRating ? null : parseFloat(r.appStoreRating).toPrecision(MarketRatingPrecision);
+            r.appGalleryRating = !r.appGalleryRating ? null : parseFloat(r.appGalleryRating).toPrecision(MarketRatingPrecision);
+        })
+        setChartData(ratings);
+    }
 
-        function createData(date, playStore, appStore, appGallery) {
-            return {date, playStore, appStore, appGallery};
+    function loadChartRatingsData() {
+        console.log("SERVER RATINGS...");
+        if (!hasChartErrors()) {
+            console.log("SERVER RATINGS REQUEST");
+            getRatings(props.userId, props.app.id, chartDateFrom, chartDateTo)
+                .then(ratings => {
+                    //TODO !!!! if interval was changed BUT CHART NOT -> MAKE SMALL TEXT ON BOTTOM
+                    fillChartDataWithRatings(ratings);
+                }).catch(err => console.log(err.message));
         }
-
-        const demoData = [
-            createData('00:00', 4.0, 4.2, 3.8),
-            createData('03:00', 4.5, 4.1, 3.9),
-            createData('06:00', 4.7, 3.9, 4.2),
-            createData('09:00', 4.3, 3.7, 4.5),
-            createData('12:00', 4.5, 3.8, 4.3),
-            createData('15:00', 4.3, 4.0, 4.1),
-            createData('18:00', 4.7, 4.3, 3.8),
-            createData('21:00', 4.8, 4.6, 4.0),
-            createData('24:00', 4.5, 4.4, 4.3),
-        ];
-
-        setChartData(demoData);
-
-    }, [props.app, chartAverageRatingType, chartAverageRatingInterval]);
+    }
 
     function toggleSelectedMarket(index) {
         console.log('toggle market: ' + index);
         const newValue = update(selectedChartMarkets, {[index]: {$set: !selectedChartMarkets[index]}});
         setSelectedChartMarkets(newValue);
     }
+
+    function reloadNotifications() {
+        getNotifications(props.userId)
+            .then(notifications => {
+                props.updateUserNotifications(notifications);
+                const newAppNotifications = notifications.filter(notification => notification.appId === props.app.id);
+                setAppNotifications(newAppNotifications)
+            })
+            .catch(err => console.log(err.message));
+    }
+
+    function deleteAllAppNotifications() {
+        console.log("delete all notifications");
+        deleteNotifications(props.userId, appNotifications.map(n => n.id))
+            .then(result => {
+                if (result.ok) {
+                    setAppNotifications([]);
+                } else {
+                    console.log("error deleting notifications");
+                    //todo show error alert
+                }
+            });
+    }
+
+
+    const handleChartDateFromError = (error, _) => {
+        setChartDateFromError(error);
+    }
+
+    const handleChartDateToError = (error, _) => {
+        setChartDateToError(error);
+    }
+
+    const handleChartDateFromInput = (date) => {
+        setChartDateFrom(date);
+    };
+
+    const handleChartDateToInput = (date) => {
+        setChartDateTo(date);
+    };
+
 
     return (
         <Grid container spacing={3}>
@@ -301,7 +392,6 @@ export default function ApplicationDashboard(props) {
             {/* todo lg = {6} TEST   */}
             {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
             <Grid item xs={12}>
-                {/* TODO !!! IMPORTANT show app not found card when app not found */}
                 {props.app &&
                 <Paper className={classes.paperNoPadding} elevation={1}>
                     <div className={classes.appDescriptionContainer}>
@@ -345,6 +435,7 @@ export default function ApplicationDashboard(props) {
                 }
             </Grid>
 
+            {/*TODO IS NOTIFICATION SECTION IN APPS NEEDED?*/}
             <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paper}>
                     <div className={formClasses.cardContainer}>
@@ -355,13 +446,76 @@ export default function ApplicationDashboard(props) {
                             <Typography variant="body2">
                                 Уведомления о новых отзывах и оценках
                             </Typography>
-
-                            {/*TODO SELECT APP NOTIFICATIONS FROM props.notifications (and reload them)*/}
-
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
-                        <Container maxWidth='sm' className={classes.containerNotCentered}>
+                        <Container maxWidth='xs' className={classes.containerNotCentered}>
+                            {/* TODO IS ALL NOTIFICATIONS LISTING NEEDED?
+                            <Paper>
+                                <Grid container alignItems='center' spacing={2} style={{maxHeight: '100px'}}>
+                                    {appNotifications?.map((notification, index) => {
+                                        return (<Grid key={notification.id} item xs={6} sm={4}>
+                                            <Box borderRadius={8} border={1} borderColor="text.primary"
+                                                 style={{
+                                                     display: 'flex',
+                                                     overflow: 'auto',
+                                                     flexDirection: 'column',
+                                                     height: '100%',
+                                                 }}
+                                            >
+                                                <div style={{flexGrow: 1, height: '100%'}}>
+                                                    <Typography variant='body1' color='textPrimary'>
+                                                        {notification.title}
+                                                    </Typography>
+
+                                                    <Typography variant='body2'
+                                                                color='textSecondary'>{notification.text}
+                                                    </Typography>
+                                                </div>
+                                                <Link
+                                                    className={classes.marginLeftSmall}
+                                                    component="button"
+                                                    variant="body2"
+                                                    color='error'
+                                                    onClick={() => updateNotifications(notification.id, index)}
+                                                >
+                                                    Удалить
+                                                </Link>
+                                            </Box>
+                                        </Grid>);})}
+                                </Grid>
+                            </Paper>
+                            */}
+
+                            {/*TODO FEATURE REQUEST: ERRORS WITH MARKETS NOTIFICATIONS*/}
+                            <Box mt={2} mb={2}>
+                                {getAppNotificationsAlert(appNotifications)}
+                            </Box>
+
                         </Container>
+                        {appNotifications &&
+                        <>
+                            <Divider className={classes.fullWidthDivider}/>
+
+                            <Container maxWidth='xs' className={classes.containerNotCentered}>
+                                <Box mt={2}>
+                                    {appNotifications.length !== 0
+                                        ? <Button disableElevation
+                                                  variant="outlined"
+                                                  color="secondary"
+                                                  onClick={() => deleteAllAppNotifications()}>
+                                            Очистить уведомления
+                                        </Button>
+                                        : <Button disableElevation
+                                                  variant="outlined"
+                                                  color="primary"
+                                                  onClick={() => reloadNotifications()}>
+                                            Обновить уведомления
+                                        </Button>
+                                    }
+                                </Box>
+                            </Container>
+                        </>
+                        }
                     </div>
                 </Paper>
             </Grid>
@@ -379,40 +533,80 @@ export default function ApplicationDashboard(props) {
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
 
-                        <Container maxWidth='sm' className={classes.containerNotCentered}>
-                            <Grid container spacing={2} justify='flex-start' className={classes.chartSelectsContainer}>
-                                <Grid item xs={9} sm={7}>
-                                    <FormControl fullWidth variant="outlined" size='small'>
-                                        <InputLabel id="averageRatingTypeLabel">Средняя оценка</InputLabel>
-                                        <Select
+                        <Container maxWidth='md' className={classes.containerNotCentered}>
+
+                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                <Grid container spacing={2} justify='flex-start' alignItems='stretch'
+                                      className={classes.chartSelectsContainer}>
+                                    <Grid item xs={7} sm={3}>
+
+                                        {/*TODO MIN AND MAX DATE IGNORE HOURS AND MINUTES :(*/}
+
+                                        <KeyboardDateTimePicker
                                             fullWidth
-                                            labelId="averageRatingTypeLabel"
-                                            id="averageRatingType"
-                                            value={chartAverageRatingType}
-                                            label="Средняя оценка"
-                                            onChange={event => setAverageRatingType(event.target.value)}>
-                                            <MenuItem value={'day'}>За день</MenuItem>
-                                            <MenuItem value={'allTime'}>За все время</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={6} sm={5}>
-                                    <FormControl fullWidth variant="outlined" size='small'>
-                                        <InputLabel id="averageRatingIntervalLabel">Интервал</InputLabel>
-                                        <Select
+                                            size="small"
+                                            disableFuture
+                                            value={chartDateFrom}
+                                            onChange={handleChartDateFromInput}
+                                            maxDate={chartDateTo}
+                                            onError={handleChartDateFromError}
+                                            error={!chartDateFrom || chartDateFromError}
+                                            helperText={!chartDateFrom
+                                                ? "Укажите начальную дату"
+                                                : chartDateFromError
+                                            }
+                                            format="dd/MM/yyyy HH:mm"
+                                            inputVariant="outlined"
+                                            ampm={false}
+                                            label="От"
+                                            id="date-picker-from"
+                                            variant="inline"
+                                            KeyboardButtonProps={{
+                                                'aria-label': 'change date',
+                                            }}
+                                            invalidDateMessage='Неверный формат даты'
+                                            maxDateMessage='Дата не может быть позднее даты в поле «До»'
+                                        />
+                                    </Grid>
+
+
+                                    <Grid item xs={7} sm={3}>
+                                        <KeyboardDateTimePicker
                                             fullWidth
-                                            labelId="averageRatingIntervalLabel"
-                                            id="averageRatingInterval"
-                                            value={chartAverageRatingInterval}
-                                            label="Интервал"
-                                            onChange={event => setAverageRatingInterval(event.target.value)}>
-                                            <MenuItem value={'day'}>День</MenuItem>
-                                            <MenuItem value={'week'}>Неделя</MenuItem>
-                                            <MenuItem value={'month'}>Месяц</MenuItem>
-                                        </Select>
-                                    </FormControl>
+                                            size="small"
+                                            disableFuture
+                                            value={chartDateTo}
+                                            onChange={handleChartDateToInput}
+                                            minDate={chartDateFrom}
+                                            onError={handleChartDateToError}
+                                            error={!chartDateTo || chartDateToError}
+                                            helperText={!chartDateTo
+                                                ? "Укажите конечную дату"
+                                                : chartDateToError
+                                            }
+                                            format="dd/MM/yyyy HH:mm"
+                                            inputVariant="outlined"
+                                            ampm={false}
+                                            label="До"
+                                            id="date-picker-to"
+                                            variant="inline"
+                                            KeyboardButtonProps={{
+                                                'aria-label': 'change date',
+                                            }}
+                                            invalidDateMessage='Неверный формат даты'
+                                            maxDateMessage='Дата не может быть позднее текущего времени'
+                                            minDateMessage='Дата не может быть раньше даты в поле «От»'
+                                        />
+                                    </Grid>
+                                    <Grid item xs={7} sm={4}>
+                                        <Button disableElevation variant="contained" color="primary" size='medium'
+                                                onClick={() => loadChartRatingsData()}>
+                                            Показать
+                                        </Button>
+                                    </Grid>
+
                                 </Grid>
-                            </Grid>
+                            </MuiPickersUtilsProvider>
                         </Container>
 
                         <Chart data={chartData} selectedMarkets={selectedChartMarkets}/>

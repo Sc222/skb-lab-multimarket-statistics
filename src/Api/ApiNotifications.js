@@ -26,6 +26,13 @@ export async function deleteNotification(userId, notificationId) {
         });
 }
 
+export async function deleteNotifications(userId, notificationIds) {
+    return fetch(`${ApiRoot}/api/Notification/${userId}?id=${notificationIds.join("&id=")}`,
+        {
+            method: "DELETE"
+        });
+}
+
 export async function deleteAllNotifications(userId) {
     return fetch(`${ApiRoot}/api/Notification/${userId}/all`,
         {

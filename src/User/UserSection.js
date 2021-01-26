@@ -216,6 +216,10 @@ export default function UserSection() {
     const [notifications, setNotifications] = React.useState(undefined);
     const [user, setUser] = React.useState(getDefaultUser());
 
+    const updateUserNotifications = (newNotifications) => {
+        setNotifications(newNotifications);
+    };
+
     const changeDrawerState = () => {
         setDrawerOpen(!isDrawerOpen);
     };
@@ -475,6 +479,7 @@ export default function UserSection() {
                     </Route>
                     <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
                         <ApplicationSection userId={userId} isDrawerOpen={isDrawerOpen}
+                                            updateUserNotifications ={updateUserNotifications}
                                             changeDrawerState={changeDrawerState}/>
                         {/*todo if path is /${HomepageUrl}/user/:userId/app/:appId (without dashboard|settings) -> redirect to dashboard*/}
                     </Route>
