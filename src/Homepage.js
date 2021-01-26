@@ -39,13 +39,13 @@ function Homepage() {
             <Typography variant='subtitle1'>
                 (Landing с информацией о программе, меню входа и прочим)
             </Typography>
-            <Typography variant='caption'>
+            <Typography variant='caption' style={{color: '#61dafb'}}>
                 smallUser : test
             </Typography>
-            <Typography variant='caption'>
+            <Typography variant='caption' style={{color: '#61dafb'}}>
                 bigUser : testPassword
             </Typography>
-            <Typography variant='subtitle2'>
+            <Typography variant='h6'>
                 Разделы сайта:
             </Typography>
             <List dense style={{color: '#61dafb'}}>
