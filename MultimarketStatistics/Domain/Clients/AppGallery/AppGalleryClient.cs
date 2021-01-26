@@ -85,15 +85,17 @@ namespace Domain.Clients.AppGallery
             {
                 App = app,
                 Date = DateTime.Now,
-                OneStarsCount = ratings[0].RatingCounts,
-                TwoStarsCount = ratings[1].RatingCounts,
-                ThreeStarsCount = ratings[2].RatingCounts,
-                FourStarsCount = ratings[3].RatingCounts,
-                FiveStarsCount = ratings[4].RatingCounts,
-                Total = ratings.Sum(r => r.RatingCounts),
+                AverageRating = CountAverage(ratings, ratings.Sum(r => r.RatingCounts)),
                 Market = MarketType.AppGallery
             };
         }
+
+        private double CountAverage(List<AppGalleryRating> ratings, int total) =>
+            (double)(ratings[4].RatingCounts * 5 +
+                     ratings[3].RatingCounts * 4 +
+                     ratings[2].RatingCounts * 3 +
+                     ratings[1].RatingCounts * 2 +
+                     ratings[0].RatingCounts) / total;
 
         public async Task<string> GetAppPicUrl(App app)
         {

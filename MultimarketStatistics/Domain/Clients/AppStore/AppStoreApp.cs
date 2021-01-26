@@ -13,5 +13,7 @@ namespace Domain.Clients.AppStore
     public class AppStoreApp
     {
         [JsonProperty("artworkUrl512")] public string PicUrl { get; set; }
+
+        [JsonProperty("averageUserRating")] public double AverageRating { get; set; }
     }
 }

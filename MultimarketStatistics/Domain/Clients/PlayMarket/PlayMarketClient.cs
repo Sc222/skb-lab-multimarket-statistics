@@ -95,14 +95,16 @@ namespace Domain.Clients.PlayMarket
                 App = app,
                 Date = DateTime.Now,
                 Market = MarketType.PlayMarket,
-                Total = ratings.Total,
-                FiveStarsCount = rating.FiveStars,
-                FourStarsCount = rating.FourStars,
-                ThreeStarsCount = rating.ThreeStars,
-                TwoStarsCount = rating.TwoStars,
-                OneStarsCount = rating.OneStars
+                AverageRating = CountAverage(rating, ratings.Total)
             };
         }
+
+        private double CountAverage(PlayMarketRating ratings, int total) =>
+            (double)(ratings.FiveStars * 5 +
+                     ratings.FourStars * 4 +
+                     ratings.ThreeStars * 3 +
+                     ratings.TwoStars * 2 +
+                     ratings.OneStars) / total;
 
         public async Task<string> GetAppPicUrl(App app)
         {

@@ -44,7 +44,7 @@ namespace Domain.Services
             try
             {
                 var reviews = await fetcherService.FetchAppReviews(app).ConfigureAwait(false);
-                var rating = await fetcherService.FetchAppRating(app, null, reviews).ConfigureAwait(false);
+                var rating = await fetcherService.FetchAppRating(app).ConfigureAwait(false);
                 reviewRepository.CreateRange(reviews);
                 ratingRepository.CreateRange(rating);
             }
