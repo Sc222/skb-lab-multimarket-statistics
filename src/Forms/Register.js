@@ -19,10 +19,11 @@ import {
     parseEmailServerError,
     parseUsernameServerError
 } from "../Helpers/ErrorHelper";
-import {createUserForCreate, getDefaultUserNoId} from "../Api/ApiUserHelper";
+import {createUserForCreate, getDefaultLoginCredentials, getDefaultUserNoId} from "../Api/ApiUserHelper";
 import update from "immutability-helper";
-import {createUser} from "../Api/ApiUser";
+import {authenticateUser, createUser} from "../Api/ApiUser";
 import {HomepageUrl} from "../App";
+import {setCookieToken, setCookieUserId} from "../Helpers/CookieHelper";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -55,14 +56,32 @@ export default function Register(props) {
                     console.log(userForCreate);
 
                     //TODO REMOVE TEMP SOLUTION USING TOKEN
-                    const loggedInUser = newUser;
-                    console.log("result blob: "+result);
-                    loggedInUser.id=result;
+                    //const loggedInUser = newUser;
+                    //console.log("result blob: "+result);
+                    //loggedInUser.id=result;
+                    //props.setLoggedInUser(loggedInUser);
+                    const loginCredentials = getDefaultLoginCredentials();
+                    loginCredentials.username=newUser.username;
+                    loginCredentials.password=newUser.password;
 
-                    props.setLoggedInUser(loggedInUser);
+                    return loginCredentials;
                     //TODO !!! REQUEST AUTHENTICATION TOKEN
                     //TODO !!! REDIRECT TO USER APPS LIST
                 })
+                .then(user=> {
+                    const loginCredentials = getDefaultLoginCredentials();
+                    loginCredentials.username=user.username;
+                    loginCredentials.password=user.password;
+                        authenticateUser(loginCredentials).then(result => {
+                            setCookieUserId(result.user.id);
+                            setCookieToken(result.token);
+
+                            //set user and redirect
+                            props.setLoggedInUser(result.user);
+                        })
+                    }
+
+                )
                 .catch(err => {
                     console.log(err.message);
                     setUsernameServerError(parseUsernameServerError(err.message));
