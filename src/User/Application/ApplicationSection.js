@@ -3,7 +3,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
 //image imports
-import {Route, Switch as RouteSwitch, useParams} from "react-router-dom";
+import {Redirect, Route, Switch as RouteSwitch, useParams} from "react-router-dom";
 import {HomepageUrl} from "../../App";
 import ApplicationDashboard from "./ApplicationDashboard";
 import {getApp} from "../../Api/ApiApp";
@@ -185,14 +185,15 @@ export default function ApplicationSection(props) {
                 <Container maxWidth="lg" className={classes.container}>
 
                     <RouteSwitch>
-                        <Route path={`${HomepageUrl}/user/:userId/app/:appId/dashboard`}>
-                            <ApplicationDashboard userId={userId} app={app}
+                        <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/dashboard`}>
+                            <ApplicationDashboard userId={userId} app={app} appId={appId}
                                                   updateUserNotifications={props.updateUserNotifications}/>
                         </Route>
                         {/*<Route path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
                                 <Applications userId={userId}/>
                             </Route>*/}
                         {/*TODO ADD REDIRECT TO APP DASHBOARD IF WRONG ROUTE*/}
+                        <Redirect to={`${HomepageUrl}/user/${userId}/app/${appId}/dashboard`}/>
                     </RouteSwitch>
                 </Container>
             </main>

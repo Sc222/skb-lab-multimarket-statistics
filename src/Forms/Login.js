@@ -17,6 +17,7 @@ import {
     getUsernameError,
     parseLoginWrongCredentialsServerError
 } from "../Helpers/ErrorHelper";
+import {HomepageUrl} from "../App";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -157,7 +158,7 @@ export default function Login(props) {
                                 disableElevation
                                 variant="outlined"
                                 color="primary"
-                                component={RouterLink} to={`./register`}
+                                component={RouterLink} to={`${HomepageUrl}/register`}
                             >
                                 Зарегистрироваться
                             </Button>

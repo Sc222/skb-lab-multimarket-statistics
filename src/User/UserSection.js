@@ -365,7 +365,7 @@ export default function UserSection() {
                                                 component={RouterLink}
                                                 variant="body2"
                                                 onClick={() => setNotificationPopoverAnchor(null)}
-                                                to={`/user/${userId}/app/${notification.appId}/dashboard/`}
+                                                to={`${HomepageUrl}/user/${userId}/app/${notification.appId}/dashboard/`}
                                             >
                                                 Посмотреть
                                             </Link>
@@ -471,13 +471,13 @@ export default function UserSection() {
 
             <main className={classes.content}>
                 <RouteSwitch>
-                    <Route path={`${HomepageUrl}/user/:userId/apps`}>
+                    <Route exact path={`${HomepageUrl}/user/:userId/apps`}>
                         <Applications userId={userId}/>
                     </Route>
-                    <Route path={`${HomepageUrl}/user/:userId/new-app`}>
+                    <Route exact path={`${HomepageUrl}/user/:userId/new-app`}>
                         <NewApplication userId={userId}/>
                     </Route>
-                    <Route path={`${HomepageUrl}/user/:userId/profile`}>
+                    <Route exact path={`${HomepageUrl}/user/:userId/profile`}>
                         <Profile userId={userId} updatePopoverUser={setUser}/>
                     </Route>
                     <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>

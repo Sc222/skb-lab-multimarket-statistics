@@ -6,7 +6,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
-import {Route,Redirect, Switch as RouteSwitch} from 'react-router-dom';
+import {Redirect, Route, Switch as RouteSwitch} from 'react-router-dom';
 
 import {HomepageUrl} from "../App";
 import FormSectionStyles from "../Styles/FormSectionStyles";
@@ -20,7 +20,9 @@ export default function FormSections() {
 
     const [user, setUser] = React.useState(undefined);
 
-    {/*TODO !!! CHANGE LOGIN/REGISTER REDIRECT WHEN AUTH ADDED*/}
+    {/*TODO !!! CHANGE LOGIN/REGISTER REDIRECT WHEN AUTH ADDED*/
+    }
+
     function setLoggedInUser(user) {
         console.log(user);
         setUser(user);
@@ -46,10 +48,10 @@ export default function FormSections() {
                             {/*TODO !!! CHANGE LOGIN/REGISTER REDIRECT WHEN AUTH ADDED*/}
                             {user && <Redirect to={`${HomepageUrl}/user/${user.id}/apps`}/>}
 
-                        <Route path={`${HomepageUrl}/login/`}>
-                            <Login setLoggedInUser={setLoggedInUser}/>
-                        </Route>
-                            <Route path={`${HomepageUrl}/register/`}>
+                            <Route exact path={`${HomepageUrl}/login`}>
+                                <Login setLoggedInUser={setLoggedInUser}/>
+                            </Route>
+                            <Route exact path={`${HomepageUrl}/register`}>
                                 <Register setLoggedInUser={setLoggedInUser}/>
                             </Route>
 

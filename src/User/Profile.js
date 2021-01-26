@@ -47,6 +47,7 @@ import Alert from "@material-ui/lab/Alert";
 import {Link as RouterLink} from "react-router-dom";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import IconButton from "@material-ui/core/IconButton";
+import {HomepageUrl} from "../App";
 
 const useFormStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -421,7 +422,7 @@ export default function Profile(props) {
                                     edge="start"
                                     aria-label="back to apps"
                                     component={RouterLink}
-                                    to={'./apps'}
+                                    to={`${HomepageUrl}/user/${userId}/apps`}
                                     className={classes.extraToolbarButtonBack}
                                 >
                                     {<ArrowBackRoundedIcon color="action"/>}

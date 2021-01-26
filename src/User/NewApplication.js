@@ -352,8 +352,7 @@ export default function NewApplications(props) {
 
     return (
         <RouteSwitch>
-
-            {createdAppId && <Redirect to={`./app/${createdAppId}/dashboard`}/>}
+            {createdAppId && <Redirect to={`${HomepageUrl}/user/${userId}/app/${createdAppId}/dashboard`}/>}
         <Route>
         <Container maxWidth="md" className={classes.container}>
             <div className={classes.appBarSpacer}/>
@@ -366,7 +365,7 @@ export default function NewApplications(props) {
                                     edge="start"
                                     aria-label="back to apps"
                                     component={RouterLink}
-                                    to={'./apps'}
+                                    to={`${HomepageUrl}/user/${userId}/apps`}
                                     className={classes.extraToolbarButtonBack}
                                 >
                                     {<ArrowBackRoundedIcon color="action"/>}

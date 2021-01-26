@@ -9,6 +9,7 @@ import Divider from "@material-ui/core/Divider";
 import {Link as RouterLink} from 'react-router-dom';
 
 import FormSectionStyles from "../Styles/FormSectionStyles";
+import {HomepageUrl} from "../App";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -61,7 +62,7 @@ export default function PasswordReset() {
                                 disableElevation
                                 variant="outlined"
                                 color="primary"
-                                component={RouterLink} to={`./login`}
+                                component={RouterLink} to={`${HomepageUrl}/login`}
                             >
                                 Войти
                             </Button>

@@ -22,6 +22,7 @@ import {
 import {createUserForCreate, getDefaultUserNoId} from "../Api/ApiUserHelper";
 import update from "immutability-helper";
 import {createUser} from "../Api/ApiUser";
+import {HomepageUrl} from "../App";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -201,7 +202,7 @@ export default function Register(props) {
                                 disableElevation
                                 variant="outlined"
                                 color="primary"
-                                component={RouterLink} to={`./login`}
+                                component={RouterLink} to={`${HomepageUrl}/login`}
                             >
                                 Войти
                             </Button>

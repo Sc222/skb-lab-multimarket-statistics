@@ -25,6 +25,7 @@ import {createLinkFromId, MarketsIndexes, MarketsInfo} from "../Helpers/MarketsI
 import {getApps} from "../Api/ApiApp";
 import {getMarketIdByStoreIndex} from "../Api/ApiAppHelper";
 import {escapeRegex} from "../Helpers/UtilsHelper";
+import {HomepageUrl} from "../App";
 
 const drawerWidth = 260;
 
@@ -282,7 +283,7 @@ export default function Applications(props) {
                 return (<Grid key={app.id} item xs={12} md={6}>
                         <Paper className={classes.paperNoPadding}>
                             <ButtonBase className={classes.primaryRippleFillHeight} component={RouterLink}
-                                        to={`./app/${app.id}/dashboard/`}>
+                                        to={`${HomepageUrl}/user/${userId}/app/${app.id}/dashboard`}>
                                 <div className={classes.appDescriptionContainer}>
                                     <Grid container alignItems='center' spacing={2}>
                                         <Grid item xs={3} sm={2} md={3}>
@@ -373,7 +374,7 @@ export default function Applications(props) {
                     aria-label="add"
                     className={classes.fabBottom}
                     component={RouterLink}
-                    to={`./new-app`}
+                    to={`${HomepageUrl}/user/${userId}/new-app`}
                 >
                     <AddRounded className={classes.extendedIcon}/>
                     Добавить
@@ -388,7 +389,7 @@ export default function Applications(props) {
                     aria-label="add"
                     className={classes.fabBottom}
                     component={RouterLink}
-                    to={`./new-app`}
+                    to={`${HomepageUrl}/user/${userId}/new-app`}
                 >
                     <AddRounded/>
                 </Fab>
