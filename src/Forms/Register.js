@@ -25,7 +25,7 @@ import {createUser} from "../Api/ApiUser";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
-export default function Register() {
+export default function Register(props) {
     const classes = useStyles();
 
     const [enableNotifications, setEnableNotifications] = React.useState(false);
@@ -50,6 +50,7 @@ export default function Register() {
             createUser(userForCreate)
                 .then(result => {
                     console.log("successfully created user with id: " + result);
+                    props.setLoggedInUser(newUser);
                     //TODO !!! REQUEST AUTHENTICATION TOKEN
                     //TODO !!! REDIRECT TO USER APPS LIST
                 })

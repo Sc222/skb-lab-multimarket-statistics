@@ -20,7 +20,7 @@ import {
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
-export default function Login() {
+export default function Login(props) {
     const classes = useStyles();
 
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
@@ -45,13 +45,20 @@ export default function Login() {
         authenticateUser(loginCredentials)
             .then(result => {
                 console.log(result);
-                setUser(result.item1);
-                setToken(result.item2);
-
-                console.log(user);
-                console.log(token);
+                setUser(result.user);
+                setToken(result.token);
 
                 //TODO STORE TOKEN AND ID IN COOKIES AND REDIRECT TO DASHBOARD
+
+                console.log(props.setLoggedInUser);
+
+                console.log(result.user);
+                props.setLoggedInUser(result.user);
+
+                //console.log(user);
+                //console.log(token);
+
+
 
             })
             .catch(err => {

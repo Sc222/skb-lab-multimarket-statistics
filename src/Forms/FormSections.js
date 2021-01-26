@@ -6,7 +6,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
-import {Route, Switch as RouteSwitch} from 'react-router-dom';
+import {Route,Redirect, Switch as RouteSwitch} from 'react-router-dom';
 
 import {HomepageUrl} from "../App";
 import FormSectionStyles from "../Styles/FormSectionStyles";
@@ -17,6 +17,13 @@ const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
 export default function FormSections() {
     const classes = useStyles();
+
+    const [user, setUser] = React.useState(undefined);
+
+    {/*TODO !!! CHANGE LOGIN/REGISTER REDIRECT WHEN AUTH ADDED*/}
+    function setLoggedInUser(user) {
+        setUser(user);
+    }
 
     /* todo add same height appbar spacer as in user section */
 
@@ -35,8 +42,16 @@ export default function FormSections() {
                     <div className={classes.appBarSpacer}/>
                     <Paper elevation={2} className={classes.paper}>
                         <RouteSwitch>
-                            <Route path={`${HomepageUrl}/login/`} component={Login}/>
-                            <Route path={`${HomepageUrl}/register/`} component={Register}/>
+                            {/*TODO !!! CHANGE LOGIN/REGISTER REDIRECT WHEN AUTH ADDED*/}
+                            {user && <Redirect to={`${HomepageUrl}/user/${user.id}/apps`}/>}
+
+                        <Route path={`${HomepageUrl}/login/`}>
+                            <Login setLoggedInUser={setLoggedInUser}/>
+                        </Route>
+                            <Route path={`${HomepageUrl}/register/`}>
+                                <Register setLoggedInUser={setLoggedInUser}/>
+                            </Route>
+
                             {/* TODO: PASSWORD-RESET IN DEVELOPMENT
                             <Route path={`${HomepageUrl}/password-reset/`} component={PasswordReset}/>
                             */}
