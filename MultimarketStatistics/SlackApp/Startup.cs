@@ -1,4 +1,7 @@
-﻿using Domain.Services;
+﻿using Domain.Clients.AppGallery;
+using Domain.Clients.AppStore;
+using Domain.Clients.PlayMarket;
+using Domain.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -21,12 +24,21 @@ namespace SlackApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<UserService>();
+            services.AddScoped<ReviewService>();
+            services.AddScoped<RatingService>();
             services.AddScoped<NotificationService>();
+            services.AddScoped<AppService>();
+            services.AddScoped<FetcherService>();
+            services.AddScoped<AppStoreClient>();
 
             services.AddScoped(typeof(DbContext), typeof(StorageContext))
                 .AddScoped<ContextFactory>()
                 .AddScoped(typeof(IRepository<>), typeof(Repository<>))
                 .AddEntityFrameworkProxies();
+            
+            services.AddScoped<AppGalleryClient>();
+            services.AddScoped<AppStoreClient>();
+            services.AddScoped<PlayMarketClient>();
 
             services.AddHostedService<Worker>();
         }

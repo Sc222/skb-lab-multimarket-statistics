@@ -40,9 +40,16 @@ namespace SlackApp
 
                 foreach (var user in usersWithSlack)
                 {
-                    using var slackClient = new SlackClient(user.SlackCredentials);
-                    var messages = notificationsByUser[user.Id].Select(n => new SlackMessage {Text = n.Text});
-                    messages.ForEach(m => slackClient.Post(m));
+                    try
+                    {
+                        using var slackClient = new SlackClient(user.SlackCredentials);
+                        var messages = notificationsByUser[user.Id].Select(n => new SlackMessage {Text = n.Text});
+                        messages.ForEach(m => slackClient.Post(m));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
                 }
 
                 _logger.LogInformation("Worker finished sending messages at: {time}", DateTimeOffset.Now);
