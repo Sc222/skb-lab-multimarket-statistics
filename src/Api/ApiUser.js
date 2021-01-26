@@ -19,10 +19,6 @@ export async function createUser(user) {
             throw new Error(result.status.toString());
         })
         .then(json => {
-
-            console.log("processing json");
-            console.log(json);
-
             //it's error json
             if (json.isEmailUnique !== undefined && json.isUsernameUnique !== undefined)
                 throw new Error(parseServerMailAndUsernameErrors(json));
@@ -48,9 +44,6 @@ export async function updateUser(user) {
             throw new Error(result.status.toString());
         })
         .then(json => {
-            console.log("processing json");
-            console.log(json);
-
             //it's error json
             if (json.isEmailUnique !== undefined && json.isUsernameUnique !== undefined)
                 throw new Error(parseServerMailAndUsernameErrors(json));

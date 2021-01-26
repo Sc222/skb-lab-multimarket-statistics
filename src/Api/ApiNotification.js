@@ -12,7 +12,7 @@ export async function getNotifications(userId) {
             if (result.ok) {
                 return result.json();
             }
-            throw new Error("Notifications error: " + result.status);
+            throw new Error("Notifications get error: " + result.status);
         });
 }
 

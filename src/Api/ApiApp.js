@@ -13,7 +13,7 @@ export async function createApp(userId, app) {
         .then(result => {
             if (result.ok)
                 return result.text();
-            throw new Error("Apps error: " + result.status);
+            throw new Error("App create error: " + result.status);
         });
 }
 
@@ -28,7 +28,7 @@ export async function getApps(userId) {
         .then(result => {
             if (result.ok)
                 return result.json();
-            throw new Error("Apps error: " + result.status);
+            throw new Error("Apps get error: " + result.status);
         });
 }
 

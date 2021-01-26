@@ -1,7 +1,7 @@
 import React from 'react';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip as ChartTooltip, XAxis, YAxis} from 'recharts';
-import {MarketsInfo, MarketsKeys} from "../../Helpers/MarketsInfoHelper";
+import {MarketsInfo, MarketsRatingKeys} from "../../Helpers/MarketsInfoHelper";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 
@@ -91,7 +91,7 @@ export default function Chart(props) {
                 {/* todo OPTION epic charts animation can be turned on */}
                 {props.selectedMarkets.map((selectedMarket, index) => {
                     return selectedMarket &&
-                        <Line isAnimationActive={false} type="monotone" dataKey={MarketsKeys[index]}
+                        <Line isAnimationActive={false} type="monotone" dataKey={MarketsRatingKeys[index]}
                               name={MarketsInfo[index].name}
                               stroke={MarketsInfo[index].getChartColor(theme)}/>
                 })

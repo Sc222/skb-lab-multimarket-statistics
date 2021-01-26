@@ -35,7 +35,9 @@ export const MarketsLinksRegex = [
 
 export const MarketsIndexes = [PlayStoreIndex,AppStoreIndex,AppGalleryIndex];
 
-export const MarketsKeys = ["playMarketRating", "appStoreRating", "appGalleryRating"];
+export const MarketsRequestKeys = ["playMarket", "appStore", "appGallery"];
+
+export const MarketsRatingKeys = ["playMarketRating", "appStoreRating", "appGalleryRating"];
 
 export const MarketsInfo = [
     {

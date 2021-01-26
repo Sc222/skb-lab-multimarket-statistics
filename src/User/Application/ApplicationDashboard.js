@@ -260,7 +260,7 @@ export default function ApplicationDashboard(props) {
     const [chartDateFromError, setChartDateFromError] = React.useState('');
     const [chartDateToError, setChartDateToError] = React.useState('');
 
-    
+
 
     function hasChartErrors() {
         return !chartDateFrom || !chartDateTo ||

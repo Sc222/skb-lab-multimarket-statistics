@@ -12,6 +12,6 @@ export async function getRatings(userId,appId, dateFrom, dateTo) {
         .then(result => {
             if (result.ok)
                 return result.json();
-            throw new Error("Notifications error: " + result.status);
+            throw new Error("Ratings get error: " + result.status);
         });
 }
