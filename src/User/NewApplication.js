@@ -289,7 +289,7 @@ export default function NewApplications(props) {
                 .then(result => {
                     console.log("successfully created app with id: " + result);
 
-                    setCreatedAppId(result.replaceAll("\"",""));
+                    setCreatedAppId(result);
                     //TODO !!! REDIRECT TO APPLICATION DASHBOARD AFTER APP CREATED
                     //TODO ПОЧЕМУ-ТО ЗАПРОСЫ НА СЕРВАК ВЛАДА МЕДЛЕННЫЕ
                     //TODO !!! ADD POSSIBILITY TO ADD APP ICON URL YOURSELF

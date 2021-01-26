@@ -35,6 +35,12 @@ import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
 import {getUser} from "../Api/ApiUser";
 import {getDefaultUser} from "../Api/ApiUserHelper";
+import {
+    deleteCookiesWhenLogout,
+    getCookieToken,
+    getCookieUserId,
+} from "../Helpers/CookieHelper";
+import WrongUser from "./WrongUser";
 
 const drawerWidth = 260;
 
@@ -225,7 +231,7 @@ export default function UserSection() {
 
     function logout() {
         setProfilePopoverAnchor(null);
-        //TODO !!! VERY IMPORTANT LOGOUT
+        deleteCookiesWhenLogout();
     }
 
     function toggleNotificationsPopover(event) {
@@ -296,10 +302,23 @@ export default function UserSection() {
     */
 
     return (
-        <div className={classes.root}>
-            <AppBar position="absolute" className={classes.appBar}>
-                <Toolbar variant="dense">
-                    { /* TODO OLD DRAWER CODE (MAY BE USEFUL)
+        <RouteSwitch>
+            {/*redirect to login if no token*/}
+            {getCookieToken() === "" &&
+            <Redirect to={`${HomepageUrl}/login}`}/>
+            }
+
+            {/*redirect to current user if wrong user*/}
+            {getCookieToken() !== "" && getCookieUserId() !== userId &&
+            <WrongUser/>
+            }
+
+
+            <div className={classes.root}>
+
+                <AppBar position="absolute" className={classes.appBar}>
+                    <Toolbar variant="dense">
+                        { /* TODO OLD DRAWER CODE (MAY BE USEFUL)
                         isDrawerOnPage &&
                     <IconButton
                         edge="start"
@@ -311,188 +330,191 @@ export default function UserSection() {
                         {isDrawerOpen ? <ArrowBackRoundedIcon/> : <MenuRoundedIcon/>}
                     </IconButton>
                     */}
-                    <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Multimarket Statistics
-                    </Typography>
-
-                    <IconButton color="inherit" onClick={(event) => toggleNotificationsPopover(event)}
-                                aria-describedby='notification-popover'>
-                        <Badge badgeContent={notifications?.length} color="secondary">
-                            <NotificationsIcon/>
-                        </Badge>
-                    </IconButton>
-
-                    {/*todo load profile picture from server*/}
-                    <IconButton className={classes.profileIconButton} color='inherit'
-                                onClick={(event) => toggleProfilePopover(event)}
-                                aria-describedby='profile-popover'
-                    >
-                        <Avatar className={classes.profileIcon} alt='Profile picture' src={demoProfile}/>
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
-
-            <Popover
-                id='notification-popover'
-                open={notificationPopoverAnchor !== null}
-                anchorEl={notificationPopoverAnchor}
-                onClose={() => toggleNotificationsPopover(null)}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-            >
-                <div className={classes.popover}>
-                    {
-                        notifications?.map((notification, index) => {
-                            return (
-                                <div key={notification.id}>
-                                    <div className={classes.popoverContainer}>
-                                        <div className={classes.flex}>
-                                            <Typography variant='body1' color='textPrimary'>
-                                                {notification.title}
-                                            </Typography>
-                                            {/*notification.isChecked && <NewReleasesRounded color='primary'/>*/}
-                                        </div>
-                                        <Typography variant='body2'
-                                                    color='textSecondary'>{notification.text}</Typography>
-                                        <Typography>
-                                            <Link
-                                                component={RouterLink}
-                                                variant="body2"
-                                                onClick={() => setNotificationPopoverAnchor(null)}
-                                                to={`${HomepageUrl}/user/${userId}/app/${notification.appId}/dashboard/`}
-                                            >
-                                                Посмотреть
-                                            </Link>
-                                            <Link
-                                                className={classes.marginLeftSmall}
-                                                component="button"
-                                                variant="body2"
-                                                color='error'
-                                                onClick={() => updateNotifications(notification.id, index)}
-                                            >
-                                                Удалить
-                                            </Link>
-                                        </Typography>
-                                    </div>
-                                    <Divider className={classes.fullWidth}/>
-                                </div>
-                            );
-                        })
-                    }
-                    {notifications !== undefined && notifications.length !== 0 &&
-                    <div className={classes.popoverContainer}>
-                        <Link
-                            component="button"
-                            onClick={() => deleteAllNotifications()}
-                        >
-                            Удалить все уведомления
-                        </Link>
-                    </div>
-                    }
-                    {notifications !== undefined && notifications.length === 0 &&
-                    <div className={classes.popoverContainer}>
-                        <div className={classes.flex}>
-                            <Typography variant='body1' color='inherit'>
-                                Уведомлений нет
-                            </Typography>
-                        </div>
-                    </div>
-                    }
-                    {notifications === undefined &&
-                    <div className={classes.popoverContainer}>
-                        <div className={classes.flex}>
-                            <Typography variant='body1' color='inherit'>
-                                Загрузка уведомлений
-                            </Typography>
-                        </div>
-                    </div>
-                    }
-                </div>
-            </Popover>
-
-            <Popover
-                id='profile-popover'
-                open={profilePopoverAnchor !== null}
-                anchorEl={profilePopoverAnchor}
-                onClose={() => toggleProfilePopover(null)}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-            >
-                <div className={classes.popover}>
-                    <div className={classes.popoverContainer}>
-                        <Typography variant='subtitle1' color='primary'>
-                            <Box ml={0.5} fontWeight="fontWeightMedium">
-                                {user.username}
-                            </Box>
+                        <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+                            Multimarket Statistics
                         </Typography>
-                    </div>
-                    <Divider className={classes.fullWidth}/>
-                    <List dense>
-                        <ListItem classes={{selected: classes.mainItemSelected}}
-                                  className={classes.mainItem}
-                                  onClick={() => setProfilePopoverAnchor(null)}
-                                  button
-                                  component={RouterLink}
-                                  to={`${HomepageUrl}/user/${userId}/apps`}
-                        >
-                            <ListItemText primary={'Приложения'}/>
-                        </ListItem>
-                        <ListItem classes={{selected: classes.mainItemSelected}}
-                                  className={classes.mainItem}
-                                  onClick={() => setProfilePopoverAnchor(null)}
-                                  button
-                                  component={RouterLink}
-                                  to={`${HomepageUrl}/user/${userId}/profile`}
-                        >
-                            <ListItemText primary={'Настройки'}/>
-                        </ListItem>
-                        <ListItem classes={{selected: classes.mainItemSelected}}
-                                  className={classes.mainItem}
-                                  onClick={() => logout()}
-                                  button
-                        >
-                            <ListItemText primary={'Выйти'}/>
-                        </ListItem>
-                    </List>
-                </div>
-            </Popover>
 
-            <main className={classes.content}>
-                <RouteSwitch>
-                    <Route exact path={`${HomepageUrl}/user/:userId/apps`}>
-                        <Applications userId={userId}/>
-                    </Route>
-                    <Route exact path={`${HomepageUrl}/user/:userId/new-app`}>
-                        <NewApplication userId={userId}/>
-                    </Route>
-                    <Route exact path={`${HomepageUrl}/user/:userId/profile`}>
-                        <Profile userId={userId} updatePopoverUser={setUser}/>
-                    </Route>
-                    <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
-                        { /* TODO OLD DRAWER CODE (MAY BE USEFUL)
+                        <IconButton color="inherit" onClick={(event) => toggleNotificationsPopover(event)}
+                                    aria-describedby='notification-popover'>
+                            <Badge badgeContent={notifications?.length} color="secondary">
+                                <NotificationsIcon/>
+                            </Badge>
+                        </IconButton>
+
+                        {/*todo load profile picture from server*/}
+                        <IconButton className={classes.profileIconButton} color='inherit'
+                                    onClick={(event) => toggleProfilePopover(event)}
+                                    aria-describedby='profile-popover'
+                        >
+                            <Avatar className={classes.profileIcon} alt='Profile picture' src={demoProfile}/>
+                        </IconButton>
+                    </Toolbar>
+                </AppBar>
+
+                <Popover
+                    id='notification-popover'
+                    open={notificationPopoverAnchor !== null}
+                    anchorEl={notificationPopoverAnchor}
+                    onClose={() => toggleNotificationsPopover(null)}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                >
+                    <div className={classes.popover}>
+                        {
+                            notifications?.map((notification, index) => {
+                                return (
+                                    <div key={notification.id}>
+                                        <div className={classes.popoverContainer}>
+                                            <div className={classes.flex}>
+                                                <Typography variant='body1' color='textPrimary'>
+                                                    {notification.title}
+                                                </Typography>
+                                                {/*notification.isChecked && <NewReleasesRounded color='primary'/>*/}
+                                            </div>
+                                            <Typography variant='body2'
+                                                        color='textSecondary'>{notification.text}</Typography>
+                                            <Typography>
+                                                <Link
+                                                    component={RouterLink}
+                                                    variant="body2"
+                                                    onClick={() => setNotificationPopoverAnchor(null)}
+                                                    to={`${HomepageUrl}/user/${userId}/app/${notification.appId}/dashboard/`}
+                                                >
+                                                    Посмотреть
+                                                </Link>
+                                                <Link
+                                                    className={classes.marginLeftSmall}
+                                                    component="button"
+                                                    variant="body2"
+                                                    color='error'
+                                                    onClick={() => updateNotifications(notification.id, index)}
+                                                >
+                                                    Удалить
+                                                </Link>
+                                            </Typography>
+                                        </div>
+                                        <Divider className={classes.fullWidth}/>
+                                    </div>
+                                );
+                            })
+                        }
+                        {notifications !== undefined && notifications.length !== 0 &&
+                        <div className={classes.popoverContainer}>
+                            <Link
+                                component="button"
+                                onClick={() => deleteAllNotifications()}
+                            >
+                                Удалить все уведомления
+                            </Link>
+                        </div>
+                        }
+                        {notifications !== undefined && notifications.length === 0 &&
+                        <div className={classes.popoverContainer}>
+                            <div className={classes.flex}>
+                                <Typography variant='body1' color='inherit'>
+                                    Уведомлений нет
+                                </Typography>
+                            </div>
+                        </div>
+                        }
+                        {notifications === undefined &&
+                        <div className={classes.popoverContainer}>
+                            <div className={classes.flex}>
+                                <Typography variant='body1' color='inherit'>
+                                    Загрузка уведомлений
+                                </Typography>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </Popover>
+
+                <Popover
+                    id='profile-popover'
+                    open={profilePopoverAnchor !== null}
+                    anchorEl={profilePopoverAnchor}
+                    onClose={() => toggleProfilePopover(null)}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                >
+                    <div className={classes.popover}>
+                        <div className={classes.popoverContainer}>
+                            <Typography variant='subtitle1' color='primary'>
+                                <Box ml={0.5} fontWeight="fontWeightMedium">
+                                    {user.username}
+                                </Box>
+                            </Typography>
+                        </div>
+                        <Divider className={classes.fullWidth}/>
+                        <List dense>
+                            <ListItem classes={{selected: classes.mainItemSelected}}
+                                      className={classes.mainItem}
+                                      onClick={() => setProfilePopoverAnchor(null)}
+                                      button
+                                      component={RouterLink}
+                                      to={`${HomepageUrl}/user/${userId}/apps`}
+                            >
+                                <ListItemText primary={'Приложения'}/>
+                            </ListItem>
+                            <ListItem classes={{selected: classes.mainItemSelected}}
+                                      className={classes.mainItem}
+                                      onClick={() => setProfilePopoverAnchor(null)}
+                                      button
+                                      component={RouterLink}
+                                      to={`${HomepageUrl}/user/${userId}/profile`}
+                            >
+                                <ListItemText primary={'Настройки'}/>
+                            </ListItem>
+                            <ListItem classes={{selected: classes.mainItemSelected}}
+                                      className={classes.mainItem}
+                                      component={RouterLink}
+                                      onClick={() => logout()}
+                                      to={`${HomepageUrl}/`}
+                                      button
+                            >
+                                <ListItemText primary={'Выйти'}/>
+                            </ListItem>
+                        </List>
+                    </div>
+                </Popover>
+
+                <main className={classes.content}>
+                    <RouteSwitch>
+                        <Route exact path={`${HomepageUrl}/user/:userId/apps`}>
+                            <Applications userId={userId}/>
+                        </Route>
+                        <Route exact path={`${HomepageUrl}/user/:userId/new-app`}>
+                            <NewApplication userId={userId}/>
+                        </Route>
+                        <Route exact path={`${HomepageUrl}/user/:userId/profile`}>
+                            <Profile userId={userId} updatePopoverUser={setUser}/>
+                        </Route>
+                        <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
+                            { /* TODO OLD DRAWER CODE (MAY BE USEFUL)
                         <ApplicationSection userId={userId} isDrawerOpen={isDrawerOpen}
                                             updateUserNotifications ={updateUserNotifications}
                                             changeDrawerState={changeDrawerState}/>
                         */}
-                        <ApplicationSection userId={userId} updateUserNotifications={updateUserNotifications}/>
-                    </Route>
+                            <ApplicationSection userId={userId} updateUserNotifications={updateUserNotifications}/>
+                        </Route>
 
-                    <Redirect to={`${HomepageUrl}/user/${userId}/apps`}/>
+                        <Redirect to={`${HomepageUrl}/user/${userId}/apps`}/>
 
-                </RouteSwitch>
-            </main>
-        </div>
+                    </RouteSwitch>
+                </main>
+            </div>
+        </RouteSwitch>
     );
 }

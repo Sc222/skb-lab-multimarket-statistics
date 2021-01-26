@@ -18,6 +18,7 @@ import {
     parseLoginWrongCredentialsServerError
 } from "../Helpers/ErrorHelper";
 import {HomepageUrl} from "../App";
+import {setCookieToken, setCookieUserId} from "../Helpers/CookieHelper";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -25,8 +26,6 @@ export default function Login(props) {
     const classes = useStyles();
 
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
-    const [user, setUser] = React.useState(getDefaultUser());
-    const [token, setToken] = React.useState("");
     const [loginCredentials, setLoginCredentials] = React.useState(getDefaultLoginCredentials());
     const [wrongCredentials, setWrongCredentials] = React.useState(false);
 
@@ -45,22 +44,11 @@ export default function Login(props) {
 
         authenticateUser(loginCredentials)
             .then(result => {
-                console.log(result);
-                setUser(result.user);
-                setToken(result.token);
+                setCookieUserId(result.user.id);
+                setCookieToken(result.token);
 
-                //TODO STORE TOKEN AND ID IN COOKIES AND REDIRECT TO DASHBOARD
-
-                console.log(props.setLoggedInUser);
-
-                console.log(result.user);
+                //set user and redirect
                 props.setLoggedInUser(result.user);
-
-                //console.log(user);
-                //console.log(token);
-
-
-
             })
             .catch(err => {
                 console.log(err.message);

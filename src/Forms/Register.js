@@ -56,7 +56,8 @@ export default function Register(props) {
 
                     //TODO REMOVE TEMP SOLUTION USING TOKEN
                     const loggedInUser = newUser;
-                    loggedInUser.id=result.replaceAll("\"","");
+                    console.log("result blob: "+result);
+                    loggedInUser.id=result;
 
                     props.setLoggedInUser(loggedInUser);
                     //TODO !!! REQUEST AUTHENTICATION TOKEN

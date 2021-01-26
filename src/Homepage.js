@@ -13,20 +13,20 @@ function Homepage() {
         {link: `${HomepageUrl}/register`, title: 'Регистрация'},
         {link: `${HomepageUrl}/login`, title: 'Вход'},
         {link: `${HomepageUrl}/password-reset`, title: 'Сброс пароля'},
-        {link: `${HomepageUrl}/user/refusedguy/apps`, title: 'Пользователь без приложений'},
-        {link: `${HomepageUrl}/user/sc222/apps`, title: 'Пользователь с приложениями'},
-        {link: `${HomepageUrl}/user/sc222/profile`, title: 'Профиль пользователя'},
+        {link: `${HomepageUrl}/user/af19aef2-ddd0-42f6-8613-4685a50f35eb/apps`, title: 'Пользователь малый'},
+        {link: `${HomepageUrl}/user/2029c065-29b1-4897-8623-0f06301f5eaf/apps`, title: 'Пользователь большой'},
+        {link: `${HomepageUrl}/user/2029c065-29b1-4897-8623-0f06301f5eaf/profile`, title: 'Профиль пользователя большого'},
         {
-            link: `${HomepageUrl}/user/sc222/new-app`,
-            title: 'Добавить приложение (статичные карточки маркетов)'
+            link: `${HomepageUrl}/user/2029c065-29b1-4897-8623-0f06301f5eaf/new-app`,
+            title: 'Добавить приложение'
         },
         {
-            link: `${HomepageUrl}/user/sc222/app/pixel-fishing/dashboard`,
-            title: 'Панель управления (еще не все готово)'
+            link: `${HomepageUrl}/user/2029c065-29b1-4897-8623-0f06301f5eaf/app/614828b5-6f50-4d62-a011-d2b501a92629/dashboard`,
+            title: 'Панель управления VK (bigUser)'
         },
         {
-            link: `${HomepageUrl}/user/sc222/app/pixel-fishing/settings`,
-            title: 'Настройки приложения (не готово)'
+            link: `${HomepageUrl}/user/029c065-29b1-4897-8623-0f06301f5eaf/app/614828b5-6f50-4d62-a011-d2b501a92629/settings`,
+            title: 'Настройки приложения VK (bigUser)'
         },
     ];
 
@@ -39,16 +39,14 @@ function Homepage() {
             <Typography variant='subtitle1'>
                 (Landing с информацией о программе, меню входа и прочим)
             </Typography>
-            <Typography variant='subtitle2'>
-                Разделы сайта (пока демо без сервера и темы + без редиректов по неверным ссылкам):
+            <Typography variant='caption'>
+                smallUser : test
+            </Typography>
+            <Typography variant='caption'>
+                bigUser : testPassword
             </Typography>
             <Typography variant='subtitle2'>
-                TODO: <br/>
-                - add app section market search
-                - !!! scroll to top when new section is opened (check router settings)<br/>
-                - app dashboard/settings MOBILE menu<br/>
-                - app dashboard menu + cards <br/>
-                - app settings menu + cards <br/>
+                Разделы сайта:
             </Typography>
             <List dense style={{color: '#61dafb'}}>
                 {DemoSections.map(

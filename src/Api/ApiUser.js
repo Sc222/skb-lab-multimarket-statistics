@@ -1,5 +1,6 @@
 import {ApiRoot, ErrorBadRequest, ErrorConflict} from "./ApiHelper";
 import {parseLoginWrongCredentialsServerError, parseServerMailAndUsernameErrors} from "../Helpers/ErrorHelper";
+import {getCookieToken} from "../Helpers/CookieHelper";
 
 export async function createUser(user) {
     return fetch(`${ApiRoot}/api/User/create`,
@@ -13,7 +14,7 @@ export async function createUser(user) {
         })
         .then(result => {
             if (result.ok) //returns token string
-                return result.text();
+                return result.json();
             if (result.status.toString() === ErrorConflict)
                 return result.json();
             throw new Error(result.status.toString());
@@ -31,7 +32,8 @@ export async function updateUser(user) {
         {
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "application/json"
+                "Accept": "application/json",
+                "Authorization": `Bearer ${getCookieToken()}`
             },
             body: JSON.stringify(user),
             method: "PUT",
@@ -55,7 +57,8 @@ export async function getUser(userId) {
     return fetch(`${ApiRoot}/api/User/${userId}`,
         {
             headers: {
-                "Accept": "application/json"
+                "Accept": "application/json",
+                "Authorization": `Bearer ${getCookieToken()}`
             },
             method: "GET",
         })
@@ -74,7 +77,7 @@ export async function authenticateUser(loginCredentials) {
         {
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "application/json",
+                "Accept": "application/json"
             },
             body: JSON.stringify(loginCredentials),
             method: "POST",
