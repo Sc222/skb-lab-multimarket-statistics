@@ -46,8 +46,12 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import {StarBorderRounded, StarRounded} from "@material-ui/icons";
+import {SettingsRounded, StarBorderRounded, StarRounded} from "@material-ui/icons";
 import green from "@material-ui/core/colors/green";
+import IconButton from "@material-ui/core/IconButton";
+import {Link as RouterLink} from "react-router-dom";
+import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
+import {HomepageUrl} from "../../App";
 
 const drawerWidth = 260;
 
@@ -207,6 +211,11 @@ const useStyles = makeStyles((theme) => ({
             display: 'block',
         },
     },
+    extraToolbarButtonBack: {
+        marginLeft: theme.spacing(0.5),
+        marginRight: theme.spacing(0.5),
+    },
+
     search: {
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
@@ -302,7 +311,10 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: theme.spacing(1.5),
         paddingRight: theme.spacing(1.5),
         paddingBottom: theme.spacing(1)
-    }
+    },
+
+
+
 }));
 const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
@@ -483,10 +495,30 @@ export default function ApplicationDashboard(props) {
             <Grid item xs={12}>
                 <Paper elevation={1}>
                     <AppBar elevation={0} position="static" className={classes.extraToolbar}>
-                        <Toolbar variant="dense" className={classes.extraToolbar}>
+                        <Toolbar variant="dense" className={classes.extraToolbar} disableGutters>
+                            <IconButton
+                                edge="start"
+                                aria-label="back to apps"
+                                component={RouterLink}
+                                to={`${HomepageUrl}/user/${props.userId}/apps`}
+                                className={classes.extraToolbarButtonBack}
+                            >
+                                {<ArrowBackRoundedIcon color="action"/>}
+                            </IconButton>
+
                             <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
                                 Панель управления
                             </Typography>
+
+                            <IconButton
+                                edge="start"
+                                aria-label="app settings"
+                                component={RouterLink}
+                                to={`./settings`}
+                                className={classes.extraToolbarButtonBack}
+                            >
+                                {<SettingsRounded color="action"/>}
+                            </IconButton>
                         </Toolbar>
                     </AppBar>
                 </Paper>

@@ -5,12 +5,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
-import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import MenuRoundedIcon from "@material-ui/icons/MenuRounded";
 import Avatar from "@material-ui/core/Avatar";
 
-import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useLocation, useParams} from 'react-router-dom';
+import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useParams} from 'react-router-dom';
 
 //image imports
 import demoProfile from '../images/demo_profile.png';
@@ -202,17 +200,21 @@ export default function UserSection() {
 
     const classes = useStyles();
 
+    /* TODO OLD DRAWER CODE (MAY BE USEFUL)
     const regexpUrlWithoutDrawer = new RegExp(`^${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/(apps|new-app|profile)`);
     const regexpUrlWithDrawer = new RegExp(`^${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/app\/[^\/]+\/(dashboard|settings)`);
 
-    const [notificationPopoverAnchor, setNotificationPopoverAnchor] = React.useState(null);
-    const [profilePopoverAnchor, setProfilePopoverAnchor] = React.useState(null);
-
-    const [isDrawerOpen, setDrawerOpen] = React.useState(false);
-
     //hide or show drawer and drawer menus
     const [isDrawerOnPage, setIsDrawerOnPage] = React.useState(false);
+    const [isDrawerOpen, setDrawerOpen] = React.useState(false);
 
+    const changeDrawerState = () => {
+        setDrawerOpen(!isDrawerOpen);
+    };
+    */
+
+    const [notificationPopoverAnchor, setNotificationPopoverAnchor] = React.useState(null);
+    const [profilePopoverAnchor, setProfilePopoverAnchor] = React.useState(null);
     const [notifications, setNotifications] = React.useState(undefined);
     const [user, setUser] = React.useState(getDefaultUser());
 
@@ -220,13 +222,10 @@ export default function UserSection() {
         setNotifications(newNotifications);
     };
 
-    const changeDrawerState = () => {
-        setDrawerOpen(!isDrawerOpen);
-    };
 
     function logout() {
         setProfilePopoverAnchor(null);
-        //todo logout
+        //TODO !!! VERY IMPORTANT LOGOUT
     }
 
     function toggleNotificationsPopover(event) {
@@ -281,9 +280,10 @@ export default function UserSection() {
             .catch(err => console.log(err.message)); //todo if user is wrong -> redirect to homepage
     }, []);
 
+    /* TODO OLD DRAWER CODE (MAY BE USEFUL)
     let location = useLocation();
     React.useEffect(() => {
-        // todo set isDrawerOnPage depending on page link
+        // set isDrawerOnPage depending on page link
         let path = location.pathname;
 
         if (path.match(regexpUrlWithoutDrawer))
@@ -293,12 +293,14 @@ export default function UserSection() {
         else
             console.log('wrong apps url');
     }, [location]);
+    */
 
     return (
         <div className={classes.root}>
             <AppBar position="absolute" className={classes.appBar}>
                 <Toolbar variant="dense">
-                    {isDrawerOnPage &&
+                    { /* TODO OLD DRAWER CODE (MAY BE USEFUL)
+                        isDrawerOnPage &&
                     <IconButton
                         edge="start"
                         color="inherit"
@@ -307,7 +309,8 @@ export default function UserSection() {
                         className={classes.menuButton}
                     >
                         {isDrawerOpen ? <ArrowBackRoundedIcon/> : <MenuRoundedIcon/>}
-                    </IconButton>}
+                    </IconButton>
+                    */}
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Multimarket Statistics
                     </Typography>
@@ -361,7 +364,7 @@ export default function UserSection() {
                                             <Link
                                                 component={RouterLink}
                                                 variant="body2"
-                                                onClick={()=>setNotificationPopoverAnchor(null)}
+                                                onClick={() => setNotificationPopoverAnchor(null)}
                                                 to={`/user/${userId}/app/${notification.appId}/dashboard/`}
                                             >
                                                 Посмотреть
@@ -478,10 +481,12 @@ export default function UserSection() {
                         <Profile userId={userId} updatePopoverUser={setUser}/>
                     </Route>
                     <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
+                        { /* TODO OLD DRAWER CODE (MAY BE USEFUL)
                         <ApplicationSection userId={userId} isDrawerOpen={isDrawerOpen}
                                             updateUserNotifications ={updateUserNotifications}
                                             changeDrawerState={changeDrawerState}/>
-                        {/*todo if path is /${HomepageUrl}/user/:userId/app/:appId (without dashboard|settings) -> redirect to dashboard*/}
+                        */}
+                        <ApplicationSection userId={userId} updateUserNotifications={updateUserNotifications}/>
                     </Route>
 
                     <Redirect to={`${HomepageUrl}/user/${userId}/apps`}/>

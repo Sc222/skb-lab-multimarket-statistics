@@ -1,22 +1,13 @@
 import React, {useEffect} from 'react';
-import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
-import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded';
 
 //image imports
-import {Button} from "@material-ui/core";
-import Divider from "@material-ui/core/Divider";
-import DrawerMenu from "./DrawerMenu";
-import {Link as RouterLink, Route, Switch as RouteSwitch, useParams} from "react-router-dom";
+import {Route, Switch as RouteSwitch, useParams} from "react-router-dom";
 import {HomepageUrl} from "../../App";
 import ApplicationDashboard from "./ApplicationDashboard";
-import Hidden from "@material-ui/core/Hidden";
-import IconButton from "@material-ui/core/IconButton";
-import {CloseRounded} from "@material-ui/icons";
 import {getApp} from "../../Api/ApiApp";
+
 
 const drawerWidth = 260;
 
@@ -119,7 +110,7 @@ export default function ApplicationSection(props) {
     useEffect(() => {
         console.log(userId);
         console.log(appId);
-        getApp(userId,appId)
+        getApp(userId, appId)
             .then(app => {
                 console.log("load app");
                 console.log(app);
@@ -131,6 +122,7 @@ export default function ApplicationSection(props) {
 
     return (
         <div className={classes.root}>
+            {/* TODO OLD DRAWER CODE (MAY BE USEFUL)
             <Hidden smUp>
                 <Drawer
                     variant='temporary'
@@ -186,6 +178,7 @@ export default function ApplicationSection(props) {
                     <DrawerMenu/>
                 </Drawer>
             </Hidden>
+            */}
 
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}/>
@@ -193,7 +186,8 @@ export default function ApplicationSection(props) {
 
                     <RouteSwitch>
                         <Route path={`${HomepageUrl}/user/:userId/app/:appId/dashboard`}>
-                            <ApplicationDashboard userId={userId} app={app} updateUserNotifications ={props.updateUserNotifications}/>
+                            <ApplicationDashboard userId={userId} app={app}
+                                                  updateUserNotifications={props.updateUserNotifications}/>
                         </Route>
                         {/*<Route path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
                                 <Applications userId={userId}/>
