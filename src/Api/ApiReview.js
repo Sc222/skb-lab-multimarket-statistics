@@ -1,7 +1,7 @@
 import {ApiRoot} from "./ApiHelper";
 
 export async function getReviews(userId, appId, skip, take, marketKey) {
-    return fetch(`${ApiRoot}/api/Rating/${userId}/${appId}?skip=${skip}&take=${take}&market=${marketKey}`,
+    return fetch(`${ApiRoot}/api/Review/${userId}/${appId}?skip=${skip}&take=${take}&market=${marketKey}`,
         {
             headers: {
                 "Accept": "application/json"
