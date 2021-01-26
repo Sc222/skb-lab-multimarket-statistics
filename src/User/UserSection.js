@@ -10,7 +10,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MenuRoundedIcon from "@material-ui/icons/MenuRounded";
 import Avatar from "@material-ui/core/Avatar";
 
-import {Link as RouterLink, Route, Switch as RouteSwitch, useLocation, useParams} from 'react-router-dom';
+import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useLocation, useParams} from 'react-router-dom';
 
 //image imports
 import demoProfile from '../images/demo_profile.png';
@@ -202,8 +202,8 @@ export default function UserSection() {
 
     const classes = useStyles();
 
-    const regexpUrlWithoutDrawer = new RegExp(`^${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/(apps|new-app)`);
-    const regexpUrlWithDrawer = new RegExp(`^${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/app\/[a-zA-Z0-9-]+\/(dashboard|settings)`);
+    const regexpUrlWithoutDrawer = new RegExp(`^${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/(apps|new-app|profile)`);
+    const regexpUrlWithDrawer = new RegExp(`^${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/app\/[^\/]+\/(dashboard|settings)`);
 
     const [notificationPopoverAnchor, setNotificationPopoverAnchor] = React.useState(null);
     const [profilePopoverAnchor, setProfilePopoverAnchor] = React.useState(null);
@@ -483,6 +483,9 @@ export default function UserSection() {
                                             changeDrawerState={changeDrawerState}/>
                         {/*todo if path is /${HomepageUrl}/user/:userId/app/:appId (without dashboard|settings) -> redirect to dashboard*/}
                     </Route>
+
+                    <Redirect to={`${HomepageUrl}/user/${userId}/apps`}/>
+
                 </RouteSwitch>
             </main>
         </div>

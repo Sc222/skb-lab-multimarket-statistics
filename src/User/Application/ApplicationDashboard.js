@@ -757,36 +757,37 @@ export default function ApplicationDashboard(props) {
                         <Container maxWidth='md' className={classes.containerApps}>
                             <Grid container alignItems='center' spacing={1} justify='space-between'>
 
-                                <Grid item >
-                            <FormControl variant="outlined" className={classes.selectStyle}>
-                                <InputLabel id="demo-simple-select-outlined-label">Магазин приложений</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-outlined-label"
-                                    id="demo-simple-select-outlined"
-                                    value={reviewsSelectedMarket}
-                                    onChange={handleReviewsSelectedMarketChange}
-                                    label="Магазин приложений"
-                                >
-                                    {
-                                        MarketsRequestKeys.map((key, index) =>
-                                            <MenuItem value={key}>{MarketsInfo[index].name}</MenuItem>
-                                        )
-                                    }
-                                </Select>
-                            </FormControl>
+                                <Grid item>
+                                    <FormControl variant="outlined" className={classes.selectStyle}>
+                                        <InputLabel id="demo-simple-select-outlined-label">Магазин
+                                            приложений</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-outlined-label"
+                                            id="demo-simple-select-outlined"
+                                            value={reviewsSelectedMarket}
+                                            onChange={handleReviewsSelectedMarketChange}
+                                            label="Магазин приложений"
+                                        >
+                                            {
+                                                MarketsRequestKeys.map((key, index) =>
+                                                    <MenuItem value={key}>{MarketsInfo[index].name}</MenuItem>
+                                                )
+                                            }
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
-                                <Grid item >
+                                <Grid item>
                                     <Box border={1} mt={1} mb={1} borderRadius={4} borderColor="grey.400">
-                            <TablePagination
-                                component="div"
-                                labelRowsPerPage='На странице'
-                                count={!reviews ? 0 : reviews.total}
-                                page={reviewsCurrentPage}
-                                rowsPerPageOptions={[10, 25, 50, 100, 250]}
-                                onChangePage={handleChangeReviewsCurrentPage}
-                                rowsPerPage={reviewsPerPage}
-                                onChangeRowsPerPage={handleChangeReviewsPerPage}
-                            />
+                                        <TablePagination
+                                            component="div"
+                                            labelRowsPerPage='На странице'
+                                            count={!reviews ? 0 : reviews.total}
+                                            page={reviewsCurrentPage}
+                                            rowsPerPageOptions={[10, 25, 50, 100, 250]}
+                                            onChangePage={handleChangeReviewsCurrentPage}
+                                            rowsPerPage={reviewsPerPage}
+                                            onChangeRowsPerPage={handleChangeReviewsPerPage}
+                                        />
                                     </Box>
                                 </Grid>
 
@@ -812,28 +813,30 @@ export default function ApplicationDashboard(props) {
                                                 </Grid>
                                                 <Grid item>
                                                     <Box pl={0.5}>
-                                                    <Typography variant="body1">
-                                                        <b>
-                                                            {review.reviewerUsername === undefined
-                                                            ? "Имя неизвестно"
-                                                            : review.reviewerUsername}
-                                                        </b>
-                                                    </Typography>
+                                                        <Typography variant="body1">
+                                                            <b>
+                                                                {review.reviewerUsername === undefined
+                                                                    ? "Имя неизвестно"
+                                                                    : review.reviewerUsername}
+                                                            </b>
+                                                        </Typography>
 
-                                                    <Typography variant="caption" noWrap>
-                                                        {format(new Date(review.date), "dd/MM/yyyy HH:mm")} | Версия: {review.version}
-                                                    </Typography>
+                                                        <Typography variant="caption" noWrap>
+                                                            {format(new Date(review.date), "dd/MM/yyyy HH:mm")} |
+                                                            Версия: {review.version}
+                                                        </Typography>
                                                         <br/>
-                                                    <Typography variant="caption" noWrap>
+                                                        <Typography variant="caption" noWrap>
 
-                                                    </Typography>
+                                                        </Typography>
                                                     </Box>
                                                     <Typography variant="h6">
                                                         {[1, 2, 3, 4, 5].map(value => {
                                                             if (review.rating < value)
                                                                 return (<StarBorderRounded fontSize='inherit'
-                                                                    className={classes.reviewRating}/>)
-                                                            return (<StarRounded fontSize='inherit' className={classes.reviewRating}/>)
+                                                                                           className={classes.reviewRating}/>)
+                                                            return (<StarRounded fontSize='inherit'
+                                                                                 className={classes.reviewRating}/>)
                                                         })
                                                         }
                                                     </Typography>
@@ -850,14 +853,7 @@ export default function ApplicationDashboard(props) {
                                 )
                                 }
                             </Grid>
-
                         </Container>
-
-
-                        <Divider className={formClasses.fullWidthDivider}/>
-                        {/* <Grid container  justify = "center"> </Grid>*/}
-
-
                     </div>
                 </Paper>
             </Grid>

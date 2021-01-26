@@ -22,6 +22,7 @@ export default function FormSections() {
 
     {/*TODO !!! CHANGE LOGIN/REGISTER REDIRECT WHEN AUTH ADDED*/}
     function setLoggedInUser(user) {
+        console.log(user);
         setUser(user);
     }
 

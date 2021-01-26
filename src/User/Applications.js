@@ -24,6 +24,7 @@ import MarketChipStyles from "../Styles/MarketChipStyles";
 import {createLinkFromId, MarketsIndexes, MarketsInfo} from "../Helpers/MarketsInfoHelper";
 import {getApps} from "../Api/ApiApp";
 import {getMarketIdByStoreIndex} from "../Api/ApiAppHelper";
+import {escapeRegex} from "../Helpers/UtilsHelper";
 
 const drawerWidth = 260;
 
@@ -232,7 +233,7 @@ export default function Applications(props) {
     };
 
     function isNameMatchesSearchFilter(app) {
-        return app.name.match(new RegExp(`^${appsNameFilter}.*`, 'i'));
+        return app.name.match(new RegExp(`^${escapeRegex(appsNameFilter)}.*`, 'i'));
     }
 
     useEffect(() => {

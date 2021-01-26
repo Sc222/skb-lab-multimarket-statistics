@@ -50,7 +50,14 @@ export default function Register(props) {
             createUser(userForCreate)
                 .then(result => {
                     console.log("successfully created user with id: " + result);
-                    props.setLoggedInUser(newUser);
+                    console.log(newUser);
+                    console.log(userForCreate);
+
+                    //TODO REMOVE TEMP SOLUTION USING TOKEN
+                    const loggedInUser = newUser;
+                    loggedInUser.id=result.replaceAll("\"","");
+
+                    props.setLoggedInUser(loggedInUser);
                     //TODO !!! REQUEST AUTHENTICATION TOKEN
                     //TODO !!! REDIRECT TO USER APPS LIST
                 })

@@ -9,6 +9,8 @@ import Paper from '@material-ui/core/Paper';
 
 import update from 'immutability-helper';
 
+import {Route, Redirect, Switch as RouteSwitch} from 'react-router-dom';
+
 import {fade} from "@material-ui/core";
 import {DoneRounded} from "@material-ui/icons";
 import Fab from "@material-ui/core/Fab";
@@ -32,6 +34,7 @@ import {
 import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../Helpers/ErrorHelper";
 import {createApp} from "../Api/ApiApp";
 import {createAppForCreate, getDefaultAppNoIdNoPic} from "../Api/ApiAppHelper";
+import {HomepageUrl} from "../App";
 
 const drawerWidth = 260;
 
@@ -238,6 +241,8 @@ export default function NewApplications(props) {
     const [appStoreLink, setAppStoreLink] = React.useState("");
     const [appGalleryLink, setAppGalleryLink] = React.useState("");
 
+    const [createdAppId, setCreatedAppId] = React.useState(undefined);
+
     function getLinkByIndex(index) {
         console.log("get link by index;")
         switch (index) {
@@ -283,6 +288,8 @@ export default function NewApplications(props) {
             createApp(userId, appForCreate)
                 .then(result => {
                     console.log("successfully created app with id: " + result);
+
+                    setCreatedAppId(result.replaceAll("\"",""));
                     //TODO !!! REDIRECT TO APPLICATION DASHBOARD AFTER APP CREATED
                     //TODO ПОЧЕМУ-ТО ЗАПРОСЫ НА СЕРВАК ВЛАДА МЕДЛЕННЫЕ
                     //TODO !!! ADD POSSIBILITY TO ADD APP ICON URL YOURSELF
@@ -344,6 +351,10 @@ export default function NewApplications(props) {
 
 
     return (
+        <RouteSwitch>
+
+            {createdAppId && <Redirect to={`./app/${createdAppId}/dashboard`}/>}
+        <Route>
         <Container maxWidth="md" className={classes.container}>
             <div className={classes.appBarSpacer}/>
             <Grid container spacing={3}>
@@ -513,5 +524,7 @@ export default function NewApplications(props) {
             </Hidden>
 
         </Container>
+        </Route>
+        </RouteSwitch>
     );
 }
