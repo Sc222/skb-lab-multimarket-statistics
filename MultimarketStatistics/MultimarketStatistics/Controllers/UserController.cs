@@ -33,12 +33,12 @@ namespace MultimarketStatistics.Controllers
             return userService.Create(user);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPut("update")]
         public ActionResult Update([FromBody] UserUpdateContract webUser)
         {
-            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
-            //    return StatusCode(StatusCodes.Status403Forbidden);
+            if (!UserIdValidator.IsValidAction(HttpContext, webUser.Id))
+                return StatusCode(StatusCodes.Status403Forbidden);
             var userToUpdate = userService.Get(webUser.Id);
 
             if (string.IsNullOrEmpty(webUser.CurrentPassword))
@@ -68,22 +68,22 @@ namespace MultimarketStatistics.Controllers
             return Ok();
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("{userId}")]
         public ActionResult<UserContract> Get(Guid userId)
         {
-            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
-            //    return StatusCode(StatusCodes.Status403Forbidden);
+            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+                return StatusCode(StatusCodes.Status403Forbidden);
             var user = userService.Get(userId);
             return mapper.Map<UserContract>(user);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpDelete("{userId}")]
         public ActionResult Delete(Guid userId)
         {
-            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
-            //    return StatusCode(StatusCodes.Status403Forbidden);
+            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+                return StatusCode(StatusCodes.Status403Forbidden);
             userService.Delete(userId);
             return Ok();
         }

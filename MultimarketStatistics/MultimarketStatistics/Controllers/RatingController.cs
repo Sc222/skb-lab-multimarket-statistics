@@ -4,6 +4,7 @@ using System.Linq;
 using AutoMapper;
 using Domain;
 using Domain.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MoreLinq;
 using MultimarketStatistics.Models;
@@ -13,7 +14,7 @@ namespace MultimarketStatistics.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RatingController
+    public class RatingController : ControllerBase
     {
         private readonly IMapper mapper;
         private readonly RatingService ratingService;
@@ -24,12 +25,12 @@ namespace MultimarketStatistics.Controllers
             this.mapper = mapper;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("{userId}/{appId}")]
         public ActionResult<List<RatingContract>> GetAppRatings(Guid userId, Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to)
         {
-            //if (!UserIdValidator.IsValidAction(HttpContext, userId))
-            //    return StatusCode(StatusCodes.Status403Forbidden);
+            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+                return StatusCode(StatusCodes.Status403Forbidden);
             var ratings = ratingService.GetRatingsByApp(appId, from, to);
             var byDateByMarket = ratings
                 .GroupBy(r => r.Date.Date + TimeSpan.FromHours(r.Date.Hour))
@@ -62,7 +63,7 @@ namespace MultimarketStatistics.Controllers
         }
 
         private double CountAverage(Rating rating) =>
-            (double)(rating.FiveStarsCount * 5  +
+            (double)(rating.FiveStarsCount * 5 +
              rating.FourStarsCount * 4 +
              rating.ThreeStarsCount * 3 +
              rating.TwoStarsCount * 2 +
