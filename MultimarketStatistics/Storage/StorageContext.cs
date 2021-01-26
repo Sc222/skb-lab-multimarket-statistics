@@ -62,7 +62,7 @@ namespace Storage
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = "Host=localhost;Port=5432;Username=postgres;Password=wt;Database=multimarket;";
+            var connectionString = "Host=localhost;Port=5432;Username=postgres;Password=wt;Database=postgres;";
             optionsBuilder.UseNpgsql(connectionString)
                 .UseLazyLoadingProxies();
         }
