@@ -27,7 +27,7 @@ import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
 import update from "immutability-helper";
 import defaultAppIcon from "../../images/default_app_icon.png";
-import {getMarketIdByStoreIndex} from "../../Api/ApiAppHelper";
+import {getAppMarketsArray, getMarketIdByStoreIndex} from "../../Api/ApiAppHelper";
 
 import DateFnsUtils from '@date-io/date-fns';
 import {format} from 'date-fns';
@@ -211,6 +211,12 @@ const useStyles = makeStyles((theme) => ({
             display: 'block',
         },
     },
+
+    extraToolbarTitleNoHide: {
+        flexGrow: 1,
+        display: 'block',
+    },
+
     extraToolbarButtonBack: {
         marginLeft: theme.spacing(0.5),
         marginRight: theme.spacing(0.5),
@@ -312,7 +318,6 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: theme.spacing(1.5),
         paddingBottom: theme.spacing(1)
     },
-
 
 
 }));
@@ -496,30 +501,29 @@ export default function ApplicationDashboard(props) {
                 <Paper elevation={1}>
                     <AppBar elevation={0} position="static" className={classes.extraToolbar}>
                         <Toolbar variant="dense" className={classes.extraToolbar} disableGutters>
-                            <IconButton
-                                edge="start"
-                                aria-label="back to apps"
-                                component={RouterLink}
-                                to={`${HomepageUrl}/user/${props.userId}/apps`}
-                                className={classes.extraToolbarButtonBack}
-                            >
-                                {<ArrowBackRoundedIcon color="action"/>}
-                            </IconButton>
+                                    <IconButton
+                                        edge="start"
+                                        aria-label="back to apps"
+                                        component={RouterLink}
+                                        to={`${HomepageUrl}/user/${props.userId}/apps`}
+                                        className={classes.extraToolbarButtonBack}
+                                    >
+                                        {<ArrowBackRoundedIcon color="action"/>}
+                                    </IconButton>
 
-                            <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
-                                Панель управления
-                            </Typography>
+                                    <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
+                                        Панель управления
+                                    </Typography>
+                                    <IconButton
+                                        edge="start"
+                                        aria-label="app settings"
+                                        component={RouterLink}
+                                        to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
 
-                            <IconButton
-                                edge="start"
-                                aria-label="app settings"
-                                component={RouterLink}
-                                to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
-
-                                className={classes.extraToolbarButtonBack}
-                            >
-                                {<SettingsRounded color="action"/>}
-                            </IconButton>
+                                        className={classes.extraToolbarButtonBack}
+                                    >
+                                        {<SettingsRounded color="primary"/>}
+                                    </IconButton>
                         </Toolbar>
                     </AppBar>
                 </Paper>
@@ -656,6 +660,9 @@ export default function ApplicationDashboard(props) {
                 </Paper>
             </Grid>
 
+
+            {/*TODO ADD 'GO TO APP SETTINGS CARD' WHEN THERE ARE NO MARKET IDS*/}
+
             <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paperNoPadding}>
                     <div className={classes.containerTopPadded}>
@@ -669,6 +676,7 @@ export default function ApplicationDashboard(props) {
                     <Divider className={formClasses.fullWidthDivider}/>
 
                     <Container maxWidth='md' className={classes.containerNotCentered}>
+
 
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <Grid container spacing={2} justify='flex-start' alignItems='stretch'
@@ -787,8 +795,8 @@ export default function ApplicationDashboard(props) {
 
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
-                        <Container maxWidth='md' className={classes.containerApps}>
-                            <Grid container alignItems='center' spacing={1} justify='space-between'>
+                        <Container className={classes.containerApps}>
+                            <Grid container alignItems='center' spacing={2} justify='space-between'>
 
                                 <Grid item>
                                     <FormControl variant="outlined" className={classes.selectStyle}>
@@ -801,10 +809,11 @@ export default function ApplicationDashboard(props) {
                                             onChange={handleReviewsSelectedMarketChange}
                                             label="Магазин приложений"
                                         >
-                                            {
-                                                MarketsRequestKeys.map((key, index) =>
-                                                    <MenuItem value={key}>{MarketsInfo[index].name}</MenuItem>
-                                                )
+                                            {props.app
+                                            && getAppMarketsArray(props.app)
+                                                .map(index =>
+                                                    <MenuItem
+                                                        value={MarketsRequestKeys[index]}>{MarketsInfo[index].name}</MenuItem>)
                                             }
                                         </Select>
                                     </FormControl>
@@ -816,7 +825,7 @@ export default function ApplicationDashboard(props) {
                                             labelRowsPerPage='На странице'
                                             count={!reviews ? 0 : reviews.total}
                                             page={reviewsCurrentPage}
-                                            rowsPerPageOptions={[10, 25, 50, 100, 250]}
+                                            rowsPerPageOptions={[5, 10, 25, 50, 100, 250]}
                                             onChangePage={handleChangeReviewsCurrentPage}
                                             rowsPerPage={reviewsPerPage}
                                             onChangeRowsPerPage={handleChangeReviewsPerPage}
@@ -828,7 +837,7 @@ export default function ApplicationDashboard(props) {
                             <Grid container alignItems='stretch' spacing={2}>
                                 {reviews && reviews.foundItem.length !== 0 &&
                                 reviews.foundItem.map(review =>
-                                    <Grid xs={12} sm={12} md={6} item key={review.text + review.date}>
+                                    <Grid xs={12} sm={12} md={6} lg={4} item key={review.text + review.date}>
                                         <Box border={1} borderRadius={8} borderColor="grey.300"
                                              className={classes.reviewCard}>
                                             <Grid container alignItems='center' spacing={1}>
@@ -856,7 +865,7 @@ export default function ApplicationDashboard(props) {
 
                                                         <Typography variant="caption" noWrap>
                                                             {format(new Date(review.date), "dd/MM/yyyy HH:mm")} |
-                                                            Версия: {review.version}
+                                                            Версия: {review.version ? review.version : "?"}
                                                         </Typography>
                                                         <br/>
                                                         <Typography variant="caption" noWrap>

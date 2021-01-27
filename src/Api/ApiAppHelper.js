@@ -51,3 +51,15 @@ export function getMarketIdByStoreIndex(app, storeIndex){
     }
     return undefined;
 }
+
+//array of marketIndexes where app is available
+export function getAppMarketsArray(app){
+    let result = [];
+    if(app.playMarketId!==undefined)
+        result.push(PlayStoreIndex);
+    if(app.appStoreId!==undefined)
+        result.push(AppStoreIndex);
+    if(app.appGalleryId!==undefined)
+        result.push(AppGalleryIndex);
+    return result;
+}
