@@ -514,7 +514,7 @@ export default function ApplicationDashboard(props) {
                                 edge="start"
                                 aria-label="app settings"
                                 component={RouterLink}
-                                to={`${HomepageUrl}/user/${props.userId}/apps/${props.appId}/settings`}
+                                to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
 
                                 className={classes.extraToolbarButtonBack}
                             >

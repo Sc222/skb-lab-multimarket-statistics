@@ -1,51 +1,47 @@
 import React, {useEffect} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-
-import update from 'immutability-helper';
-
-import {Route, Redirect, Switch as RouteSwitch} from 'react-router-dom';
-
-import {fade} from "@material-ui/core";
-import {DoneRounded} from "@material-ui/icons";
-import Fab from "@material-ui/core/Fab";
-import Divider from "@material-ui/core/Divider";
-import Hidden from "@material-ui/core/Hidden";
-import {Link as RouterLink} from "react-router-dom";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
-import TextField from "@material-ui/core/TextField";
-import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
-import FormSectionStyles from "../Styles/FormSectionStyles";
-import MarketChipStyles from "../Styles/MarketChipStyles";
+
+
+//image imports
+import {fade} from "@material-ui/core";
+import Divider from "@material-ui/core/Divider";
+import Chip from "@material-ui/core/Chip";
 import {
     AppGalleryIndex,
     AppStoreIndex,
+    createLinkFromId,
     getAppIdFromUrl,
+    MarketsIndexes,
     MarketsInfo,
     PlayStoreIndex
-} from "../Helpers/MarketsInfoHelper";
-import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../Helpers/ErrorHelper";
-import {createApp} from "../Api/ApiApp";
-import {createAppForCreate, getDefaultAppNoIdNoPic} from "../Api/ApiAppHelper";
-import {HomepageUrl} from "../App";
+} from "../../Helpers/MarketsInfoHelper";
+import MarketChipStyles from "../../Styles/MarketChipStyles";
+import Container from "@material-ui/core/Container";
+import FormSectionStyles from "../../Styles/FormSectionStyles";
+import update from "immutability-helper";
+import defaultAppIcon from "../../images/default_app_icon.png";
+import {createAppForCreate, getDefaultAppNoIdNoPic, getMarketIdByStoreIndex} from "../../Api/ApiAppHelper";
+import {DoneRounded} from "@material-ui/icons";
+import green from "@material-ui/core/colors/green";
+import IconButton from "@material-ui/core/IconButton";
+import {Link as RouterLink} from "react-router-dom";
+import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
+import {HomepageUrl} from "../../App";
+import Hidden from "@material-ui/core/Hidden";
+import Fab from "@material-ui/core/Fab";
+import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../../Helpers/ErrorHelper";
+import {createApp} from "../../Api/ApiApp";
+import TextField from "@material-ui/core/TextField";
 
 const drawerWidth = 260;
 
 const useStyles = makeStyles((theme) => ({
-
-    fabBottom: {
-        position: 'absolute',
-        bottom: theme.spacing(2),
-        right: theme.spacing(2),
-    },
-
     appBarSpacer: {
         height: '48px'
     },
@@ -53,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
     },
-
     toolbarIcon: {
         display: 'flex',
         alignItems: 'center',
@@ -68,9 +63,8 @@ const useStyles = makeStyles((theme) => ({
         zIndex: theme.zIndex.drawer + 1,
     },
 
-    extraToolbarButtonBack: {
-        marginLeft: theme.spacing(0.5),
-        marginRight: theme.spacing(0.5),
+    menuButton: {
+        marginRight: theme.spacing(2),
     },
     title: {
         flexGrow: 1,
@@ -94,6 +88,24 @@ const useStyles = makeStyles((theme) => ({
         width: 0,
     },
 
+    containerNotCentered: {
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(2),
+        width: '100%',
+        marginLeft: 0,
+        marginRight: 0
+    },
+
+    containerApps: {
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(2),
+        paddingTop: theme.spacing(2),
+        paddingBottom: theme.spacing(2),
+        width: '100%',
+        marginLeft: 0,
+        marginRight: 0
+    },
+
     content: {
         flexGrow: 1,
         height: '100vh',
@@ -103,6 +115,7 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: theme.spacing(4),
         paddingBottom: theme.spacing(4),
     },
+
     paper: {
         paddingTop: theme.spacing(1.5),
         paddingBottom: theme.spacing(1.5),
@@ -111,9 +124,26 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         height: '100%',
     },
-    paperNoBottomPadding: {
+    fixedHeight: {
+        height: 240,
+    },
+    profileIconButton: {
+        marginLeft: theme.spacing(1.5),
+        padding: 0
+    },
+    profileIcon: {
+        width: theme.spacing(4.5),
+        height: theme.spacing(4.5),
+    },
+
+    fabBottom: {
+        position: 'absolute',
+        bottom: theme.spacing(2),
+        right: theme.spacing(2),
+    },
+
+    paperNoPadding: {
         display: 'flex',
-        paddingTop: theme.spacing(1.5),
         overflow: 'auto',
         flexDirection: 'column',
         height: '100%',
@@ -123,6 +153,15 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         paddingLeft: theme.spacing(1.5),
         paddingRight: theme.spacing(1.5),
+        width: '100%'
+    },
+
+    containerTopPadded: {
+        flexGrow: 1,
+        textAlign: "left",
+        paddingTop: theme.spacing(1.5),
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(2),
         width: '100%'
     },
 
@@ -141,47 +180,41 @@ const useStyles = makeStyles((theme) => ({
         width: '100%'
     },
 
+
     appIcon: {
         width: 128,
         height: 128
     },
-
-    fixedHeight: {
-        height: 240,
-    },
-    profileIconButton: {
-        marginLeft: theme.spacing(1.5),
-        padding: 0
-    },
-    profileIcon: {
-        width: theme.spacing(4.5),
-        height: theme.spacing(4.5)
-    },
-
-
     //search toolbar styles
     extraToolbar: {
         background: "transparent",
         color: theme.palette.text.primary
     },
-    extraToolbarTitleNoHide: {
+    extraToolbarTitle: {
         flexGrow: 1,
-        display: 'block',
+        display: 'none',
+        [theme.breakpoints.up('sm')]: {
+            display: 'block',
+        },
     },
-    searchCard: {
-        display: 'block',
-        borderRadius: theme.shape.borderRadius,
-        marginTop: theme.spacing(1.5),
+    extraToolbarButtonBack: {
+        marginLeft: theme.spacing(0.5),
+        marginRight: theme.spacing(0.5),
+    },
+
+    search: {
         position: 'relative',
+        borderRadius: theme.shape.borderRadius,
         backgroundColor: fade(theme.palette.common.black, 0.07),
         '&:hover': {
             backgroundColor: fade(theme.palette.common.black, 0.09),
         },
-
+        marginLeft: 0,
+        width: '100%',
         [theme.breakpoints.up('sm')]: {
-            display: 'inline-block',
+            marginLeft: theme.spacing(1),
+            width: 'auto',
         },
-
     },
     searchIcon: {
         padding: theme.spacing(0, 2),
@@ -194,45 +227,91 @@ const useStyles = makeStyles((theme) => ({
     },
     inputRoot: {
         color: 'inherit',
-        width: '100%'
     },
     inputInput: {
         padding: theme.spacing(1, 1, 1, 0),
         // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+        transition: theme.transitions.create('width'),
         width: '100%',
         [theme.breakpoints.up('sm')]: {
-            width: '45ch'
+            width: '20ch',
+            '&:focus': {
+                width: '30ch',
+            },
         },
+    },
+    applicationIcon: {
+        borderRadius: "1.5em",
+        maxWidth: "100%",
+        maxHeight: '100%'
     },
 
     extendedIcon: {
         marginRight: theme.spacing(1),
     },
-
     fullWidthDivider: {
         width: '100%',
         marginBottom: theme.spacing(0.5),
     },
+    chartSelectsContainer: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1)
+    },
 
-    containerNotCentered: {
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2),
-        width: '100%',
-        marginLeft: 0,
-        marginRight: 0
-    }
+    selectStyle: {
+        minWidth: '200px',
+    },
+
+    textWithIcon: {
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap'
+    },
+
+    reviewAvatar: {
+        color: theme.palette.white,
+        backgroundColor: theme.palette.primary.light,
+        width: theme.spacing(7),
+        height: theme.spacing(7),
+        fontSize: "32px"
+    },
+
+    reviewRating: {
+        fill: green[400]
+    },
+
+    /*
+    paperNoPadding: {
+        display: 'flex',
+        overflow: 'auto',
+        flexDirection: 'column',
+        height: '100%',
+    },
+    * */
+    reviewCard: {
+        height: '100%',
+        paddingTop: theme.spacing(1.5),
+        paddingLeft: theme.spacing(1.5),
+        paddingRight: theme.spacing(1.5),
+        paddingBottom: theme.spacing(1)
+    },
+
 
 }));
 const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
-export default function NewApplications(props) {
+export default function ApplicationSettings(props) {
     const userId = props.userId;
 
+    const theme = useTheme();
     const classes = useStyles();
     const formClasses = useFormSectionStyles();
     const marketClasses = useMarketChipStyles();
+
 
     const [selectedMarkets, setSelectedMarkets] = React.useState([false, false, false]);
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
@@ -242,6 +321,96 @@ export default function NewApplications(props) {
     const [appGalleryLink, setAppGalleryLink] = React.useState("");
 
     const [createdAppId, setCreatedAppId] = React.useState(undefined);
+
+    useEffect(() => {
+
+        if (props.app) {
+
+            setSelectedMarkets([
+                props.app.playMarketId !== undefined,
+                props.app.appStoreId !== undefined,
+                props.app.appGalleryId !== undefined
+            ]);
+
+
+
+            setNewApp(props.app);
+
+        }
+    }, [props.app]);
+
+
+    function hasErrors(areErrorsVisible) {
+        return getAppNameError(areErrorsVisible, newApp.name)
+            + getAppDescriptionError(areErrorsVisible, newApp.description)
+            + getAppMarketError(areErrorsVisible, PlayStoreIndex, selectedMarkets[PlayStoreIndex], playStoreLink, newApp.playMarketId)
+            + getAppMarketError(areErrorsVisible, AppStoreIndex, selectedMarkets[AppStoreIndex], appStoreLink, newApp.appStoreId)
+            + getAppMarketError(areErrorsVisible, AppGalleryIndex, selectedMarkets[AppGalleryIndex], appGalleryLink, newApp.appGalleryId) !== "";
+    }
+
+    function addNewApp() {
+        setErrorsVisible(true);
+        console.log("add");
+        if (!hasErrors(true)) {
+            const appForCreate = createAppForCreate(newApp, selectedMarkets);
+            createApp(userId, appForCreate)
+                .then(result => {
+                    console.log("successfully created app with id: " + result);
+
+                    setCreatedAppId(result);
+                    //TODO !!! REDIRECT TO APPLICATION DASHBOARD AFTER APP CREATED
+                    //TODO ПОЧЕМУ-ТО ЗАПРОСЫ НА СЕРВАК ВЛАДА МЕДЛЕННЫЕ
+                    //TODO !!! ADD POSSIBILITY TO ADD APP ICON URL YOURSELF
+                })
+                .catch(err => {
+                    console.log(err.message);
+                });
+        }
+    }
+
+
+    const handleNameInput = (event) => {
+        const newAppValue = update(newApp, {name: {$set: event.target.value}});
+        setNewApp(newAppValue);
+    }
+
+    const handleDescriptionInput = (event) => {
+        const newAppValue = update(newApp, {description: {$set: event.target.value}});
+        setNewApp(newAppValue);
+    }
+
+    function toggleMarket(index) {
+        console.log('toggle market: ' + index);
+        const newSelectedMarkets = update(selectedMarkets, {[index]: {$set: !selectedMarkets[index]}});
+        setSelectedMarkets(newSelectedMarkets);
+    }
+
+    const handlePlayStoreLinkInput = (event) => {
+        const link = event.target.value;
+        setPlayStoreLink(link);
+        const newAppValue = update(newApp, {playMarketId: {$set: getAppIdFromUrl(PlayStoreIndex, link)}});
+        setNewApp(newAppValue);
+    }
+
+    const handleAppStoreLinkInput = (event) => {
+        const link = event.target.value;
+        setAppStoreLink(link);
+        const newAppValue = update(newApp, {appStoreId: {$set: getAppIdFromUrl(AppStoreIndex, link)}});
+        setNewApp(newAppValue);
+    }
+
+    const handleAppGalleryLinkInput = (event) => {
+        const link = event.target.value;
+        setAppGalleryLink(link);
+        const newAppValue = update(newApp, {appGalleryId: {$set: getAppIdFromUrl(AppGalleryIndex, link)}});
+        setNewApp(newAppValue);
+    }
+
+    const handleLinkInputByIndex = [
+        handlePlayStoreLinkInput,
+        handleAppStoreLinkInput,
+        handleAppGalleryLinkInput
+    ];
 
     function getLinkByIndex(index) {
         console.log("get link by index;")
@@ -272,78 +441,6 @@ export default function NewApplications(props) {
         }
     }
 
-    function hasErrors(areErrorsVisible) {
-        return getAppNameError(areErrorsVisible, newApp.name)
-            + getAppDescriptionError(areErrorsVisible, newApp.description)
-            + getAppMarketError(areErrorsVisible, PlayStoreIndex, selectedMarkets[PlayStoreIndex], playStoreLink, newApp.playMarketId)
-            + getAppMarketError(areErrorsVisible, AppStoreIndex, selectedMarkets[AppStoreIndex], appStoreLink, newApp.appStoreId)
-            + getAppMarketError(areErrorsVisible, AppGalleryIndex, selectedMarkets[AppGalleryIndex], appGalleryLink, newApp.appGalleryId) !== "";
-    }
-
-    function addNewApp() {
-        setErrorsVisible(true);
-        console.log("add");
-        if (!hasErrors(true)) {
-            const appForCreate = createAppForCreate(newApp, selectedMarkets);
-            createApp(userId, appForCreate)
-                .then(result => {
-                    console.log("successfully created app with id: " + result);
-
-                    setCreatedAppId(result);
-                    //TODO !!! REDIRECT TO APPLICATION DASHBOARD AFTER APP CREATED
-                    //TODO ПОЧЕМУ-ТО ЗАПРОСЫ НА СЕРВАК ВЛАДА МЕДЛЕННЫЕ
-                    //TODO !!! ADD POSSIBILITY TO ADD APP ICON URL YOURSELF
-                    //TODO ADD APP CREATED - LOADING ALERT
-                })
-                .catch(err => {
-                    console.log(err.message);
-                });
-        }
-    }
-
-    function toggleMarket(index) {
-        console.log('toggle market: ' + index);
-        const newSelectedMarkets = update(selectedMarkets, {[index]: {$set: !selectedMarkets[index]}});
-        setSelectedMarkets(newSelectedMarkets);
-    }
-
-    const handleNameInput = (event) => {
-        const newAppValue = update(newApp, {name: {$set: event.target.value}});
-        setNewApp(newAppValue);
-    }
-
-    const handleDescriptionInput = (event) => {
-        const newAppValue = update(newApp, {description: {$set: event.target.value}});
-        setNewApp(newAppValue);
-    }
-
-    const handlePlayStoreLinkInput = (event) => {
-        const link = event.target.value;
-        setPlayStoreLink(link);
-        const newAppValue = update(newApp, {playMarketId: {$set: getAppIdFromUrl(PlayStoreIndex, link)}});
-        setNewApp(newAppValue);
-    }
-
-    const handleAppStoreLinkInput = (event) => {
-        const link = event.target.value;
-        setAppStoreLink(link);
-        const newAppValue = update(newApp, {appStoreId: {$set: getAppIdFromUrl(AppStoreIndex, link)}});
-        setNewApp(newAppValue);
-    }
-
-    const handleAppGalleryLinkInput = (event) => {
-        const link = event.target.value;
-        setAppGalleryLink(link);
-        const newAppValue = update(newApp, {appGalleryId: {$set: getAppIdFromUrl(AppGalleryIndex, link)}});
-        setNewApp(newAppValue);
-    }
-
-    const handleLinkInputByIndex = [
-        handlePlayStoreLinkInput,
-        handleAppStoreLinkInput,
-        handleAppGalleryLinkInput
-    ];
-
     useEffect(() => {
         // todo load info by userId (TOKEN)
         console.log(userId);
@@ -352,11 +449,7 @@ export default function NewApplications(props) {
 
 
     return (
-        <RouteSwitch>
-            {createdAppId && <Redirect to={`${HomepageUrl}/user/${userId}/app/${createdAppId}/dashboard`}/>}
-        <Route>
-        <Container maxWidth="lg" className={classes.container}>
-            <div className={classes.appBarSpacer}/>
+        <>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Paper elevation={1}>
@@ -366,17 +459,76 @@ export default function NewApplications(props) {
                                     edge="start"
                                     aria-label="back to apps"
                                     component={RouterLink}
-                                    to={`${HomepageUrl}/user/${userId}/apps`}
+                                    to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
                                     className={classes.extraToolbarButtonBack}
                                 >
                                     {<ArrowBackRoundedIcon color="action"/>}
                                 </IconButton>
+
                                 <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
-                                    Добавить приложение
+                                    Настройки приложения
                                 </Typography>
+
                             </Toolbar>
                         </AppBar>
                     </Paper>
+                </Grid>
+
+                {/* todo lg = {6} TEST   */}
+                {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
+                <Grid item xs={12}>
+                    {props.app &&
+                    <Paper className={classes.paperNoPadding} elevation={1}>
+
+                        <div className={classes.containerTopPadded}>
+                            <Typography variant="h6">
+                                Информация о приложении
+                            </Typography>
+                            <Typography variant="body2">
+                                Текущая информация о приложении
+                            </Typography>
+                        </div>
+                        <Divider className={formClasses.fullWidthDivider}/>
+                        <div className={classes.appDescriptionContainer}>
+
+                            <Grid container alignItems='center' spacing={2}>
+                                <Grid item xs={3} sm={2} md={1}>
+                                    <img alt='app icon'
+                                         src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
+                                         className={classes.applicationIcon}/>
+                                </Grid>
+                                <Grid item xs={9} sm={10} md={11}>
+                                    <Typography component="h5" variant="h6">{props.app.name}</Typography>
+                                    <Typography component="p" variant="body1">
+                                        {props.app.description}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </div>
+                        <Divider className={classes.fullWidthDivider}/>
+                        <div className={marketClasses.marketsContainer}>
+                            {
+                                MarketsIndexes.map(marketIndex => {
+                                    let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
+                                    return <Chip variant="outlined"
+                                                 clickable
+                                                 component='a'
+                                                 label={MarketsInfo[marketIndex].name}
+                                                 href={createLinkFromId(marketIndex, marketId)}
+                                                 target="_blank"
+                                                 rel='noreferrer'
+                                                 disabled={marketId === undefined}
+                                                 color={marketId === undefined ? "default" : "primary"}
+                                                 avatar={<Avatar className={marketClasses.transparentBg}
+                                                                 variant='square'
+                                                                 src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
+
+
+                                })
+                            }
+                        </div>
+                    </Paper>
+                    }
                 </Grid>
 
                 <Grid item xs={12}>
@@ -384,10 +536,10 @@ export default function NewApplications(props) {
                         <div className={formClasses.cardContainer}>
                             <div className={formClasses.container}>
                                 <Typography variant="h6">
-                                    Информация о приложении
+                                    Редактирование приложения
                                 </Typography>
                                 <Typography variant="body2">
-                                    Укажите краткую информацию о приложении
+                                    Обновите информацию о приложении
                                 </Typography>
                             </div>
                             <Divider className={formClasses.fullWidthDivider}/>
@@ -494,8 +646,9 @@ export default function NewApplications(props) {
                             </Grid>
                     })
                 }
-            </Grid>
 
+
+            </Grid>
             <Hidden smDown>
                 <Fab
                     variant="extended"
@@ -522,9 +675,7 @@ export default function NewApplications(props) {
                     <DoneRounded/>
                 </Fab>
             </Hidden>
+        </>
 
-        </Container>
-        </Route>
-        </RouteSwitch>
     );
 }

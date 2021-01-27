@@ -7,6 +7,7 @@ import {Redirect, Route, Switch as RouteSwitch, useParams} from "react-router-do
 import {HomepageUrl} from "../../App";
 import ApplicationDashboard from "./ApplicationDashboard";
 import {getApp} from "../../Api/ApiApp";
+import ApplicationSettings from "./ApplicationSettings";
 
 
 const drawerWidth = 260;
@@ -189,10 +190,12 @@ export default function ApplicationSection(props) {
                             <ApplicationDashboard userId={userId} app={app} appId={appId}
                                                   updateUserNotifications={props.updateUserNotifications}/>
                         </Route>
-                        {/*<Route path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
-                                <Applications userId={userId}/>
-                            </Route>*/}
-                        {/*TODO ADD REDIRECT TO APP DASHBOARD IF WRONG ROUTE*/}
+
+                        <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
+                            <ApplicationSettings userId={userId} app={app} appId={appId}
+                                                 updateUserNotifications={props.updateUserNotifications}/>
+                        </Route>
+
                         <Redirect to={`${HomepageUrl}/user/${userId}/app/${appId}/dashboard`}/>
                     </RouteSwitch>
                 </Container>
