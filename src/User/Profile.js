@@ -48,6 +48,7 @@ import {Link as RouterLink} from "react-router-dom";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import IconButton from "@material-ui/core/IconButton";
 import {HomepageUrl} from "../App";
+import Link from "@material-ui/core/Link";
 
 const useFormStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -235,7 +236,7 @@ const useStyles = makeStyles((theme) => ({
     textWithIcon: {
         display: 'flex',
         alignItems: 'center',
-        flexWrap: 'wrap'
+        flexWrap: 'nowrap'
     },
 
 
@@ -406,7 +407,9 @@ export default function Profile(props) {
 
 
     function shouldTypeCurrentPassword() {
-        return shouldChangeLogin || shouldChangeEmail || shouldChangePassword || enableNotifications || (currentUser.slackCredentials !== "" && !enableNotifications);
+        return shouldChangeLogin || shouldChangeEmail || shouldChangePassword
+            || (enableNotifications && (currentUser.slackCredentials !== fieldsStateUser.slackCredentials))
+            || (!enableNotifications && currentUser.slackCredentials !== "");
     }
 
     return (
@@ -488,7 +491,9 @@ export default function Profile(props) {
                                     <Typography variant='subtitle1' gutterBottom className={classes.textWithIcon}>
                                         <LockRounded className={classes.extendedIcon}
                                                      color={currentUser.slackCredentials === "" ? 'action' : 'primary'}/>
-                                        {currentUser.slackCredentials === "" ? "Уведомления выключены" : currentUser.slackCredentials}
+                                        <Typography noWrap>
+                                            {currentUser.slackCredentials === "" ? "Уведомления выключены" : currentUser.slackCredentials}
+                                        </Typography>
                                     </Typography>
                                 </Box>
                             </Container>
@@ -603,6 +608,8 @@ export default function Profile(props) {
                                     />
                                     {
                                         enableNotifications &&
+                                            <>
+
                                         <TextField
                                             error={getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials) !== ''}
                                             helperText={getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials)}
@@ -616,6 +623,15 @@ export default function Profile(props) {
                                             label="Slack-токен"
                                             name="slack-token">
                                         </TextField>
+                                                <Link
+                                                    variant='caption'
+                                                    color='primary'
+                                                    href="https://api.slack.com/messaging/webhooks"
+                                                    target="_blank"
+                                                    rel='noreferrer'>
+                                                    Как получить токен и настроить канал в Slack
+                                                </Link>
+                                        </>
                                     }
                                 </Box>
                                 {shouldTypeCurrentPassword() &&

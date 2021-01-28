@@ -14,6 +14,8 @@ export function getSlackCredentialsError(areErrorsVisible, enableNotifications, 
         return "";
     if (slackCredentials === "")
         return "Введите Slack-токен";
+    if (!slackCredentials.match(/^https:\/\/hooks.slack.com\/services\/[\S]*$/))
+        return "Введите Slack-токен в формате https://hooks.slack.com/services/UNIQUE-TOKEN-PART";
     return "";
 }
 
