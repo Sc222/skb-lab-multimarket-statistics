@@ -667,7 +667,7 @@ export default function Profile(props) {
                     variant="extended"
                     size="medium"
                     color="secondary"
-                    aria-label="add"
+                    aria-label="update"
                     className={classes.fabBottom}
                     onClick={() => editProfile()}
                 >
@@ -681,7 +681,7 @@ export default function Profile(props) {
                     variant="round"
                     size="medium"
                     color="secondary"
-                    aria-label="add"
+                    aria-label="update"
                     className={classes.fabBottom}
                     onClick={() => editProfile()}
                 >

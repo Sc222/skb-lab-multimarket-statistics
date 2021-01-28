@@ -11,7 +11,6 @@ export const AppGalleryIndex = 2;
 
 //utility constants
 export const MarketRatingPrecision = 3;
-export const ReviewsPerPage = 20;
 
 export const MarketsLinks = [
     "https://play.google.com/store/apps/details?id=",

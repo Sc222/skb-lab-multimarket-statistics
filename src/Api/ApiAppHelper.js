@@ -1,6 +1,7 @@
 //appGalleryId, appStoreId, playMarketId are removed on send
 
 import {AppGalleryIndex, AppStoreIndex, PlayStoreIndex} from "../Helpers/MarketsInfoHelper";
+import {getDefaultUser} from "./ApiUserHelper";
 
 export function getDefaultAppNoIdNoPicNoMarkets(){
     return {name:"", description:""};
@@ -38,6 +39,13 @@ export function createAppForCreate(app, selectedMarkets) {
         appResult.playMarketId=app.playMarketId;
     return appResult;
 }
+
+export function createAppForUpdate(app, appId, selectedMarkets) {
+    const appResult = createAppForCreate(app,selectedMarkets);
+    appResult.id=appId;
+    return appResult;
+}
+
 
 //if app doesn't have such market undefined is returned
 export function getMarketIdByStoreIndex(app, storeIndex){

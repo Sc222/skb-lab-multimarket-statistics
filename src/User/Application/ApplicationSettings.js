@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {makeStyles, useTheme} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -26,8 +26,12 @@ import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
 import update from "immutability-helper";
 import defaultAppIcon from "../../images/default_app_icon.png";
-import {createAppForCreate, getDefaultAppNoIdNoPic, getMarketIdByStoreIndex} from "../../Api/ApiAppHelper";
-import {DoneRounded} from "@material-ui/icons";
+import {
+    createAppForUpdate,
+    getDefaultAppNoIdNoPic,
+    getMarketIdByStoreIndex
+} from "../../Api/ApiAppHelper";
+import {DoneRounded, UpdateRounded} from "@material-ui/icons";
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
@@ -36,8 +40,10 @@ import {HomepageUrl} from "../../App";
 import Hidden from "@material-ui/core/Hidden";
 import Fab from "@material-ui/core/Fab";
 import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../../Helpers/ErrorHelper";
-import {createApp} from "../../Api/ApiApp";
 import TextField from "@material-ui/core/TextField";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+import {updateApp} from "../../Api/ApiApp";
 
 const drawerWidth = 260;
 
@@ -307,20 +313,20 @@ const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 export default function ApplicationSettings(props) {
     const userId = props.userId;
 
-    const theme = useTheme();
     const classes = useStyles();
     const formClasses = useFormSectionStyles();
     const marketClasses = useMarketChipStyles();
 
-
+    const [isStatusSuccessOpen, setStatusSuccessOpen] = React.useState(false);
     const [selectedMarkets, setSelectedMarkets] = React.useState([false, false, false]);
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
-    const [newApp, setNewApp] = React.useState(getDefaultAppNoIdNoPic());
+
+    const [fieldsStateApp, setFieldsStateApp] = React.useState(getDefaultAppNoIdNoPic());
+
     const [playStoreLink, setPlayStoreLink] = React.useState("");
     const [appStoreLink, setAppStoreLink] = React.useState("");
     const [appGalleryLink, setAppGalleryLink] = React.useState("");
 
-    const [createdAppId, setCreatedAppId] = React.useState(undefined);
 
     useEffect(() => {
 
@@ -332,35 +338,42 @@ export default function ApplicationSettings(props) {
                 props.app.appGalleryId !== undefined
             ]);
 
+            setFieldsStateApp(props.app);
 
-
-            setNewApp(props.app);
+            //console.log()
+            setPlayStoreLink(createLinkFromId(PlayStoreIndex,props.app.playMarketId));
+            setAppStoreLink(createLinkFromId(AppStoreIndex,props.app.appStoreId));
+            setAppGalleryLink(createLinkFromId(AppGalleryIndex,props.app.appGalleryId));
 
         }
     }, [props.app]);
 
 
     function hasErrors(areErrorsVisible) {
-        return getAppNameError(areErrorsVisible, newApp.name)
-            + getAppDescriptionError(areErrorsVisible, newApp.description)
-            + getAppMarketError(areErrorsVisible, PlayStoreIndex, selectedMarkets[PlayStoreIndex], playStoreLink, newApp.playMarketId)
-            + getAppMarketError(areErrorsVisible, AppStoreIndex, selectedMarkets[AppStoreIndex], appStoreLink, newApp.appStoreId)
-            + getAppMarketError(areErrorsVisible, AppGalleryIndex, selectedMarkets[AppGalleryIndex], appGalleryLink, newApp.appGalleryId) !== "";
+        return getAppNameError(areErrorsVisible, fieldsStateApp.name)
+            + getAppDescriptionError(areErrorsVisible, fieldsStateApp.description)
+            + getAppMarketError(areErrorsVisible, PlayStoreIndex, selectedMarkets[PlayStoreIndex], playStoreLink, fieldsStateApp.playMarketId)
+            + getAppMarketError(areErrorsVisible, AppStoreIndex, selectedMarkets[AppStoreIndex], appStoreLink, fieldsStateApp.appStoreId)
+            + getAppMarketError(areErrorsVisible, AppGalleryIndex, selectedMarkets[AppGalleryIndex], appGalleryLink, fieldsStateApp.appGalleryId) !== "";
     }
 
-    function addNewApp() {
+    function editApp() {
         setErrorsVisible(true);
-        console.log("add");
+        console.log("update");
         if (!hasErrors(true)) {
-            const appForCreate = createAppForCreate(newApp, selectedMarkets);
-            createApp(userId, appForCreate)
+            const appForUpdate = createAppForUpdate(fieldsStateApp, props.appId, selectedMarkets);
+            updateApp(userId, appForUpdate)
                 .then(result => {
-                    console.log("successfully created app with id: " + result);
+                    console.log("successfully updated app with id: " + result);
 
-                    setCreatedAppId(result);
-                    //TODO !!! REDIRECT TO APPLICATION DASHBOARD AFTER APP CREATED
-                    //TODO ПОЧЕМУ-ТО ЗАПРОСЫ НА СЕРВАК ВЛАДА МЕДЛЕННЫЕ
-                    //TODO !!! ADD POSSIBILITY TO ADD APP ICON URL YOURSELF
+                    appForUpdate.picUrl = props.app.picUrl;
+                    props.updateAppInSection(appForUpdate);
+
+
+
+                    setStatusSuccessOpen(true);
+                    //setFieldsStateApp(result);
+                    setErrorsVisible(false);
                 })
                 .catch(err => {
                     console.log(err.message);
@@ -368,15 +381,20 @@ export default function ApplicationSettings(props) {
         }
     }
 
+    const handleStatusSuccessClose = (event, reason) => {
+        if (reason === 'clickaway')
+            return;
+        setStatusSuccessOpen(false);
+    };
 
     const handleNameInput = (event) => {
-        const newAppValue = update(newApp, {name: {$set: event.target.value}});
-        setNewApp(newAppValue);
+        const newAppValue = update(fieldsStateApp, {name: {$set: event.target.value}});
+        setFieldsStateApp(newAppValue);
     }
 
     const handleDescriptionInput = (event) => {
-        const newAppValue = update(newApp, {description: {$set: event.target.value}});
-        setNewApp(newAppValue);
+        const newAppValue = update(fieldsStateApp, {description: {$set: event.target.value}});
+        setFieldsStateApp(newAppValue);
     }
 
     function toggleMarket(index) {
@@ -388,22 +406,22 @@ export default function ApplicationSettings(props) {
     const handlePlayStoreLinkInput = (event) => {
         const link = event.target.value;
         setPlayStoreLink(link);
-        const newAppValue = update(newApp, {playMarketId: {$set: getAppIdFromUrl(PlayStoreIndex, link)}});
-        setNewApp(newAppValue);
+        const newAppValue = update(fieldsStateApp, {playMarketId: {$set: getAppIdFromUrl(PlayStoreIndex, link)}});
+        setFieldsStateApp(newAppValue);
     }
 
     const handleAppStoreLinkInput = (event) => {
         const link = event.target.value;
         setAppStoreLink(link);
-        const newAppValue = update(newApp, {appStoreId: {$set: getAppIdFromUrl(AppStoreIndex, link)}});
-        setNewApp(newAppValue);
+        const newAppValue = update(fieldsStateApp, {appStoreId: {$set: getAppIdFromUrl(AppStoreIndex, link)}});
+        setFieldsStateApp(newAppValue);
     }
 
     const handleAppGalleryLinkInput = (event) => {
         const link = event.target.value;
         setAppGalleryLink(link);
-        const newAppValue = update(newApp, {appGalleryId: {$set: getAppIdFromUrl(AppGalleryIndex, link)}});
-        setNewApp(newAppValue);
+        const newAppValue = update(fieldsStateApp, {appGalleryId: {$set: getAppIdFromUrl(AppGalleryIndex, link)}});
+        setFieldsStateApp(newAppValue);
     }
 
     const handleLinkInputByIndex = [
@@ -427,26 +445,19 @@ export default function ApplicationSettings(props) {
     }
 
     function getApplicationStoreIdByIndex(index) {
-        console.log("get store id by index");
-        console.log(newApp);
+        //console.log("get store id by index");
+        //console.log(fieldsStateApp);
         switch (index) {
             case PlayStoreIndex:
-                return newApp.playMarketId;
+                return fieldsStateApp.playMarketId;
             case AppStoreIndex:
-                return newApp.appStoreId;
+                return fieldsStateApp.appStoreId;
             case AppGalleryIndex:
-                return newApp.appGalleryId;
+                return fieldsStateApp.appGalleryId;
             default:
                 return "";
         }
     }
-
-    useEffect(() => {
-        // todo load info by userId (TOKEN)
-        console.log(userId);
-        console.log(newApp);
-    }, []);
-
 
     return (
         <>
@@ -522,8 +533,6 @@ export default function ApplicationSettings(props) {
                                                  avatar={<Avatar className={marketClasses.transparentBg}
                                                                  variant='square'
                                                                  src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
-
-
                                 })
                             }
                         </div>
@@ -545,9 +554,9 @@ export default function ApplicationSettings(props) {
                             <Divider className={formClasses.fullWidthDivider}/>
                             <Container maxWidth='sm' className={classes.containerNotCentered}>
                                 <TextField
-                                    error={getAppNameError(areErrorsVisible, newApp.name) !== ''}
-                                    helperText={getAppNameError(areErrorsVisible, newApp.name)}
-                                    value={newApp.name}
+                                    error={getAppNameError(areErrorsVisible, fieldsStateApp.name) !== ''}
+                                    helperText={getAppNameError(areErrorsVisible, fieldsStateApp.name)}
+                                    value={fieldsStateApp.name}
                                     onChange={handleNameInput}
                                     variant="outlined"
                                     margin="dense"
@@ -558,9 +567,9 @@ export default function ApplicationSettings(props) {
                                     name="name"
                                 />
                                 <TextField
-                                    error={getAppDescriptionError(areErrorsVisible, newApp.description) !== ''}
-                                    helperText={getAppDescriptionError(areErrorsVisible, newApp.description)}
-                                    value={newApp.description}
+                                    error={getAppDescriptionError(areErrorsVisible, fieldsStateApp.description) !== ''}
+                                    helperText={getAppDescriptionError(areErrorsVisible, fieldsStateApp.description)}
+                                    value={fieldsStateApp.description}
                                     onChange={handleDescriptionInput}
                                     variant="outlined"
                                     margin="dense"
@@ -654,12 +663,12 @@ export default function ApplicationSettings(props) {
                     variant="extended"
                     size="medium"
                     color="secondary"
-                    aria-label="add"
+                    aria-label="update"
                     className={classes.fabBottom}
-                    onClick={() => addNewApp()}
+                    onClick={() => editApp()}
                 >
-                    <DoneRounded className={classes.extendedIcon}/>
-                    Создать
+                    <UpdateRounded className={classes.extendedIcon}/>
+                    Обновить
                 </Fab>
             </Hidden>
 
@@ -668,13 +677,19 @@ export default function ApplicationSettings(props) {
                     variant="round"
                     size="medium"
                     color="secondary"
-                    aria-label="add"
+                    aria-label="update"
                     className={classes.fabBottom}
-                    onClick={() => addNewApp()}
+                    onClick={() => editApp()}
                 >
-                    <DoneRounded/>
+                    <UpdateRounded/>
                 </Fab>
             </Hidden>
+
+            <Snackbar open={isStatusSuccessOpen} autoHideDuration={1000} onClose={handleStatusSuccessClose}>
+                <Alert onClose={handleStatusSuccessClose} severity="success">
+                    Данные успешно обновлены
+                </Alert>
+            </Snackbar>
         </>
 
     );

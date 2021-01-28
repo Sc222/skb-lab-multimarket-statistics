@@ -20,6 +20,25 @@ export async function createApp(userId, app) {
         });
 }
 
+export async function updateApp(userId, app) {
+
+    return fetch(`${ApiRoot}/api/App/update/${userId}`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": `Bearer ${getCookieToken()}`
+            },
+            body: JSON.stringify(app),
+            method: "PUT",
+        })
+        .then(result => {
+            if (result.ok)
+                return result.text();
+            throw new Error("App update error: " + result.status);
+        });
+}
+
 export async function getApps(userId) {
     return fetch(`${ApiRoot}/api/App/${userId}/apps`,
         {

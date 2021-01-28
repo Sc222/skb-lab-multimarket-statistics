@@ -108,6 +108,12 @@ export default function ApplicationSection(props) {
     const userId = props.userId;
     const [app, setApp] = React.useState(undefined);
 
+    function updateAppInSection(newApp) {
+        console.log("update app from settings")
+        console.log(newApp);
+        setApp(newApp);
+    }
+
     useEffect(() => {
         console.log(userId);
         console.log(appId);
@@ -192,7 +198,7 @@ export default function ApplicationSection(props) {
                         </Route>
 
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
-                            <ApplicationSettings userId={userId} app={app} appId={appId}
+                            <ApplicationSettings userId={userId} app={app} appId={appId} updateAppInSection={updateAppInSection}
                                                  updateUserNotifications={props.updateUserNotifications}/>
                         </Route>
 
