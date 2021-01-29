@@ -423,7 +423,6 @@ export default function ApplicationSettings(props) {
     ];
 
     function getLinkByIndex(index) {
-        console.log("get link by index;")
         switch (index) {
             case PlayStoreIndex:
                 return playStoreLink;
@@ -431,21 +430,6 @@ export default function ApplicationSettings(props) {
                 return appStoreLink;
             case AppGalleryIndex:
                 return appGalleryLink;
-            default:
-                return "";
-        }
-    }
-
-    function getApplicationStoreIdByIndex(index) {
-        //console.log("get store id by index");
-        //console.log(fieldsStateApp);
-        switch (index) {
-            case PlayStoreIndex:
-                return fieldsStateApp.playMarketId;
-            case AppStoreIndex:
-                return fieldsStateApp.appStoreId;
-            case AppGalleryIndex:
-                return fieldsStateApp.appGalleryId;
             default:
                 return "";
         }
@@ -628,8 +612,8 @@ export default function ApplicationSettings(props) {
                                         <Divider className={formClasses.fullWidthDivider}/>
                                         <Container maxWidth='sm' className={classes.containerNotCentered}>
                                             <TextField
-                                                error={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getApplicationStoreIdByIndex(index)) !== ''}
-                                                helperText={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getApplicationStoreIdByIndex(index))}
+                                                error={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getMarketIdByStoreIndex(fieldsStateApp, index)) !== ''}
+                                                helperText={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getMarketIdByStoreIndex(fieldsStateApp, index))}
                                                 value={getLinkByIndex(index)}
                                                 onChange={handleLinkInputByIndex[index]}
                                                 variant="outlined"
@@ -641,6 +625,13 @@ export default function ApplicationSettings(props) {
                                                 name="store-url"
                                                 autoComplete='url'
                                             />
+                                            {getMarketIdByStoreIndex(props.app, index) !== undefined && getMarketIdByStoreIndex(fieldsStateApp, index) !== getMarketIdByStoreIndex(props.app, index) &&
+                                            <Typography variant="caption" color='primary'>
+                                                С момента изменения ссылки, сервер будет получать отзывы и оценки на
+                                                новое
+                                                приложение, но <b>старые при этом сохранятся</b>
+                                            </Typography>
+                                            }
                                         </Container>
                                     </div>
                                 </Paper>

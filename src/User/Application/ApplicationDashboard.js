@@ -347,7 +347,7 @@ export default function ApplicationDashboard(props) {
     const [reviews, setReviews] = React.useState(undefined);
     const [reviewsCurrentPage, setReviewsPage] = React.useState(0);
     const [reviewsPerPage, setReviewsPerPage] = React.useState(10);
-    const [reviewsSelectedMarket, setReviewsSelectedMarket] = React.useState(MarketsRequestKeys[0]);
+    const [reviewsSelectedMarket, setReviewsSelectedMarket] = React.useState(undefined);
 
     const handleChangeReviewsCurrentPage = (event, newPage) => {
         setReviewsPage(newPage);
@@ -381,6 +381,13 @@ export default function ApplicationDashboard(props) {
                 props.app.appStoreId !== undefined,
                 props.app.appGalleryId !== undefined
             ]);
+
+            const defaultMarketKey = getFirstExistingMarketRequestKey(props.app);
+
+            setReviewsSelectedMarket(defaultMarketKey);
+
+            //if(!defaultMarketKey)
+            //    return;
 
             Promise.all([
                 getNotifications(props.userId),

@@ -127,5 +127,5 @@ export function getFirstExistingMarketRequestKey(app){
         return MarketsRequestKeys[AppStoreIndex];
     if(app.appGalleryId!==undefined)
         return MarketsRequestKeys[AppGalleryIndex];
-    return MarketsRequestKeys[PlayStoreIndex];
+    return "";
 }
