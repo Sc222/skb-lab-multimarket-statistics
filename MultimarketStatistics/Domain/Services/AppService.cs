@@ -74,7 +74,7 @@ namespace Domain.Services
         public async Task Update(App app)
         {
             var dbApp = appRepository.Get(app.Id);
-            if (app.PicUrl != dbApp.PicUrl)
+            if (string.IsNullOrEmpty(app.PicUrl) || app.PicUrl != dbApp.PicUrl)
             {
                 var picUrl = await fetcherService.FetchAppPicUrl(app).ConfigureAwait(false);
                 app.PicUrl = picUrl;
