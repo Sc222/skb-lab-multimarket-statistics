@@ -39,7 +39,6 @@ export function getAppDescriptionError(areErrorsVisible, description){
 }
 
 export function getAppMarketError(areErrorsVisible, marketIndex, isSelected, marketLink, marketId){
-    console.log("app market error: "+areErrorsVisible+" "+marketIndex+" "+isSelected+" "+marketLink+" "+marketId)
     if (!areErrorsVisible)
         return "";
     if (!isSelected)

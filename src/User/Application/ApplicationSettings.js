@@ -26,12 +26,8 @@ import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
 import update from "immutability-helper";
 import defaultAppIcon from "../../images/default_app_icon.png";
-import {
-    createAppForUpdate,
-    getDefaultAppNoIdNoPic,
-    getMarketIdByStoreIndex
-} from "../../Api/ApiAppHelper";
-import {DoneRounded, UpdateRounded} from "@material-ui/icons";
+import {createAppForUpdate, getDefaultAppNoIdNoPic, getMarketIdByStoreIndex} from "../../Api/ApiAppHelper";
+import {UpdateRounded} from "@material-ui/icons";
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
@@ -341,9 +337,9 @@ export default function ApplicationSettings(props) {
             setFieldsStateApp(props.app);
 
             //console.log()
-            setPlayStoreLink(createLinkFromId(PlayStoreIndex,props.app.playMarketId));
-            setAppStoreLink(createLinkFromId(AppStoreIndex,props.app.appStoreId));
-            setAppGalleryLink(createLinkFromId(AppGalleryIndex,props.app.appGalleryId));
+            setPlayStoreLink(createLinkFromId(PlayStoreIndex, props.app.playMarketId));
+            setAppStoreLink(createLinkFromId(AppStoreIndex, props.app.appStoreId));
+            setAppGalleryLink(createLinkFromId(AppGalleryIndex, props.app.appGalleryId));
 
         }
     }, [props.app]);
@@ -364,15 +360,11 @@ export default function ApplicationSettings(props) {
             const appForUpdate = createAppForUpdate(fieldsStateApp, props.appId, selectedMarkets);
             updateApp(userId, appForUpdate)
                 .then(result => {
-                    console.log("successfully updated app with id: " + result);
-
-                    appForUpdate.picUrl = props.app.picUrl;
+                    console.log("successfully updated app with new picUrl: " + result);
+                    if (result) //todo move "" regexp to some helper
+                        appForUpdate.picUrl = result.replace(/^"/, "").replace(/"$/, "");
                     props.updateAppInSection(appForUpdate);
-
-
-
                     setStatusSuccessOpen(true);
-                    //setFieldsStateApp(result);
                     setErrorsVisible(false);
                 })
                 .catch(err => {
