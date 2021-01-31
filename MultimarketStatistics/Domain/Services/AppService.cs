@@ -71,7 +71,7 @@ namespace Domain.Services
             return appRepository.GetAll(true);
         }
 
-        public async Task Update(App app)
+        public async Task<string> Update(App app)
         {
             var dbApp = appRepository.Get(app.Id);
             if (string.IsNullOrEmpty(app.PicUrl) || app.PicUrl != dbApp.PicUrl)
@@ -81,6 +81,9 @@ namespace Domain.Services
             }
 
             appRepository.Update(app);
+            
+            //returns new app id to update app interface (because page doesn't reload)
+            return app.PicUrl;
         }
 
         public void Delete(Guid appId)
