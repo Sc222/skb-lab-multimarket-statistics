@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -52,6 +52,9 @@ import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import {HomepageUrl} from "../../App";
+import Pagination from "@material-ui/lab/Pagination";
+import {scrollToTop} from "../../Helpers/UiHelper";
+
 
 const drawerWidth = 260;
 
@@ -347,11 +350,19 @@ export default function ApplicationDashboard(props) {
     const [reviews, setReviews] = React.useState(undefined);
     const [reviewsCurrentPage, setReviewsPage] = React.useState(0);
     const [reviewsPerPage, setReviewsPerPage] = React.useState(10);
-    const [reviewsSelectedMarket, setReviewsSelectedMarket] = React.useState(undefined);
+    const [reviewsSelectedMarket, setReviewsSelectedMarket] = React.useState(MarketsRequestKeys[1]);
+
+    const reviewsTopRef = useRef(null);
 
     const handleChangeReviewsCurrentPage = (event, newPage) => {
         setReviewsPage(newPage);
         loadNextReviewsPage(newPage, reviewsPerPage, reviewsSelectedMarket);
+    };
+
+    //TablePagination starts from zero, default Pagination starts from 1 + scroll to top
+    const handleChangeReviewsCurrentPageBottomPagination = (event, newPage) => {
+        handleChangeReviewsCurrentPage(event,newPage-1);
+        scrollToTop(reviewsTopRef,false); //when isSmooth sometimes scroll is broken
     };
 
     const handleReviewsSelectedMarketChange = (event) => {
@@ -384,7 +395,8 @@ export default function ApplicationDashboard(props) {
 
             const defaultMarketKey = getFirstExistingMarketRequestKey(props.app);
 
-            setReviewsSelectedMarket(defaultMarketKey);
+            if (defaultMarketKey)
+                setReviewsSelectedMarket(defaultMarketKey);
 
             //if(!defaultMarketKey)
             //    return;
@@ -403,11 +415,7 @@ export default function ApplicationDashboard(props) {
                     //select current app notifications
                     const newAppNotifications = notifications.filter(notification => notification.appId === props.app.id);
                     setAppNotifications(newAppNotifications)
-
                     fillChartDataWithRatings(ratings);
-
-                    console.log("reviews: ");
-                    console.log(reviews);
                     setReviews(reviews);
 
                 })
@@ -416,9 +424,6 @@ export default function ApplicationDashboard(props) {
     }, [props.app]);
 
     function fillChartDataWithRatings(ratings) {
-        console.log("load ratings");
-        console.log(ratings);
-
         //replace 0 ratings with 0
         ratings.forEach(r => {
             r.date = format(new Date(r.date), "dd/MM/yyyy HH:mm");
@@ -432,11 +437,14 @@ export default function ApplicationDashboard(props) {
     function loadNextReviewsPage(page, perPage, selectedMarket) {
         getReviews(props.userId, props.app.id, (page) * perPage, perPage, selectedMarket)
             .then(reviews => {
-                console.log("reviews next page: ");
-                console.log(reviews);
                 setReviews(reviews);
 
-            }).catch(err => console.log(err.message));
+            }).catch(err => {
+            console.log(err.message);
+            setReviews(undefined);
+            //todo show error message can't load reviews
+
+        });
 
     }
 
@@ -451,7 +459,6 @@ export default function ApplicationDashboard(props) {
     }
 
     function toggleSelectedMarket(index) {
-        console.log('toggle market: ' + index);
         const newValue = update(selectedChartMarkets, {[index]: {$set: !selectedChartMarkets[index]}});
         setSelectedChartMarkets(newValue);
     }
@@ -508,29 +515,29 @@ export default function ApplicationDashboard(props) {
                 <Paper elevation={1}>
                     <AppBar elevation={0} position="static" className={classes.extraToolbar}>
                         <Toolbar variant="dense" className={classes.extraToolbar} disableGutters>
-                                    <IconButton
-                                        edge="start"
-                                        aria-label="back to apps"
-                                        component={RouterLink}
-                                        to={`${HomepageUrl}/user/${props.userId}/apps`}
-                                        className={classes.extraToolbarButtonBack}
-                                    >
-                                        {<ArrowBackRoundedIcon color="action"/>}
-                                    </IconButton>
+                            <IconButton
+                                edge="start"
+                                aria-label="back to apps"
+                                component={RouterLink}
+                                to={`${HomepageUrl}/user/${props.userId}/apps`}
+                                className={classes.extraToolbarButtonBack}
+                            >
+                                {<ArrowBackRoundedIcon color="action"/>}
+                            </IconButton>
 
-                                    <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
-                                        Панель управления
-                                    </Typography>
-                                    <IconButton
-                                        edge="start"
-                                        aria-label="app settings"
-                                        component={RouterLink}
-                                        to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
+                            <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
+                                Панель управления
+                            </Typography>
+                            <IconButton
+                                edge="start"
+                                aria-label="app settings"
+                                component={RouterLink}
+                                to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
 
-                                        className={classes.extraToolbarButtonBack}
-                                    >
-                                        {<SettingsRounded color="primary"/>}
-                                    </IconButton>
+                                className={classes.extraToolbarButtonBack}
+                            >
+                                {<SettingsRounded color="primary"/>}
+                            </IconButton>
                         </Toolbar>
                     </AppBar>
                 </Paper>
@@ -583,7 +590,7 @@ export default function ApplicationDashboard(props) {
             </Grid>
 
             {/*TODO IS NOTIFICATION SECTION IN APPS NEEDED?*/}
-            <Grid item xs={12}>
+            <Grid item xs={6}>
                 <Paper elevation={1} className={classes.paper}>
                     <div className={formClasses.cardContainer}>
                         <div className={formClasses.container}>
@@ -596,43 +603,6 @@ export default function ApplicationDashboard(props) {
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container maxWidth='xs' className={classes.containerNotCentered}>
-                            {/* TODO IS ALL NOTIFICATIONS LISTING NEEDED?
-                            <Paper>
-                                <Grid container alignItems='center' spacing={2} style={{maxHeight: '100px'}}>
-                                    {appNotifications?.map((notification, index) => {
-                                        return (<Grid key={notification.id} item xs={6} sm={4}>
-                                            <Box borderRadius={8} border={1} borderColor="text.primary"
-                                                 style={{
-                                                     display: 'flex',
-                                                     overflow: 'auto',
-                                                     flexDirection: 'column',
-                                                     height: '100%',
-                                                 }}
-                                            >
-                                                <div style={{flexGrow: 1, height: '100%'}}>
-                                                    <Typography variant='body1' color='textPrimary'>
-                                                        {notification.title}
-                                                    </Typography>
-
-                                                    <Typography variant='body2'
-                                                                color='textSecondary'>{notification.text}
-                                                    </Typography>
-                                                </div>
-                                                <Link
-                                                    className={classes.marginLeftSmall}
-                                                    component="button"
-                                                    variant="body2"
-                                                    color='error'
-                                                    onClick={() => updateNotifications(notification.id, index)}
-                                                >
-                                                    Удалить
-                                                </Link>
-                                            </Box>
-                                        </Grid>);})}
-                                </Grid>
-                            </Paper>
-                            */}
-
                             {/*TODO FEATURE REQUEST: ERRORS WITH MARKETS NOTIFICATIONS*/}
                             <Box mt={2} mb={2}>
                                 {getAppNotificationsAlert(appNotifications)}
@@ -764,7 +734,7 @@ export default function ApplicationDashboard(props) {
                     </div>}
 
                     <Divider className={formClasses.fullWidthDivider}/>
-                    <div className={marketClasses.marketsContainer}>
+                    <div className={marketClasses.marketsContainer}  >
                         {props.app &&
                         MarketsIndexes.map(marketIndex => {
                             let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
@@ -789,7 +759,7 @@ export default function ApplicationDashboard(props) {
                 </Snackbar>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} ref={reviewsTopRef}>
                 <Paper elevation={1} className={classes.paperNoPadding}>
                     <div className={formClasses.cardContainer}>
                         <div className={classes.containerTopPadded}>
@@ -901,6 +871,18 @@ export default function ApplicationDashboard(props) {
                                     </Grid>
                                 )
                                 }
+                            </Grid>
+
+                            <Grid container justify="center">
+                                <Grid item>
+                                    <Box border={1} mt={2} py={1} borderRadius={4} borderColor="grey.400">
+                                    <Pagination count={!reviews ? 0 : Math.ceil(reviews.total/reviewsPerPage)}
+                                                page={reviewsCurrentPage+1}
+                                                onChange={handleChangeReviewsCurrentPageBottomPagination}
+                                                color='primary'
+                                    />
+                                    </Box>
+                                </Grid>
                             </Grid>
                         </Container>
                     </div>
