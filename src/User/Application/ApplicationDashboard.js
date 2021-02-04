@@ -1,11 +1,10 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Chart from './Chart';
 import Avatar from "@material-ui/core/Avatar";
 
 
@@ -13,40 +12,17 @@ import Avatar from "@material-ui/core/Avatar";
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
-import {
-    createLinkFromId,
-    getChipChartColor,
-    getFirstExistingMarketRequestKey,
-    MarketRatingPrecision,
-    MarketsIndexes,
-    MarketsInfo,
-    MarketsRequestKeys,
-    MarketStarsTemplate
-} from "../../Helpers/MarketsInfoHelper";
+import {createLinkFromId, MarketsIndexes, MarketsInfo, MarketStarsTemplate} from "../../Helpers/MarketsInfoHelper";
 import MarketChipStyles from "../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
-import update from "immutability-helper";
 import defaultAppIcon from "../../images/default_app_icon.png";
 import {getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../Api/ApiAppHelper";
-
-import DateFnsUtils from '@date-io/date-fns';
-import {format} from 'date-fns';
-
-import {KeyboardDateTimePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import Button from "@material-ui/core/Button";
 import {getRatings} from "../../Api/ApiRating";
 import {deleteNotifications, getNotifications} from "../../Api/ApiNotification";
 import {getAppNotificationsAlert} from "../../Helpers/AlertsHelper";
 import Box from "@material-ui/core/Box";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
-import {getReviews} from "../../Api/ApiReview";
-import TablePagination from "@material-ui/core/TablePagination";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
 import {
     ArrowForwardRounded,
     HelpOutlineRounded,
@@ -59,14 +35,12 @@ import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import {HomepageUrl} from "../../App";
-import Pagination from "@material-ui/lab/Pagination";
-import {scrollToTop} from "../../Helpers/UiHelper";
 import Hidden from "@material-ui/core/Hidden";
 import clsx from "clsx";
-import Link from "@material-ui/core/Link";
 import {getLatestRatings} from "../../Api/ApiRatingsHelper";
 import {getLatestReviews, getReviewsMultipleMarkets} from "../../Api/ApiReviewHelper";
 import {filterNotificationsByApp} from "../../Api/ApiNotificationHelper";
+import AppNoMarketsCard from "../../Components/AppNoMarketsCard";
 
 
 const drawerWidth = 260;
@@ -371,152 +345,29 @@ export default function ApplicationDashboard(props) {
     const formClasses = useFormSectionStyles();
     const marketClasses = useMarketChipStyles();
 
-    const [selectedChartMarkets, setSelectedChartMarkets] = React.useState([false, false, false]);
     const [appNotifications, setAppNotifications] = React.useState(undefined);
-    const [chartData, setChartData] = React.useState(undefined);
     const [latestRatings, setLatestRatings] = React.useState(undefined);
     const [latestReviews, setLatestReviews] = React.useState(undefined);
 
-    //for status snackbars
-    const [isChartsStatusSuccessOpen, setChartsStatusSuccessOpen] = React.useState(false);
-
-    const [chartDateFrom, setChartDateFrom] = React.useState(new Date().setDate(new Date().getDate() - 1));
-    const [chartDateTo, setChartDateTo] = React.useState(new Date());
-    const [chartDateFromError, setChartDateFromError] = React.useState('');
-    const [chartDateToError, setChartDateToError] = React.useState('');
-
-    //for reviews
-    const [reviews, setReviews] = React.useState(undefined);
-    const [reviewsCurrentPage, setReviewsPage] = React.useState(0);
-    const [reviewsPerPage, setReviewsPerPage] = React.useState(10);
-    const [reviewsSelectedMarket, setReviewsSelectedMarket] = React.useState(MarketsRequestKeys[1]);
-
-    const reviewsTopRef = useRef(null);
-
-    const handleChangeReviewsCurrentPage = (event, newPage) => {
-        setReviewsPage(newPage);
-        loadNextReviewsPage(newPage, reviewsPerPage, reviewsSelectedMarket);
-    };
-
-    //TablePagination starts from zero, default Pagination starts from 1 + scroll to top
-    const handleChangeReviewsCurrentPageBottomPagination = (event, newPage) => {
-        handleChangeReviewsCurrentPage(event, newPage - 1);
-        scrollToTop(reviewsTopRef, false); //when isSmooth sometimes scroll is broken
-    };
-
-    const handleReviewsSelectedMarketChange = (event) => {
-        const selectedMarket = event.target.value;
-        setReviewsSelectedMarket(selectedMarket);
-        setReviewsPage(0);
-        loadNextReviewsPage(0, reviewsPerPage, selectedMarket);
-    };
-
-    const handleChangeReviewsPerPage = (event) => {
-        const newReviewsPerPage = parseInt(event.target.value, 10);
-        setReviewsPerPage(newReviewsPerPage);
-        setReviewsPage(0);
-        loadNextReviewsPage(0, newReviewsPerPage, reviewsSelectedMarket);
-    };
-
-    function hasChartErrors() {
-        return !chartDateFrom || !chartDateTo ||
-            chartDateFromError + chartDateToError !== "";
-    }
-
     useEffect(() => {
-
         if (props.app) {
-            setSelectedChartMarkets([
-                props.app.playMarketId !== undefined,
-                props.app.appStoreId !== undefined,
-                props.app.appGalleryId !== undefined
-            ]);
-
-            const defaultMarketKey = getFirstExistingMarketRequestKey(props.app);
-
-            if (defaultMarketKey)
-                setReviewsSelectedMarket(defaultMarketKey);
-
-            //if(!defaultMarketKey)
-            //    return;
             let markets = getAppMarketsArray(props.app);
-            //console.log(markets);
-            //let aaa = getReviewsMultipleMarkets(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, markets);
-            //console.log(aaa);
-            //getReviews(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, getFirstExistingMarketRequestKey(props.app))
             const requests = [];
             requests.push(getNotifications(props.userId));
             requests.push(getRatings(props.userId, props.app.id, new Date().setDate(new Date().getDate() - 1), new Date()));
             requests.push(...getReviewsMultipleMarkets(props.userId, props.app.id, 0, 1, markets));
-            //console.log("AAAA");
-            console.log(requests);
-            /*Promise.all([
-                getNotifications(props.userId),
-                getRatings(props.userId, props.app.id, new Date().setDate(new Date().getDate() - 1), new Date()),
-                getReviewsMultipleMarkets(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, markets)
-        ])*/
             Promise.all(requests)
                 .then(([notifications, ratings, ...reviews]) => {
 
                     //update global notifications
                     props.updateUserNotifications(notifications);
-
-                    /*TODO IS NOTIFICATION SECTION IN APPS NEEDED?*/
-                    //select current app notifications
-                    //const newAppNotifications = notifications.filter(notification => notification.appId === props.app.id);
                     setAppNotifications(filterNotificationsByApp(notifications, props.app));
-                    fillChartDataWithRatings(ratings);
-                    console.log(getLatestRatings(ratings, props.app));
                     setLatestRatings(getLatestRatings(ratings, props.app));
-                    console.log(getLatestReviews(reviews));
                     setLatestReviews(getLatestReviews(reviews));
                 })
                 .catch(err => console.log(err.message));
         }
     }, [props.app]);
-
-    function fillChartDataWithRatings(ratings) {
-        //replace 0 ratings with null and format date
-        let formattedRatings = ratings.map(r => {
-            let formattedRating = {};
-            formattedRating.date = format(new Date(r.date), "dd/MM/yyyy HH:mm");
-            formattedRating.playMarketRating = !r.playMarketRating ? null : parseFloat(r.playMarketRating).toPrecision(MarketRatingPrecision);
-            formattedRating.appStoreRating = !r.appStoreRating ? null : parseFloat(r.appStoreRating).toPrecision(MarketRatingPrecision);
-            formattedRating.appGalleryRating = !r.appGalleryRating ? null : parseFloat(r.appGalleryRating).toPrecision(MarketRatingPrecision);
-            return formattedRating;
-        });
-
-        setChartData(formattedRatings);
-    }
-
-    function loadNextReviewsPage(page, perPage, selectedMarket) {
-        getReviews(props.userId, props.app.id, (page) * perPage, perPage, selectedMarket)
-            .then(reviews => {
-                setReviews(reviews);
-
-            }).catch(err => {
-            console.log(err.message);
-            setReviews(undefined);
-            //todo show error message can't load reviews
-
-        });
-
-    }
-
-    function loadChartRatingsData() {
-        if (!hasChartErrors()) {
-            getRatings(props.userId, props.app.id, chartDateFrom, chartDateTo)
-                .then(ratings => {
-                    setChartsStatusSuccessOpen(true);
-                    fillChartDataWithRatings(ratings);
-                }).catch(err => console.log(err.message));
-        }
-    }
-
-    function toggleSelectedMarket(index) {
-        const newValue = update(selectedChartMarkets, {[index]: {$set: !selectedChartMarkets[index]}});
-        setSelectedChartMarkets(newValue);
-    }
 
     function reloadNotifications() {
         getNotifications(props.userId)
@@ -540,29 +391,6 @@ export default function ApplicationDashboard(props) {
                 }
             });
     }
-
-    const handleChartsStatusSuccessClose = (event, reason) => {
-        if (reason === 'clickaway')
-            return;
-        setChartsStatusSuccessOpen(false);
-    };
-
-
-    const handleChartDateFromError = (error, _) => {
-        setChartDateFromError(error);
-    }
-
-    const handleChartDateToError = (error, _) => {
-        setChartDateToError(error);
-    }
-
-    const handleChartDateFromInput = (date) => {
-        setChartDateFrom(date);
-    };
-
-    const handleChartDateToInput = (date) => {
-        setChartDateTo(date);
-    };
 
     return (
         <Grid container spacing={3}>
@@ -790,7 +618,7 @@ export default function ApplicationDashboard(props) {
                                 edge="end"
                                 aria-label="app rating"
                                 component={RouterLink}
-                                to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/rating`}
+                                to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/ratings`}
                                 disableElevation
                                 size='small'
                                 variant="outlined"
@@ -819,8 +647,8 @@ export default function ApplicationDashboard(props) {
 
                     <Container
                         className={clsx(classes.containerNotCentered, classes.mYdividers, classes.flexGrowFillCenterVertical)}>
-                        <Grid container alignItems='center' justify='center'
-                              spacing={2}>{/*TODO justify='center' ONLY IF MD*/}
+                        <Grid container alignItems='center'
+                              spacing={2}>{/*TODO !!! justify='center' ONLY IF MD and 3 markets*/}
                             {latestReviews && latestReviews.map(review => {
                                 return (<Grid xs={12} md={6} lg={4} item key={review.marketIndex}>
                                         <Box border={1} borderRadius={8} borderColor="grey.300"
@@ -905,254 +733,7 @@ export default function ApplicationDashboard(props) {
             </Grid>
             }
 
-            {/*todo extract error message component*/}
-            {props.app && !hasMarkets(props.app) &&
-            <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                    <div className={classes.paperContainer}>
-                        <Typography component="h2" variant="h6" color="primary">Не указаны магазины
-                            приложений</Typography>
-                        <Typography component="p" variant="body1">
-                            Нажмите на кнопку <Link component={RouterLink}
-                                                    to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}>настройки</Link> для
-                            того, чтобы указать маркеты, где приложение опубликовано
-                        </Typography>
-                    </div>
-                </Paper>
-            </Grid>
-            }
+            <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId} appId={props.appId}/>
 
-
-            <Grid item xs={12}>
-                <Paper elevation={1} className={classes.paperNoPadding}>
-                    <div className={classes.containerTopPadded}>
-                        <Typography variant="h6">
-                            Средняя оценка
-                        </Typography>
-                        <Typography variant="body2">
-                            Динамика изменения средней оценки приложения
-                        </Typography>
-                    </div>
-                    <Divider className={formClasses.fullWidthDivider}/>
-
-                    <Container maxWidth='md' className={classes.containerNotCentered}>
-                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <Grid container spacing={2} justify='flex-start' alignItems='stretch'
-                                  className={classes.chartSelectsContainer}>
-                                <Grid item xs={7} sm={10} md={3}>
-                                    {/*TODO MIN AND MAX DATE IGNORE HOURS AND MINUTES :(*/}
-                                    <KeyboardDateTimePicker
-                                        fullWidth
-                                        size="small"
-                                        disableFuture
-                                        value={chartDateFrom}
-                                        onChange={handleChartDateFromInput}
-                                        maxDate={chartDateTo}
-                                        onError={handleChartDateFromError}
-                                        error={!chartDateFrom || chartDateFromError !== ""}
-                                        helperText={!chartDateFrom
-                                            ? "Укажите начальную дату"
-                                            : chartDateFromError
-                                        }
-                                        format="dd/MM/yyyy HH:mm"
-                                        inputVariant="outlined"
-                                        ampm={false}
-                                        label="От"
-                                        id="date-picker-from"
-                                        variant="inline"
-                                        KeyboardButtonProps={{
-                                            'aria-label': 'change date',
-                                        }}
-                                        invalidDateMessage='Неверный формат даты'
-                                        maxDateMessage='Дата не может быть позднее даты в поле «До»'
-                                    />
-                                </Grid>
-                                <Grid item xs={7} sm={10} md={3}>
-                                    <KeyboardDateTimePicker
-                                        fullWidth
-                                        size="small"
-                                        disableFuture
-                                        value={chartDateTo}
-                                        onChange={handleChartDateToInput}
-                                        minDate={chartDateFrom}
-                                        onError={handleChartDateToError}
-                                        error={!chartDateTo || chartDateToError !== ""}
-                                        helperText={!chartDateTo
-                                            ? "Укажите конечную дату"
-                                            : chartDateToError
-                                        }
-                                        format="dd/MM/yyyy HH:mm"
-                                        inputVariant="outlined"
-                                        ampm={false}
-                                        label="До"
-                                        id="date-picker-to"
-                                        variant="inline"
-                                        KeyboardButtonProps={{
-                                            'aria-label': 'change date',
-                                        }}
-                                        invalidDateMessage='Неверный формат даты'
-                                        maxDateMessage='Дата не может быть позднее текущего времени'
-                                        minDateMessage='Дата не может быть раньше даты в поле «От»'
-                                    />
-                                </Grid>
-                                <Grid item xs={7} sm={8} md={4}>
-                                    <Button disableElevation variant="contained" color="primary" size='medium'
-                                            onClick={() => loadChartRatingsData()}>
-                                        Показать
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </MuiPickersUtilsProvider>
-                    </Container>
-
-                    <Chart data={chartData} selectedMarkets={selectedChartMarkets}/>
-                    {chartData && chartData.length !== 0 && selectedChartMarkets.some(isSelected => isSelected) &&
-                    <div className={formClasses.container}>
-                        <Typography variant="caption" color='primary'>
-                            Если диапазон графика меньше указанного, это значит, что оценки есть не на всем исходном
-                            диапазоне
-                        </Typography>
-                    </div>}
-
-                    <Divider className={formClasses.fullWidthDivider}/>
-                    <div className={marketClasses.marketsContainer}>
-                        {props.app &&
-                        getAppMarketsArray(props.app).map(marketIndex =>
-                            <Chip
-                                clickable
-                                component='a'
-                                label={MarketsInfo[marketIndex].name}
-                                color={selectedChartMarkets[marketIndex] ? "primary" : "default"}
-                                style={{backgroundColor: getChipChartColor(theme, marketIndex, selectedChartMarkets[marketIndex])}}
-                                onClick={() => toggleSelectedMarket(marketIndex)}
-                            />)
-                        }
-                    </div>
-                </Paper>
-                <Snackbar open={isChartsStatusSuccessOpen} autoHideDuration={1000}
-                          onClose={handleChartsStatusSuccessClose}>
-                    <Alert onClose={handleChartsStatusSuccessClose} severity="success">
-                        График успешно обновлён
-                    </Alert>
-                </Snackbar>
-            </Grid>
-
-            <Grid item xs={12}>
-                <Paper elevation={1} className={classes.paperNoPadding}>
-                    <div className={formClasses.cardContainer}>
-                        <div className={classes.containerTopPadded}>
-                            <Typography variant="h6" ref={reviewsTopRef}>
-                                Отзывы
-                            </Typography>
-                            <Typography variant="body2">
-                                Читайте и анализируйте отзывы о вашем приложении
-                            </Typography>
-                        </div>
-                        <Divider className={formClasses.fullWidthDivider}/>
-                        <Container className={classes.containerApps}>
-                            <Grid container alignItems='center' spacing={2} justify='space-between'>
-
-                                <Grid item>
-                                    <FormControl variant="outlined" className={classes.selectStyle}>
-                                        <InputLabel id="demo-simple-select-outlined-label">Магазин
-                                            приложений</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-outlined-label"
-                                            id="demo-simple-select-outlined"
-                                            value={reviewsSelectedMarket}
-                                            onChange={handleReviewsSelectedMarketChange}
-                                            label="Магазин приложений"
-                                        >
-                                            {props.app
-                                            && getAppMarketsArray(props.app)
-                                                .map(index =>
-                                                    <MenuItem
-                                                        value={MarketsRequestKeys[index]}>{MarketsInfo[index].name}</MenuItem>)
-                                            }
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item>
-                                    <Box border={1} mt={1} mb={1} borderRadius={4} borderColor="grey.400">
-                                        <TablePagination
-                                            component="div"
-                                            labelRowsPerPage='На странице'
-                                            count={!reviews ? 0 : reviews.total}
-                                            page={reviewsCurrentPage}
-                                            rowsPerPageOptions={[5, 10, 25, 50, 100, 250]}
-                                            onChangePage={handleChangeReviewsCurrentPage}
-                                            rowsPerPage={reviewsPerPage}
-                                            onChangeRowsPerPage={handleChangeReviewsPerPage}
-                                        />
-                                    </Box>
-                                </Grid>
-
-                            </Grid>
-                            <Grid container alignItems='stretch' justify='center' spacing={2}>
-                                {reviews && reviews.foundItem.length !== 0 &&
-                                reviews.foundItem.map(review =>
-                                    <Grid xs={12} sm={12} md={6} lg={4} item key={review.text + review.date}>
-                                        <Box border={1} borderRadius={8} borderColor="grey.300"
-                                             className={classes.reviewCard}>
-                                            <Grid container alignItems='center' spacing={1}>
-                                                <Grid item>
-                                                    <Avatar className={classes.reviewAvatar}>
-                                                        {review.reviewerUsername === undefined
-                                                            ? "?"
-                                                            : review.reviewerUsername.match(/[a-zA-Zа-яА-Я]/)
-                                                                ? review.reviewerUsername.charAt(0).toUpperCase()
-                                                                : "!"}
-                                                    </Avatar>
-                                                </Grid>
-                                                <Grid item>
-                                                    <Box pl={0.5}>
-                                                        <Typography variant="body1">
-                                                            <b>{review.reviewerUsername === undefined
-                                                                ? "Имя неизвестно"
-                                                                : review.reviewerUsername}
-                                                            </b>
-                                                        </Typography>
-
-                                                        <Typography variant="caption" noWrap>
-                                                            {format(new Date(review.date), "dd/MM/yyyy HH:mm")} |
-                                                            Версия: {review.version ? review.version : "?"}
-                                                        </Typography>
-                                                    </Box>
-                                                    <Typography variant="h6">
-                                                        {MarketStarsTemplate.map(value => {
-                                                            if (review.rating < value)
-                                                                return (<StarBorderRounded fontSize='inherit'
-                                                                                           className={classes.reviewRating}/>)
-                                                            return (<StarRounded fontSize='inherit'
-                                                                                 className={classes.reviewRating}/>)
-                                                        })
-                                                        }
-                                                    </Typography>
-
-                                                </Grid>
-                                            </Grid>
-                                            <Typography variant="body2">
-                                                {review.text}
-                                            </Typography>
-                                        </Box>
-                                    </Grid>)
-                                }
-                            </Grid>
-
-                            <Grid container justify="center">
-                                <Grid item>
-                                    <Box border={1} mt={2} py={1} borderRadius={4} borderColor="grey.400">
-                                        <Pagination count={!reviews ? 0 : Math.ceil(reviews.total / reviewsPerPage)}
-                                                    page={reviewsCurrentPage + 1}
-                                                    onChange={handleChangeReviewsCurrentPageBottomPagination}
-                                                    color='primary'
-                                        />
-                                    </Box>
-                                </Grid>
-                            </Grid>
-                        </Container>
-                    </div>
-                </Paper>
-            </Grid>
         </Grid>);
 }

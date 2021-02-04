@@ -286,7 +286,7 @@ export default function Applications(props) {
                 return (<Grid key={app.id} item xs={12} md={6}>
                         <Paper className={classes.paperNoPadding}>
                             <ButtonBase className={classes.primaryRippleFillHeight} component={RouterLink}
-                                        to={`${HomepageUrl}/user/${userId}/app/${app.id}/dashboard`}>
+                                        to={`${HomepageUrl}/user/${userId}/app/${app.id}/`}>
                                 <div className={classes.appDescriptionContainer}>
                                     <Grid container alignItems='center' spacing={2}>
                                         <Grid item xs={3} sm={2} md={3}>

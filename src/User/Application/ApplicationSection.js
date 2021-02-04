@@ -8,6 +8,8 @@ import {HomepageUrl} from "../../App";
 import ApplicationDashboard from "./ApplicationDashboard";
 import {getApp} from "../../Api/ApiApp";
 import ApplicationSettings from "./ApplicationSettings";
+import AppRatingsSection from "./AppRatingsSection";
+import AppReviewsSection from "./AppReviewsSection";
 
 
 const drawerWidth = 260;
@@ -192,17 +194,21 @@ export default function ApplicationSection(props) {
                 <Container maxWidth="lg" className={classes.container}>
 
                     <RouteSwitch>
-                        <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/dashboard`}>
+                        <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/`}>
                             <ApplicationDashboard userId={userId} app={app} appId={appId}
                                                   updateUserNotifications={props.updateUserNotifications}/>
                         </Route>
-
+                        <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/ratings`}>
+                            <AppRatingsSection userId={userId} app={app} appId={appId}/>
+                        </Route>
+                        <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/reviews`}>
+                            <AppReviewsSection userId={userId} app={app} appId={appId}/>
+                        </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
                             <ApplicationSettings userId={userId} app={app} appId={appId} updateAppInSection={updateAppInSection}
                                                  updateUserNotifications={props.updateUserNotifications}/>
                         </Route>
-
-                        <Redirect to={`${HomepageUrl}/user/${userId}/app/${appId}/dashboard`}/>
+                        <Redirect to={`${HomepageUrl}/user/${userId}/app/${appId}/`}/>
                     </RouteSwitch>
                 </Container>
             </main>

@@ -353,7 +353,7 @@ export default function NewApplications(props) {
 
     return (
         <RouteSwitch>
-            {createdAppId && <Redirect to={`${HomepageUrl}/user/${userId}/app/${createdAppId}/dashboard`}/>}
+            {createdAppId && <Redirect to={`${HomepageUrl}/user/${userId}/app/${createdAppId}/`}/>}
         <Route>
         <Container maxWidth="lg" className={classes.container}>
             <div className={classes.appBarSpacer}/>
