@@ -1,7 +1,6 @@
 //appGalleryId, appStoreId, playMarketId are removed on send
 
 import {AppGalleryIndex, AppStoreIndex, PlayStoreIndex} from "../Helpers/MarketsInfoHelper";
-import {getDefaultUser} from "./ApiUserHelper";
 
 export function getDefaultAppNoIdNoPicNoMarkets(){
     return {name:"", description:""};
@@ -70,4 +69,8 @@ export function getAppMarketsArray(app){
     if(app.appGalleryId!==undefined)
         result.push(AppGalleryIndex);
     return result;
+}
+
+export function hasMarkets(app){
+    return getAppMarketsArray(app).length>0;
 }

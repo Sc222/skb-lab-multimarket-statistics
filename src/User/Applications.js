@@ -26,6 +26,7 @@ import {getApps} from "../Api/ApiApp";
 import {getMarketIdByStoreIndex} from "../Api/ApiAppHelper";
 import {escapeRegex} from "../Helpers/UtilsHelper";
 import {HomepageUrl} from "../App";
+import Link from "@material-ui/core/Link";
 
 const drawerWidth = 260;
 
@@ -273,7 +274,9 @@ export default function Applications(props) {
                             <Typography component="h2" variant="h6" color="primary">У Вас еще нет
                                 приложений</Typography>
                             <Typography component="p" variant="body1">
-                                Нажмите на кнопку 'добавить' для того, чтобы создать новое приложение
+                                Нажмите на кнопку <Link component={RouterLink}
+                                                        to={`${HomepageUrl}/user/${userId}/new-app`}>добавить</Link> для
+                                того, чтобы создать новое приложение
                             </Typography>
                         </div>
                     </Paper>

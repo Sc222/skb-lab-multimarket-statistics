@@ -12,6 +12,8 @@ export const AppGalleryIndex = 2;
 //utility constants
 export const MarketRatingPrecision = 3;
 
+export const MarketStarsTemplate = [1, 2, 3, 4, 5];
+
 export const MarketsLinks = [
     "https://play.google.com/store/apps/details?id=",
     "https://apps.apple.com/app/id",
@@ -34,9 +36,10 @@ export const MarketsLinksRegex = [
     /^https:\/\/appgallery\.huawei\.com\/#\/app\/(C[\d]+)(\?[^\s\/]*)?$/
 ];
 
-export const MarketsIndexes = [PlayStoreIndex,AppStoreIndex,AppGalleryIndex];
+export const MarketsIndexes = [PlayStoreIndex, AppStoreIndex, AppGalleryIndex]; // starts with 0 and +1
 
 export const MarketsRequestKeys = ["playMarket", "appStore", "appGallery"];
+export const IndexByRequestKey = MarketsRequestKeys.reduce((a, val, index) => ({...a, [val]: index}),{});
 
 export const MarketsRatingKeys = ["playMarketRating", "appStoreRating", "appGalleryRating"];
 
@@ -49,7 +52,7 @@ export const MarketsInfo = [
             return disabled ? googlePlayDisabled : googlePlay
         },
         getChartColor: (theme) => {
-            return theme.palette.secondary.main;
+            return theme.palette.success.main;
         }
     },
     {
@@ -71,7 +74,7 @@ export const MarketsInfo = [
             return disabled ? appGalleryDisabled : appGallery
         },
         getChartColor: (theme) => {
-            return theme.palette.success.main;
+            return theme.palette.secondary.main;
         }
     }
 ];
@@ -120,12 +123,12 @@ export function getAppIdFromUrl(marketIndex, link) {
     return "";
 }
 
-export function getFirstExistingMarketRequestKey(app){
-    if(app.playMarketId!==undefined)
+export function getFirstExistingMarketRequestKey(app) {
+    if (app.playMarketId !== undefined)
         return MarketsRequestKeys[PlayStoreIndex];
-    if(app.appStoreId!==undefined)
+    if (app.appStoreId !== undefined)
         return MarketsRequestKeys[AppStoreIndex];
-    if(app.appGalleryId!==undefined)
+    if (app.appGalleryId !== undefined)
         return MarketsRequestKeys[AppGalleryIndex];
     return "";
 }

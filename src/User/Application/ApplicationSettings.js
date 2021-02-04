@@ -446,7 +446,7 @@ export default function ApplicationSettings(props) {
                                     edge="start"
                                     aria-label="back to apps"
                                     component={RouterLink}
-                                    to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
+                                    to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/dashboard`}
                                     className={classes.extraToolbarButtonBack}
                                 >
                                     {<ArrowBackRoundedIcon color="action"/>}

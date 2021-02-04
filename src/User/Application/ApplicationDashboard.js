@@ -20,14 +20,15 @@ import {
     MarketRatingPrecision,
     MarketsIndexes,
     MarketsInfo,
-    MarketsRequestKeys
+    MarketsRequestKeys,
+    MarketStarsTemplate
 } from "../../Helpers/MarketsInfoHelper";
 import MarketChipStyles from "../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
 import update from "immutability-helper";
 import defaultAppIcon from "../../images/default_app_icon.png";
-import {getAppMarketsArray, getMarketIdByStoreIndex} from "../../Api/ApiAppHelper";
+import {getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../Api/ApiAppHelper";
 
 import DateFnsUtils from '@date-io/date-fns';
 import {format} from 'date-fns';
@@ -46,7 +47,13 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import {SettingsRounded, StarBorderRounded, StarRounded} from "@material-ui/icons";
+import {
+    ArrowForwardRounded,
+    HelpOutlineRounded,
+    SettingsRounded,
+    StarBorderRounded,
+    StarRounded
+} from "@material-ui/icons";
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
@@ -54,6 +61,12 @@ import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import {HomepageUrl} from "../../App";
 import Pagination from "@material-ui/lab/Pagination";
 import {scrollToTop} from "../../Helpers/UiHelper";
+import Hidden from "@material-ui/core/Hidden";
+import clsx from "clsx";
+import Link from "@material-ui/core/Link";
+import {getLatestRatings} from "../../Api/ApiRatingsHelper";
+import {getLatestReviews, getReviewsMultipleMarkets} from "../../Api/ApiReviewHelper";
+import {filterNotificationsByApp} from "../../Api/ApiNotificationHelper";
 
 
 const drawerWidth = 260;
@@ -113,6 +126,14 @@ const useStyles = makeStyles((theme) => ({
         marginRight: 0
     },
 
+    containerNotCenteredSmallerPadding: {
+        paddingLeft: theme.spacing(1.5),
+        paddingRight: theme.spacing(1.5),
+        width: '100%',
+        marginLeft: 0,
+        marginRight: 0
+    },
+
     containerApps: {
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(2),
@@ -139,7 +160,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
-        height: '100%',
+        height: '100%'
     },
     fixedHeight: {
         height: 240,
@@ -171,6 +192,16 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: theme.spacing(1.5),
         paddingRight: theme.spacing(1.5),
         width: '100%'
+    },
+
+    flexGrowFillCenterVertical: {
+        flexGrow: 1,
+        display: 'flex',
+        alignItems: 'center'
+    },
+
+    flexGrowFill: {
+        flexGrow: 1
     },
 
     containerTopPadded: {
@@ -306,14 +337,11 @@ const useStyles = makeStyles((theme) => ({
         fill: green[400]
     },
 
-    /*
-    paperNoPadding: {
-        display: 'flex',
-        overflow: 'auto',
-        flexDirection: 'column',
-        height: '100%',
+    textGreenBold: {
+        fontWeight: "bold",
+        color: green[400]
     },
-    * */
+
     reviewCard: {
         height: '100%',
         paddingTop: theme.spacing(1.5),
@@ -321,6 +349,15 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: theme.spacing(1.5),
         paddingBottom: theme.spacing(1)
     },
+
+    mT: {
+        marginTop: theme.spacing(1.5)
+    },
+
+    mYdividers: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(0.5)
+    }
 
 
 }));
@@ -337,6 +374,8 @@ export default function ApplicationDashboard(props) {
     const [selectedChartMarkets, setSelectedChartMarkets] = React.useState([false, false, false]);
     const [appNotifications, setAppNotifications] = React.useState(undefined);
     const [chartData, setChartData] = React.useState(undefined);
+    const [latestRatings, setLatestRatings] = React.useState(undefined);
+    const [latestReviews, setLatestReviews] = React.useState(undefined);
 
     //for status snackbars
     const [isChartsStatusSuccessOpen, setChartsStatusSuccessOpen] = React.useState(false);
@@ -361,8 +400,8 @@ export default function ApplicationDashboard(props) {
 
     //TablePagination starts from zero, default Pagination starts from 1 + scroll to top
     const handleChangeReviewsCurrentPageBottomPagination = (event, newPage) => {
-        handleChangeReviewsCurrentPage(event,newPage-1);
-        scrollToTop(reviewsTopRef,false); //when isSmooth sometimes scroll is broken
+        handleChangeReviewsCurrentPage(event, newPage - 1);
+        scrollToTop(reviewsTopRef, false); //when isSmooth sometimes scroll is broken
     };
 
     const handleReviewsSelectedMarketChange = (event) => {
@@ -400,38 +439,54 @@ export default function ApplicationDashboard(props) {
 
             //if(!defaultMarketKey)
             //    return;
-
-            Promise.all([
+            let markets = getAppMarketsArray(props.app);
+            //console.log(markets);
+            //let aaa = getReviewsMultipleMarkets(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, markets);
+            //console.log(aaa);
+            //getReviews(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, getFirstExistingMarketRequestKey(props.app))
+            const requests = [];
+            requests.push(getNotifications(props.userId));
+            requests.push(getRatings(props.userId, props.app.id, new Date().setDate(new Date().getDate() - 1), new Date()));
+            requests.push(...getReviewsMultipleMarkets(props.userId, props.app.id, 0, 1, markets));
+            //console.log("AAAA");
+            console.log(requests);
+            /*Promise.all([
                 getNotifications(props.userId),
                 getRatings(props.userId, props.app.id, new Date().setDate(new Date().getDate() - 1), new Date()),
-                getReviews(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, getFirstExistingMarketRequestKey(props.app))
-            ])
-                .then(([notifications, ratings, reviews]) => {
+                getReviewsMultipleMarkets(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, markets)
+        ])*/
+            Promise.all(requests)
+                .then(([notifications, ratings, ...reviews]) => {
 
                     //update global notifications
                     props.updateUserNotifications(notifications);
 
                     /*TODO IS NOTIFICATION SECTION IN APPS NEEDED?*/
                     //select current app notifications
-                    const newAppNotifications = notifications.filter(notification => notification.appId === props.app.id);
-                    setAppNotifications(newAppNotifications)
+                    //const newAppNotifications = notifications.filter(notification => notification.appId === props.app.id);
+                    setAppNotifications(filterNotificationsByApp(notifications, props.app));
                     fillChartDataWithRatings(ratings);
-                    setReviews(reviews);
-
+                    console.log(getLatestRatings(ratings, props.app));
+                    setLatestRatings(getLatestRatings(ratings, props.app));
+                    console.log(getLatestReviews(reviews));
+                    setLatestReviews(getLatestReviews(reviews));
                 })
                 .catch(err => console.log(err.message));
         }
     }, [props.app]);
 
     function fillChartDataWithRatings(ratings) {
-        //replace 0 ratings with 0
-        ratings.forEach(r => {
-            r.date = format(new Date(r.date), "dd/MM/yyyy HH:mm");
-            r.playMarketRating = !r.playMarketRating ? null : parseFloat(r.playMarketRating).toPrecision(MarketRatingPrecision);
-            r.appStoreRating = !r.appStoreRating ? null : parseFloat(r.appStoreRating).toPrecision(MarketRatingPrecision);
-            r.appGalleryRating = !r.appGalleryRating ? null : parseFloat(r.appGalleryRating).toPrecision(MarketRatingPrecision);
-        })
-        setChartData(ratings);
+        //replace 0 ratings with null and format date
+        let formattedRatings = ratings.map(r => {
+            let formattedRating = {};
+            formattedRating.date = format(new Date(r.date), "dd/MM/yyyy HH:mm");
+            formattedRating.playMarketRating = !r.playMarketRating ? null : parseFloat(r.playMarketRating).toPrecision(MarketRatingPrecision);
+            formattedRating.appStoreRating = !r.appStoreRating ? null : parseFloat(r.appStoreRating).toPrecision(MarketRatingPrecision);
+            formattedRating.appGalleryRating = !r.appGalleryRating ? null : parseFloat(r.appGalleryRating).toPrecision(MarketRatingPrecision);
+            return formattedRating;
+        });
+
+        setChartData(formattedRatings);
     }
 
     function loadNextReviewsPage(page, perPage, selectedMarket) {
@@ -528,16 +583,35 @@ export default function ApplicationDashboard(props) {
                             <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
                                 Панель управления
                             </Typography>
-                            <IconButton
-                                edge="start"
-                                aria-label="app settings"
-                                component={RouterLink}
-                                to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
+                            <Hidden smDown>
+                                <Button
+                                    edge="end"
+                                    aria-label="app settings"
+                                    component={RouterLink}
+                                    to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
+                                    disableElevation
+                                    variant="outlined"
+                                    color="primary"
+                                    size='small'
+                                    endIcon={<SettingsRounded/>}
+                                    className={classes.extraToolbarButtonBack}
+                                >
+                                    Настройки
+                                </Button>
+                            </Hidden>
 
-                                className={classes.extraToolbarButtonBack}
-                            >
-                                {<SettingsRounded color="primary"/>}
-                            </IconButton>
+                            <Hidden mdUp>
+                                <IconButton
+                                    edge="end"
+                                    aria-label="app settings"
+                                    component={RouterLink}
+                                    to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
+
+                                    className={classes.extraToolbarButtonBack}
+                                >
+                                    {<SettingsRounded color="primary"/>}
+                                </IconButton>
+                            </Hidden>
                         </Toolbar>
                     </AppBar>
                 </Paper>
@@ -545,17 +619,26 @@ export default function ApplicationDashboard(props) {
 
             {/* todo lg = {6} TEST   */}
             {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
-            <Grid item xs={12}>
+            <Grid item xs={12} md={7} lg={8}>
                 {props.app &&
                 <Paper className={classes.paperNoPadding} elevation={1}>
+                    <div className={classes.containerTopPadded}>
+                        <Typography variant="h6">
+                            Информация о приложении
+                        </Typography>
+                        <Typography variant="body2">
+                            Текущая информация о приложении
+                        </Typography>
+                    </div>
+                    <Divider className={formClasses.fullWidthDivider}/>
                     <div className={classes.appDescriptionContainer}>
                         <Grid container alignItems='center' spacing={2}>
-                            <Grid item xs={3} sm={2} md={1}>
+                            <Grid item xs={3} sm={2} md={2}>
                                 <img alt='app icon'
                                      src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
                                      className={classes.applicationIcon}/>
                             </Grid>
-                            <Grid item xs={9} sm={10} md={11}>
+                            <Grid item xs={9} sm={10} md={10}>
                                 <Typography component="h5" variant="h6">{props.app.name}</Typography>
                                 <Typography component="p" variant="body1">
                                     {props.app.description}
@@ -590,55 +673,255 @@ export default function ApplicationDashboard(props) {
             </Grid>
 
             {/*TODO IS NOTIFICATION SECTION IN APPS NEEDED?*/}
-            <Grid item xs={6}>
+            <Grid item xs={12} md={5} lg={4}>
                 <Paper elevation={1} className={classes.paper}>
-                    <div className={formClasses.cardContainer}>
-                        <div className={formClasses.container}>
-                            <Typography variant="h6">
-                                Уведомления
-                            </Typography>
-                            <Typography variant="body2">
-                                Уведомления о новых отзывах и оценках
-                            </Typography>
-                        </div>
-                        <Divider className={formClasses.fullWidthDivider}/>
-                        <Container maxWidth='xs' className={classes.containerNotCentered}>
-                            {/*TODO FEATURE REQUEST: ERRORS WITH MARKETS NOTIFICATIONS*/}
-                            <Box mt={2} mb={2}>
-                                {getAppNotificationsAlert(appNotifications)}
-                            </Box>
-
-                        </Container>
-                        {appNotifications &&
-                        <>
-                            <Divider className={classes.fullWidthDivider}/>
-
-                            <Container maxWidth='xs' className={classes.containerNotCentered}>
-                                <Box mt={2}>
-                                    {appNotifications.length !== 0
-                                        ? <Button disableElevation
-                                                  variant="outlined"
-                                                  color="secondary"
-                                                  onClick={() => deleteAllAppNotifications()}>
-                                            Очистить уведомления
-                                        </Button>
-                                        : <Button disableElevation
-                                                  variant="outlined"
-                                                  color="primary"
-                                                  onClick={() => reloadNotifications()}>
-                                            Обновить уведомления
-                                        </Button>
-                                    }
-                                </Box>
-                            </Container>
-                        </>
-                        }
+                    <div className={formClasses.container}>
+                        <Typography variant="h6">
+                            Уведомления
+                        </Typography>
+                        <Typography variant="body2">
+                            Уведомления о новых отзывах и оценках
+                        </Typography>
                     </div>
+                    <Divider className={formClasses.fullWidthDivider}/>
+                    <Container maxWidth='xs'
+                               className={clsx(classes.containerNotCentered, classes.flexGrowFillCenterVertical)}>
+                        {/*TODO FEATURE REQUEST: ERRORS WITH MARKETS NOTIFICATIONS*/}
+                        <Box mt={2} mb={2}>
+                            {getAppNotificationsAlert(appNotifications)}
+                        </Box>
+                    </Container>
+                    {appNotifications &&
+                    <>
+                        <Divider className={classes.fullWidthDivider}/>
+
+                        <Container maxWidth='xs' className={classes.containerNotCentered}>
+                            <Box mt={1}>
+                                {appNotifications.length !== 0
+                                    ? <Button disableElevation
+                                              size='small'
+                                              variant="outlined"
+                                              color="secondary"
+                                              onClick={() => deleteAllAppNotifications()}>
+                                        Очистить уведомления
+                                    </Button>
+                                    : <Button disableElevation
+                                              size='small'
+                                              variant="outlined"
+                                              color="primary"
+                                              onClick={() => reloadNotifications()}>
+                                        Обновить уведомления
+                                    </Button>
+                                }
+                            </Box>
+                        </Container>
+                    </>
+                    }
                 </Paper>
             </Grid>
 
+            {props.app && hasMarkets(props.app) &&
+            <Grid item xs={12}>
+                <Paper elevation={1} className={classes.paper}>
+                    <div className={formClasses.container}>
+                        <Typography variant="h6">
+                            Средняя оценка
+                        </Typography>
+                        <Typography variant="body2">
+                            Динамика изменения средней оценки приложения
+                        </Typography>
+                    </div>
+                    <Divider className={formClasses.fullWidthDivider}/>
 
-            {/*TODO ADD 'GO TO APP SETTINGS CARD' WHEN THERE ARE NO MARKET IDS*/}
+                    <Container maxWidth='md'
+                               className={clsx(classes.containerNotCenteredSmallerPadding, classes.mYdividers, classes.flexGrowFillCenterVertical)}>
+                        <Grid container alignItems='center' spacing={2}>
+                            {latestRatings && getAppMarketsArray(props.app).map(marketIndex => {
+                                return (<Grid item xs={12} sm={4} md={3} lg={3}>
+                                    <Grid container alignItems='center' spacing={1} key={marketIndex}>
+                                        <Grid item>
+                                            <Avatar
+                                                className={marketClasses.marketAvatar}
+                                                variant='square'
+                                                src={MarketsInfo[marketIndex].getIcon(false)}/>
+                                        </Grid>
+                                        <Grid item>
+                                            <Box pl={0.5}>
+                                                <Typography variant="body1">
+                                                    <b>{MarketsInfo[marketIndex].name}</b>
+                                                </Typography>
+                                                {latestRatings[marketIndex].rating !== 0
+                                                    ? <Typography variant="caption" noWrap>
+                                                        {latestRatings[marketIndex].date} | <span
+                                                        className={classes.textGreenBold}>{latestRatings[marketIndex].rating}</span>
+                                                    </Typography>
+                                                    : <Typography variant="caption" noWrap>
+                                                        Последняя оценка за прошедший день не найдена
+                                                    </Typography>
+                                                }
+                                            </Box>
+                                            <Box className={classes.textWithIcon}>
+                                                <Typography variant="h6" display='inline'>
+                                                    {latestRatings[marketIndex].rating !== 0
+                                                        ? MarketStarsTemplate.map(value => {
+                                                            if (latestRatings[marketIndex].rating < value)
+                                                                return (<StarBorderRounded fontSize='inherit'
+                                                                                           className={classes.reviewRating}/>)
+                                                            return (<StarRounded fontSize='inherit'
+                                                                                 className={classes.reviewRating}/>)
+                                                        })
+                                                        : MarketStarsTemplate.map(_ => <HelpOutlineRounded
+                                                            fontSize='inherit'
+                                                            color='error'/>)
+                                                    }
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>);
+                            })
+                            }
+                        </Grid>
+                    </Container>
+                    <Divider className={formClasses.fullWidthDivider}/>
+                    <Container maxWidth='xs' className={classes.containerNotCentered}>
+                        <Box mt={1}>
+                            <Button
+                                edge="end"
+                                aria-label="app rating"
+                                component={RouterLink}
+                                to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/rating`}
+                                disableElevation
+                                size='small'
+                                variant="outlined"
+                                endIcon={<ArrowForwardRounded/>}
+                                color="primary">
+                                Динамика оценок
+                            </Button>
+                        </Box>
+                    </Container>
+                </Paper>
+            </Grid>
+            }
+
+            {props.app && hasMarkets(props.app) &&
+            <Grid item xs={12}>
+                <Paper elevation={1} className={classes.paper}>
+                    <div className={formClasses.container}>
+                        <Typography variant="h6">
+                            Отзывы
+                        </Typography>
+                        <Typography variant="body2">
+                            Читайте и анализируйте отзывы о вашем приложении
+                        </Typography>
+                    </div>
+                    <Divider className={formClasses.fullWidthDivider}/>
+
+                    <Container
+                        className={clsx(classes.containerNotCentered, classes.mYdividers, classes.flexGrowFillCenterVertical)}>
+                        <Grid container alignItems='center' justify='center'
+                              spacing={2}>{/*TODO justify='center' ONLY IF MD*/}
+                            {latestReviews && latestReviews.map(review => {
+                                return (<Grid xs={12} md={6} lg={4} item key={review.marketIndex}>
+                                        <Box border={1} borderRadius={8} borderColor="grey.300"
+                                             className={classes.reviewCard}>
+                                            <Grid container alignItems='center' spacing={1}>
+                                                <Grid item>
+                                                    <Avatar
+                                                        style={{backgroundColor: MarketsInfo[review.marketIndex].getChartColor(theme)}}
+                                                        className={classes.reviewAvatar}>{
+                                                        review.reviewerUsername === undefined
+                                                            ? "?"
+                                                            : review.reviewerUsername.match(/[a-zA-Zа-яА-Я]/)
+                                                            ? review.reviewerUsername.charAt(0).toUpperCase()
+                                                            : "!"
+                                                    }
+                                                    </Avatar>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Box pl={0.5}>
+                                                        <Typography variant="body1" className={classes.textWithIcon}>
+                                                <span> <Avatar
+                                                    className={clsx(marketClasses.marketAvatarSmall, marketClasses.iconMargin)}
+                                                    variant='square'
+                                                    src={MarketsInfo[review.marketIndex].getIcon(false)}/></span>
+                                                            <b>
+                                                                {review.reviewerUsername === undefined
+                                                                    ? "Имя неизвестно"
+                                                                    : review.reviewerUsername}
+                                                            </b>
+                                                        </Typography>
+
+                                                        <Typography variant="caption" noWrap>
+                                                            {review.date} |
+                                                            Версия: {review.version ? review.version : "?"}
+                                                        </Typography>
+                                                    </Box>
+                                                    <Typography variant="h6">
+                                                        {review.rating !== 0
+                                                            ? MarketStarsTemplate.map(value => {
+                                                                if (review.rating < value)
+                                                                    return (<StarBorderRounded fontSize='inherit'
+                                                                                               className={classes.reviewRating}/>)
+                                                                return (<StarRounded fontSize='inherit'
+                                                                                     className={classes.reviewRating}/>)
+                                                            })
+                                                            : MarketStarsTemplate.map(_ => <HelpOutlineRounded
+                                                                fontSize='inherit'
+                                                                color='error'/>)
+                                                        }
+                                                    </Typography>
+
+                                                </Grid>
+                                            </Grid>
+                                            <Typography variant="body2" noWrap>
+                                                {review.text}
+                                            </Typography>
+                                        </Box>
+                                    </Grid>
+                                );
+                            })
+                            }
+                        </Grid>
+                    </Container>
+                    <Divider className={formClasses.fullWidthDivider}/>
+                    <Container maxWidth='xs' className={classes.containerNotCentered}>
+                        <Box mt={1}>
+                            <Button
+                                edge="end"
+                                aria-label="app reviews"
+                                component={RouterLink}
+                                to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/reviews`}
+                                disableElevation
+                                size='small'
+                                variant="outlined"
+                                endIcon={<ArrowForwardRounded/>}
+                                color="primary">
+                                Все отзывы
+                            </Button>
+                        </Box>
+                    </Container>
+                </Paper>
+            </Grid>
+            }
+
+            {/*todo extract error message component*/}
+            {props.app && !hasMarkets(props.app) &&
+            <Grid item xs={12}>
+                <Paper className={classes.paper}>
+                    <div className={classes.paperContainer}>
+                        <Typography component="h2" variant="h6" color="primary">Не указаны магазины
+                            приложений</Typography>
+                        <Typography component="p" variant="body1">
+                            Нажмите на кнопку <Link component={RouterLink}
+                                                    to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}>настройки</Link> для
+                            того, чтобы указать маркеты, где приложение опубликовано
+                        </Typography>
+                    </div>
+                </Paper>
+            </Grid>
+            }
+
 
             <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paperNoPadding}>
@@ -647,14 +930,12 @@ export default function ApplicationDashboard(props) {
                             Средняя оценка
                         </Typography>
                         <Typography variant="body2">
-                            Как меняется средняя оценка приложения со временем
+                            Динамика изменения средней оценки приложения
                         </Typography>
                     </div>
                     <Divider className={formClasses.fullWidthDivider}/>
 
                     <Container maxWidth='md' className={classes.containerNotCentered}>
-
-
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <Grid container spacing={2} justify='flex-start' alignItems='stretch'
                                   className={classes.chartSelectsContainer}>
@@ -728,26 +1009,23 @@ export default function ApplicationDashboard(props) {
                     {chartData && chartData.length !== 0 && selectedChartMarkets.some(isSelected => isSelected) &&
                     <div className={formClasses.container}>
                         <Typography variant="caption" color='primary'>
-                            Если диапазон графика меньше указанного, это значит, что отзывы есть не на всем исходном
+                            Если диапазон графика меньше указанного, это значит, что оценки есть не на всем исходном
                             диапазоне
                         </Typography>
                     </div>}
 
                     <Divider className={formClasses.fullWidthDivider}/>
-                    <div className={marketClasses.marketsContainer}  >
+                    <div className={marketClasses.marketsContainer}>
                         {props.app &&
-                        MarketsIndexes.map(marketIndex => {
-                            let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
-                            return marketId !== undefined &&
-                                <Chip
-                                    clickable
-                                    component='a'
-                                    label={MarketsInfo[marketIndex].name}
-                                    color={selectedChartMarkets[marketIndex] ? "primary" : "default"}
-                                    style={{backgroundColor: getChipChartColor(theme, marketIndex, selectedChartMarkets[marketIndex])}}
-                                    onClick={() => toggleSelectedMarket(marketIndex)}
-                                />
-                        })
+                        getAppMarketsArray(props.app).map(marketIndex =>
+                            <Chip
+                                clickable
+                                component='a'
+                                label={MarketsInfo[marketIndex].name}
+                                color={selectedChartMarkets[marketIndex] ? "primary" : "default"}
+                                style={{backgroundColor: getChipChartColor(theme, marketIndex, selectedChartMarkets[marketIndex])}}
+                                onClick={() => toggleSelectedMarket(marketIndex)}
+                            />)
                         }
                     </div>
                 </Paper>
@@ -759,17 +1037,16 @@ export default function ApplicationDashboard(props) {
                 </Snackbar>
             </Grid>
 
-            <Grid item xs={12} ref={reviewsTopRef}>
+            <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paperNoPadding}>
                     <div className={formClasses.cardContainer}>
                         <div className={classes.containerTopPadded}>
-                            <Typography variant="h6">
+                            <Typography variant="h6" ref={reviewsTopRef}>
                                 Отзывы
                             </Typography>
                             <Typography variant="body2">
                                 Читайте и анализируйте отзывы о вашем приложении
                             </Typography>
-
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container className={classes.containerApps}>
@@ -811,32 +1088,28 @@ export default function ApplicationDashboard(props) {
                                 </Grid>
 
                             </Grid>
-                            <Grid container alignItems='stretch' spacing={2}>
+                            <Grid container alignItems='stretch' justify='center' spacing={2}>
                                 {reviews && reviews.foundItem.length !== 0 &&
                                 reviews.foundItem.map(review =>
                                     <Grid xs={12} sm={12} md={6} lg={4} item key={review.text + review.date}>
                                         <Box border={1} borderRadius={8} borderColor="grey.300"
                                              className={classes.reviewCard}>
                                             <Grid container alignItems='center' spacing={1}>
-
                                                 <Grid item>
-                                                    <Avatar
-                                                        className={classes.reviewAvatar}>{
-                                                        review.reviewerUsername === undefined
+                                                    <Avatar className={classes.reviewAvatar}>
+                                                        {review.reviewerUsername === undefined
                                                             ? "?"
                                                             : review.reviewerUsername.match(/[a-zA-Zа-яА-Я]/)
-                                                            ? review.reviewerUsername.charAt(0).toUpperCase()
-                                                            : "!"
-                                                    }
+                                                                ? review.reviewerUsername.charAt(0).toUpperCase()
+                                                                : "!"}
                                                     </Avatar>
                                                 </Grid>
                                                 <Grid item>
                                                     <Box pl={0.5}>
                                                         <Typography variant="body1">
-                                                            <b>
-                                                                {review.reviewerUsername === undefined
-                                                                    ? "Имя неизвестно"
-                                                                    : review.reviewerUsername}
+                                                            <b>{review.reviewerUsername === undefined
+                                                                ? "Имя неизвестно"
+                                                                : review.reviewerUsername}
                                                             </b>
                                                         </Typography>
 
@@ -844,13 +1117,9 @@ export default function ApplicationDashboard(props) {
                                                             {format(new Date(review.date), "dd/MM/yyyy HH:mm")} |
                                                             Версия: {review.version ? review.version : "?"}
                                                         </Typography>
-                                                        <br/>
-                                                        <Typography variant="caption" noWrap>
-
-                                                        </Typography>
                                                     </Box>
                                                     <Typography variant="h6">
-                                                        {[1, 2, 3, 4, 5].map(value => {
+                                                        {MarketStarsTemplate.map(value => {
                                                             if (review.rating < value)
                                                                 return (<StarBorderRounded fontSize='inherit'
                                                                                            className={classes.reviewRating}/>)
@@ -862,25 +1131,22 @@ export default function ApplicationDashboard(props) {
 
                                                 </Grid>
                                             </Grid>
-
-
                                             <Typography variant="body2">
                                                 {review.text}
                                             </Typography>
                                         </Box>
-                                    </Grid>
-                                )
+                                    </Grid>)
                                 }
                             </Grid>
 
                             <Grid container justify="center">
                                 <Grid item>
                                     <Box border={1} mt={2} py={1} borderRadius={4} borderColor="grey.400">
-                                    <Pagination count={!reviews ? 0 : Math.ceil(reviews.total/reviewsPerPage)}
-                                                page={reviewsCurrentPage+1}
-                                                onChange={handleChangeReviewsCurrentPageBottomPagination}
-                                                color='primary'
-                                    />
+                                        <Pagination count={!reviews ? 0 : Math.ceil(reviews.total / reviewsPerPage)}
+                                                    page={reviewsCurrentPage + 1}
+                                                    onChange={handleChangeReviewsCurrentPageBottomPagination}
+                                                    color='primary'
+                                        />
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -888,6 +1154,5 @@ export default function ApplicationDashboard(props) {
                     </div>
                 </Paper>
             </Grid>
-        </Grid>
-    );
+        </Grid>);
 }
