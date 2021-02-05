@@ -308,7 +308,8 @@ export default function Applications(props) {
                                 {
                                     MarketsIndexes.map(marketIndex => {
                                         let marketId = getMarketIdByStoreIndex(app, marketIndex);
-                                        return <Chip variant="outlined"
+                                        return <Chip key={marketIndex}
+                                                     variant="outlined"
                                                      clickable
                                                      component='a'
                                                      label={MarketsInfo[marketIndex].name}

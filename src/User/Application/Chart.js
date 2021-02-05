@@ -91,7 +91,8 @@ export default function Chart(props) {
                 {/* todo OPTION epic charts animation can be turned on */}
                 {props.selectedMarkets.map((selectedMarket, index) => {
                     return selectedMarket &&
-                        <Line isAnimationActive={false} type="monotone" dataKey={MarketsRatingKeys[index]}
+                        <Line key={index}
+                              isAnimationActive={false} type="monotone" dataKey={MarketsRatingKeys[index]}
                               name={MarketsInfo[index].name}
                               stroke={MarketsInfo[index].getChartColor(theme)}/>
                 })

@@ -9,14 +9,13 @@ import Paper from '@material-ui/core/Paper';
 
 import update from 'immutability-helper';
 
-import {Route, Redirect, Switch as RouteSwitch} from 'react-router-dom';
+import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch} from 'react-router-dom';
 
 import {fade} from "@material-ui/core";
 import {DoneRounded} from "@material-ui/icons";
 import Fab from "@material-ui/core/Fab";
 import Divider from "@material-ui/core/Divider";
 import Hidden from "@material-ui/core/Hidden";
-import {Link as RouterLink} from "react-router-dom";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import TextField from "@material-ui/core/TextField";
@@ -354,177 +353,177 @@ export default function NewApplications(props) {
     return (
         <RouteSwitch>
             {createdAppId && <Redirect to={`${HomepageUrl}/user/${userId}/app/${createdAppId}/`}/>}
-        <Route>
-        <Container maxWidth="lg" className={classes.container}>
-            <div className={classes.appBarSpacer}/>
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Paper elevation={1}>
-                        <AppBar elevation={0} position="static" className={classes.extraToolbar}>
-                            <Toolbar variant="dense" className={classes.extraToolbar} disableGutters>
-                                <IconButton
-                                    edge="start"
-                                    aria-label="back to apps"
-                                    component={RouterLink}
-                                    to={`${HomepageUrl}/user/${userId}/apps`}
-                                    className={classes.extraToolbarButtonBack}
-                                >
-                                    {<ArrowBackRoundedIcon color="action"/>}
-                                </IconButton>
-                                <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
-                                    Добавить приложение
-                                </Typography>
-                            </Toolbar>
-                        </AppBar>
-                    </Paper>
-                </Grid>
+            <Route>
+                <Container maxWidth="lg" className={classes.container}>
+                    <div className={classes.appBarSpacer}/>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <Paper elevation={1}>
+                                <AppBar elevation={0} position="static" className={classes.extraToolbar}>
+                                    <Toolbar variant="dense" className={classes.extraToolbar} disableGutters>
+                                        <IconButton
+                                            edge="start"
+                                            aria-label="back to apps"
+                                            component={RouterLink}
+                                            to={`${HomepageUrl}/user/${userId}/apps`}
+                                            className={classes.extraToolbarButtonBack}
+                                        >
+                                            {<ArrowBackRoundedIcon color="action"/>}
+                                        </IconButton>
+                                        <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
+                                            Добавить приложение
+                                        </Typography>
+                                    </Toolbar>
+                                </AppBar>
+                            </Paper>
+                        </Grid>
 
-                <Grid item xs={12}>
-                    <Paper elevation={1} className={classes.paper}>
-                        <div className={formClasses.cardContainer}>
-                            <div className={formClasses.container}>
-                                <Typography variant="h6">
-                                    Информация о приложении
-                                </Typography>
-                                <Typography variant="body2">
-                                    Укажите краткую информацию о приложении
-                                </Typography>
-                            </div>
-                            <Divider className={formClasses.fullWidthDivider}/>
-                            <Container maxWidth='sm' className={classes.containerNotCentered}>
-                                <TextField
-                                    error={getAppNameError(areErrorsVisible, newApp.name) !== ''}
-                                    helperText={getAppNameError(areErrorsVisible, newApp.name)}
-                                    value={newApp.name}
-                                    onChange={handleNameInput}
-                                    variant="outlined"
-                                    margin="dense"
-                                    required
-                                    fullWidth
-                                    id="name"
-                                    label="Название приложения"
-                                    name="name"
-                                />
-                                <TextField
-                                    error={getAppDescriptionError(areErrorsVisible, newApp.description) !== ''}
-                                    helperText={getAppDescriptionError(areErrorsVisible, newApp.description)}
-                                    value={newApp.description}
-                                    onChange={handleDescriptionInput}
-                                    variant="outlined"
-                                    margin="dense"
-                                    required
-                                    fullWidth
-                                    multiline
-                                    rowsMax={4}
-                                    rows={4}
-                                    name="description"
-                                    label="Описание приложения"
-                                    id="description"
-                                />
-                            </Container>
-                        </div>
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Paper elevation={1} className={classes.paperNoBottomPadding}>
-                        <div className={formClasses.cardContainer}>
-                            <div className={formClasses.container}>
-                                <Typography variant="h6">
-                                    Магазины приложений
-                                </Typography>
-                                <Typography variant="body2">
-                                    Укажите маркеты, в которых опубликовано ваше приложение
-                                </Typography>
-                            </div>
-                            <Divider className={formClasses.fullWidthDivider}/>
-                            <div className={marketClasses.marketsContainer}>
-                                {
-                                    selectedMarkets.map((isSelected, index) => {
-                                        return <Chip variant="outlined"
-                                                     clickable
-                                                     key={MarketsInfo[index].name}
-                                                     component='a'
-                                                     onClick={() => toggleMarket(index)}
-                                                     label={MarketsInfo[index].name}
-                                                     color={isSelected ? "primary" : "default"}
-                                                     avatar={<Avatar className={marketClasses.transparentBg}
-                                                                     variant='square'
-                                                                     src={MarketsInfo[index].getIcon(!isSelected)}/>}/>
-                                    })
-                                }
-                            </div>
-                        </div>
-                    </Paper>
-                </Grid>
-
-                {
-                    selectedMarkets.map((isSelected, index) => {
-                        return isSelected &&
-                            <Grid item xs={12}>
-                                <Paper elevation={1} className={classes.paper}>
-                                    <div className={formClasses.cardContainer}>
-                                        <div className={formClasses.container}>
-                                            <Typography variant="h6">
-                                                {MarketsInfo[index].name}
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                {MarketsInfo[index].description}
-                                            </Typography>
-                                        </div>
-                                        <Divider className={formClasses.fullWidthDivider}/>
-                                        <Container maxWidth='sm' className={classes.containerNotCentered}>
-                                            <TextField
-                                                error={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getApplicationStoreIdByIndex(index)) !== ''}
-                                                helperText={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getApplicationStoreIdByIndex(index))}
-                                                value={getLinkByIndex(index)}
-                                                onChange={handleLinkInputByIndex[index]}
-                                                variant="outlined"
-                                                margin="dense"
-                                                required
-                                                fullWidth
-                                                id={`link-${index}`}
-                                                label="Ссылка на приложение"
-                                                name="store-url"
-                                                autoComplete='url'
-                                            />
-                                        </Container>
+                        <Grid item xs={12}>
+                            <Paper elevation={1} className={classes.paper}>
+                                <div className={formClasses.cardContainer}>
+                                    <div className={formClasses.container}>
+                                        <Typography variant="h6">
+                                            Информация о приложении
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Укажите краткую информацию о приложении
+                                        </Typography>
                                     </div>
-                                </Paper>
-                            </Grid>
-                    })
-                }
-            </Grid>
+                                    <Divider className={formClasses.fullWidthDivider}/>
+                                    <Container maxWidth='sm' className={classes.containerNotCentered}>
+                                        <TextField
+                                            error={getAppNameError(areErrorsVisible, newApp.name) !== ''}
+                                            helperText={getAppNameError(areErrorsVisible, newApp.name)}
+                                            value={newApp.name}
+                                            onChange={handleNameInput}
+                                            variant="outlined"
+                                            margin="dense"
+                                            required
+                                            fullWidth
+                                            id="name"
+                                            label="Название приложения"
+                                            name="name"
+                                        />
+                                        <TextField
+                                            error={getAppDescriptionError(areErrorsVisible, newApp.description) !== ''}
+                                            helperText={getAppDescriptionError(areErrorsVisible, newApp.description)}
+                                            value={newApp.description}
+                                            onChange={handleDescriptionInput}
+                                            variant="outlined"
+                                            margin="dense"
+                                            required
+                                            fullWidth
+                                            multiline
+                                            rowsMax={4}
+                                            rows={4}
+                                            name="description"
+                                            label="Описание приложения"
+                                            id="description"
+                                        />
+                                    </Container>
+                                </div>
+                            </Paper>
+                        </Grid>
 
-            <Hidden smDown>
-                <Fab
-                    variant="extended"
-                    size="medium"
-                    color="secondary"
-                    aria-label="add"
-                    className={classes.fabBottom}
-                    onClick={() => addNewApp()}
-                >
-                    <DoneRounded className={classes.extendedIcon}/>
-                    Создать
-                </Fab>
-            </Hidden>
+                        <Grid item xs={12}>
+                            <Paper elevation={1} className={classes.paperNoBottomPadding}>
+                                <div className={formClasses.cardContainer}>
+                                    <div className={formClasses.container}>
+                                        <Typography variant="h6">
+                                            Магазины приложений
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Укажите маркеты, в которых опубликовано ваше приложение
+                                        </Typography>
+                                    </div>
+                                    <Divider className={formClasses.fullWidthDivider}/>
+                                    <div className={marketClasses.marketsContainer}>
+                                        {
+                                            selectedMarkets.map((isSelected, index) => {
+                                                return <Chip key={MarketsInfo[index].name}
+                                                             variant="outlined"
+                                                             clickable
+                                                             component='a'
+                                                             onClick={() => toggleMarket(index)}
+                                                             label={MarketsInfo[index].name}
+                                                             color={isSelected ? "primary" : "default"}
+                                                             avatar={<Avatar className={marketClasses.transparentBg}
+                                                                             variant='square'
+                                                                             src={MarketsInfo[index].getIcon(!isSelected)}/>}/>
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                            </Paper>
+                        </Grid>
 
-            <Hidden mdUp>
-                <Fab
-                    variant="round"
-                    size="medium"
-                    color="secondary"
-                    aria-label="add"
-                    className={classes.fabBottom}
-                    onClick={() => addNewApp()}
-                >
-                    <DoneRounded/>
-                </Fab>
-            </Hidden>
+                        {
+                            selectedMarkets.map((isSelected, index) => {
+                                return isSelected &&
+                                    <Grid key={index} item xs={12}>
+                                        <Paper elevation={1} className={classes.paper}>
+                                            <div className={formClasses.cardContainer}>
+                                                <div className={formClasses.container}>
+                                                    <Typography variant="h6">
+                                                        {MarketsInfo[index].name}
+                                                    </Typography>
+                                                    <Typography variant="body2">
+                                                        {MarketsInfo[index].description}
+                                                    </Typography>
+                                                </div>
+                                                <Divider className={formClasses.fullWidthDivider}/>
+                                                <Container maxWidth='sm' className={classes.containerNotCentered}>
+                                                    <TextField
+                                                        error={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getApplicationStoreIdByIndex(index)) !== ''}
+                                                        helperText={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getApplicationStoreIdByIndex(index))}
+                                                        value={getLinkByIndex(index)}
+                                                        onChange={handleLinkInputByIndex[index]}
+                                                        variant="outlined"
+                                                        margin="dense"
+                                                        required
+                                                        fullWidth
+                                                        id={`link-${index}`}
+                                                        label="Ссылка на приложение"
+                                                        name="store-url"
+                                                        autoComplete='url'
+                                                    />
+                                                </Container>
+                                            </div>
+                                        </Paper>
+                                    </Grid>
+                            })
+                        }
+                    </Grid>
 
-        </Container>
-        </Route>
+                    <Hidden smDown>
+                        <Fab
+                            variant="extended"
+                            size="medium"
+                            color="secondary"
+                            aria-label="add"
+                            className={classes.fabBottom}
+                            onClick={() => addNewApp()}
+                        >
+                            <DoneRounded className={classes.extendedIcon}/>
+                            Создать
+                        </Fab>
+                    </Hidden>
+
+                    <Hidden mdUp>
+                        <Fab
+                            variant="round"
+                            size="medium"
+                            color="secondary"
+                            aria-label="add"
+                            className={classes.fabBottom}
+                            onClick={() => addNewApp()}
+                        >
+                            <DoneRounded/>
+                        </Fab>
+                    </Hidden>
+
+                </Container>
+            </Route>
         </RouteSwitch>
     );
 }

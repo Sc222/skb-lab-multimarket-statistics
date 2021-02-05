@@ -497,7 +497,8 @@ export default function ApplicationSettings(props) {
                             {
                                 MarketsIndexes.map(marketIndex => {
                                     let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
-                                    return <Chip variant="outlined"
+                                    return <Chip key={marketIndex}
+                                                 variant="outlined"
                                                  clickable
                                                  component='a'
                                                  label={MarketsInfo[marketIndex].name}
@@ -578,9 +579,9 @@ export default function ApplicationSettings(props) {
                             <div className={marketClasses.marketsContainer}>
                                 {
                                     selectedMarkets.map((isSelected, index) => {
-                                        return <Chip variant="outlined"
+                                        return <Chip key={MarketsInfo[index].name}
+                                                     variant="outlined"
                                                      clickable
-                                                     key={MarketsInfo[index].name}
                                                      component='a'
                                                      onClick={() => toggleMarket(index)}
                                                      label={MarketsInfo[index].name}
@@ -598,7 +599,7 @@ export default function ApplicationSettings(props) {
                 {
                     selectedMarkets.map((isSelected, index) => {
                         return isSelected &&
-                            <Grid item xs={12}>
+                            <Grid key={index} item xs={12}>
                                 <Paper elevation={1} className={classes.paper}>
                                     <div className={formClasses.cardContainer}>
                                         <div className={formClasses.container}>

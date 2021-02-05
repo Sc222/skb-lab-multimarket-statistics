@@ -571,6 +571,7 @@ export default function AppRatingsSection(props) {
                         {props.app &&
                         getAppMarketsArray(props.app).map(marketIndex =>
                             <Chip
+                                key={marketIndex}
                                 clickable
                                 component='a'
                                 label={MarketsInfo[marketIndex].name}

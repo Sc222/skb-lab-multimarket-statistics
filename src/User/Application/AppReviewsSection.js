@@ -29,7 +29,7 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import {SettingsRounded, StarBorderRounded, StarRounded} from "@material-ui/icons";
+import {HelpOutlineRounded, SettingsRounded, StarBorderRounded, StarRounded} from "@material-ui/icons";
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
@@ -485,8 +485,9 @@ export default function AppReviewsSection(props) {
                                             {props.app
                                             && getAppMarketsArray(props.app)
                                                 .map(index =>
-                                                    <MenuItem
-                                                        value={MarketsRequestKeys[index]}>{MarketsInfo[index].name}</MenuItem>)
+                                                    <MenuItem key={index} value={MarketsRequestKeys[index]}>
+                                                        {MarketsInfo[index].name}
+                                                    </MenuItem>)
                                             }
                                         </Select>
                                     </FormControl>
@@ -510,7 +511,7 @@ export default function AppReviewsSection(props) {
                             <Grid container alignItems='stretch' justify='center' spacing={2}>
                                 {reviews && reviews.foundItem.length !== 0 &&
                                 reviews.foundItem.map(review =>
-                                    <Grid xs={12} sm={12} md={6} lg={4} item key={review.text + review.date}>
+                                    <Grid key={review.text + review.date} xs={12} sm={12} md={6} lg={4} item>
                                         <Box border={1} borderRadius={8} borderColor="grey.300"
                                              className={classes.reviewCard}>
                                             <Grid container alignItems='center' spacing={1}>
@@ -538,13 +539,18 @@ export default function AppReviewsSection(props) {
                                                         </Typography>
                                                     </Box>
                                                     <Typography variant="h6">
-                                                        {MarketStarsTemplate.map(value => {
-                                                            if (review.rating < value)
-                                                                return (<StarBorderRounded fontSize='inherit'
-                                                                                           className={classes.reviewRating}/>)
-                                                            return (<StarRounded fontSize='inherit'
-                                                                                 className={classes.reviewRating}/>)
-                                                        })
+                                                        {review.rating !== 0
+                                                            ? MarketStarsTemplate.map(value => {
+                                                                if (review.rating < value)
+                                                                    return (<StarBorderRounded key={value} fontSize='inherit'
+                                                                                               className={classes.reviewRating}/>)
+                                                                return (<StarRounded  key={value} fontSize='inherit'
+                                                                                      className={classes.reviewRating}/>)
+                                                            })
+                                                            : MarketStarsTemplate.map(value => <HelpOutlineRounded
+                                                                key={value}
+                                                                fontSize='inherit'
+                                                                color='error'/>)
                                                         }
                                                     </Typography>
 

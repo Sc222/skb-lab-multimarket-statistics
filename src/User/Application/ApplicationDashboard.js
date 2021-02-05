@@ -383,12 +383,10 @@ export default function ApplicationDashboard(props) {
         console.log("delete all notifications");
         deleteNotifications(props.userId, appNotifications.map(n => n.id))
             .then(result => {
-                if (result.ok) {
+                if (result.ok)
                     setAppNotifications([]);
-                } else {
+                else  //todo show error alert
                     console.log("error deleting notifications");
-                    //todo show error alert
-                }
             });
     }
 
@@ -479,7 +477,8 @@ export default function ApplicationDashboard(props) {
                         {
                             MarketsIndexes.map(marketIndex => {
                                 let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
-                                return <Chip variant="outlined"
+                                return <Chip key={marketIndex}
+                                             variant="outlined"
                                              clickable
                                              component='a'
                                              label={MarketsInfo[marketIndex].name}
@@ -565,7 +564,7 @@ export default function ApplicationDashboard(props) {
                                className={clsx(classes.containerNotCenteredSmallerPadding, classes.mYdividers, classes.flexGrowFillCenterVertical)}>
                         <Grid container alignItems='center' spacing={2}>
                             {latestRatings && getAppMarketsArray(props.app).map(marketIndex => {
-                                return (<Grid item xs={12} sm={4} md={3} lg={3}>
+                                return (<Grid key={marketIndex} item xs={12} sm={4} md={3} lg={3}>
                                     <Grid container alignItems='center' spacing={1} key={marketIndex}>
                                         <Grid item>
                                             <Avatar
@@ -593,12 +592,14 @@ export default function ApplicationDashboard(props) {
                                                     {latestRatings[marketIndex].rating !== 0
                                                         ? MarketStarsTemplate.map(value => {
                                                             if (latestRatings[marketIndex].rating < value)
-                                                                return (<StarBorderRounded fontSize='inherit'
-                                                                                           className={classes.reviewRating}/>)
-                                                            return (<StarRounded fontSize='inherit'
+                                                                return (
+                                                                    <StarBorderRounded key={value} fontSize='inherit'
+                                                                                       className={classes.reviewRating}/>)
+                                                            return (<StarRounded key={value} fontSize='inherit'
                                                                                  className={classes.reviewRating}/>)
                                                         })
-                                                        : MarketStarsTemplate.map(_ => <HelpOutlineRounded
+                                                        : MarketStarsTemplate.map(value => <HelpOutlineRounded
+                                                            key={value}
                                                             fontSize='inherit'
                                                             color='error'/>)
                                                     }
@@ -650,7 +651,7 @@ export default function ApplicationDashboard(props) {
                         <Grid container alignItems='center'
                               spacing={2}>{/*TODO !!! justify='center' ONLY IF MD and 3 markets*/}
                             {latestReviews && latestReviews.map(review => {
-                                return (<Grid xs={12} md={6} lg={4} item key={review.marketIndex}>
+                                return (<Grid key={review.marketIndex} xs={12} md={6} lg={4} item>
                                         <Box border={1} borderRadius={8} borderColor="grey.300"
                                              className={classes.reviewCard}>
                                             <Grid container alignItems='center' spacing={1}>
@@ -689,12 +690,14 @@ export default function ApplicationDashboard(props) {
                                                         {review.rating !== 0
                                                             ? MarketStarsTemplate.map(value => {
                                                                 if (review.rating < value)
-                                                                    return (<StarBorderRounded fontSize='inherit'
+                                                                    return (<StarBorderRounded key={value}
+                                                                                               fontSize='inherit'
                                                                                                className={classes.reviewRating}/>)
-                                                                return (<StarRounded fontSize='inherit'
+                                                                return (<StarRounded key={value} fontSize='inherit'
                                                                                      className={classes.reviewRating}/>)
                                                             })
-                                                            : MarketStarsTemplate.map(_ => <HelpOutlineRounded
+                                                            : MarketStarsTemplate.map(value => <HelpOutlineRounded
+                                                                key={value}
                                                                 fontSize='inherit'
                                                                 color='error'/>)
                                                         }
