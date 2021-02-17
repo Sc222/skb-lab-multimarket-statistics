@@ -43,8 +43,6 @@ namespace ReviewsDaemon
                     .ToDictionary(g => g.Key, g => g
                         .OrderByDescending(r => r.Date)
                         .First()));
-                var appStoreReviewsByApp = reviews.ToDictionary(kvp => kvp.Key,
-                    kvp => kvp.Value.Where(r => r.Market == MarketType.AppStore).ToArray());
 
                 var reviewsToAdd = new List<Review>();
                 var ratingsToAdd = new List<Rating>();
@@ -59,10 +57,8 @@ namespace ReviewsDaemon
                             .ConfigureAwait(false);
                         reviewsToAdd.AddRange(newReviews);
 
-                        var newAppStoreReviews = newReviews.Where(r => r.Market == MarketType.AppStore);
-                        appStoreReviewsByApp.TryGetValue(app.Id, out var appStoreAppReviews);
                         ratingsToAdd.AddRange(await fetcherService
-                            .FetchAppRating(app, appStoreAppReviews, newAppStoreReviews).ConfigureAwait(false));
+                            .FetchAppRating(app).ConfigureAwait(false));
 
                         notificationsToAdd.AddRange(notificationService.GetNotificationsFromReviews(app, newReviews));
                     }

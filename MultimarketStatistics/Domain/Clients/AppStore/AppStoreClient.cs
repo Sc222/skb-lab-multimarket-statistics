@@ -13,9 +13,26 @@ namespace Domain.Clients.AppStore
         private const int MaxITunesRssPages = 10;
         private const int ReviewsPerPage = 50;
 
-        public Task<Rating> GetAppRatingAsync(App app)
+        public async Task<Rating> GetAppRatingAsync(App app)
         {
-            throw new NotImplementedException();
+            using var client = RestClient.GetClient();
+            try
+            {
+                var uri = GetAppInfoRequestUri(app.AppStoreId);
+                var info = await RestClient.GetAsync<AppStoreAppResult>(client, uri).ConfigureAwait(false);
+                return new Rating
+                {
+                    AverageRating = info.Result.First().AverageRating,
+                    App = app,
+                    Date = DateTime.Now,
+                    Market = MarketType.AppStore
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public async Task<List<Review>> GetAppReviewsAsync(App app, int requestedPagesNumber = MaxITunesRssPages)

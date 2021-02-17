@@ -37,7 +37,7 @@ namespace MultimarketStatistics.Controllers
                 .ToDictionary(g => g.Key, g => g
                     .GroupBy(k => k.Market)
                     .ToDictionary(k => k.Key, k => CountAverage(k
-                        .Select(CountAverage)
+                        .Select(r => r.AverageRating)
                         .ToArray())));
             var result = new List<RatingContract>();
 
@@ -61,13 +61,6 @@ namespace MultimarketStatistics.Controllers
 
             return result;
         }
-
-        private double CountAverage(Rating rating) =>
-            (double)(rating.FiveStarsCount * 5 +
-             rating.FourStarsCount * 4 +
-             rating.ThreeStarsCount * 3 +
-             rating.TwoStarsCount * 2 +
-             rating.OneStarsCount) / rating.Total;
 
         private double CountAverage(double[] averages) => averages.Sum() / averages.Length;
 
