@@ -413,9 +413,7 @@ export default function AppReviewsSection(props) {
             console.log(err.message);
             setReviews(undefined);
             //todo show error message can't load reviews
-
         });
-
     }
 
     return (

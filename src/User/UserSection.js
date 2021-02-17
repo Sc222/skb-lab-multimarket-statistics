@@ -35,11 +35,7 @@ import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
 import {getUser} from "../Api/ApiUser";
 import {getDefaultUser} from "../Api/ApiUserHelper";
-import {
-    deleteCookiesWhenLogout,
-    getCookieToken,
-    getCookieUserId,
-} from "../Helpers/CookieHelper";
+import {deleteCookiesWhenLogout, getCookieToken, getCookieUserId,} from "../Helpers/CookieHelper";
 import WrongUser from "./WrongUser";
 
 const drawerWidth = 260;
@@ -202,22 +198,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function UserSection() {
-    let {userId} = useParams(); //todo simplify links and get userId from cookies
-
+    let {userId} = useParams();
     const classes = useStyles();
-
-    /* TODO OLD DRAWER CODE (MAY BE USEFUL)
-    const regexpUrlWithoutDrawer = new RegExp(`^${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/(apps|new-app|profile)`);
-    const regexpUrlWithDrawer = new RegExp(`^${HomepageUrl}\/user\/[a-zA-Z0-9-]+\/app\/[^\/]+\/(dashboard|settings)`);
-
-    //hide or show drawer and drawer menus
-    const [isDrawerOnPage, setIsDrawerOnPage] = React.useState(false);
-    const [isDrawerOpen, setDrawerOpen] = React.useState(false);
-
-    const changeDrawerState = () => {
-        setDrawerOpen(!isDrawerOpen);
-    };
-    */
 
     const [notificationPopoverAnchor, setNotificationPopoverAnchor] = React.useState(null);
     const [profilePopoverAnchor, setProfilePopoverAnchor] = React.useState(null);
@@ -280,56 +262,24 @@ export default function UserSection() {
                 console.log(notifications);
                 setNotifications(notifications);
                 setUser(user);
-                //TODO IF USER 204 -> REDIRECT TO CURRENT USER
                 //if one of values is empty -> TODO SHOW ERROR ALERT
             })
-            .catch(err => console.log(err.message)); //todo if user is wrong -> redirect to homepage
+            .catch(err => console.log(err.message));
     }, []);
-
-    /* TODO OLD DRAWER CODE (MAY BE USEFUL)
-    let location = useLocation();
-    React.useEffect(() => {
-        // set isDrawerOnPage depending on page link
-        let path = location.pathname;
-
-        if (path.match(regexpUrlWithoutDrawer))
-            setIsDrawerOnPage(false);
-        else if (path.match(regexpUrlWithDrawer))
-            setIsDrawerOnPage(true);
-        else
-            console.log('wrong apps url');
-    }, [location]);
-    */
 
     return (
         <RouteSwitch>
             {/*redirect to login if no token*/}
             {getCookieToken() === "" &&
-            <Redirect to={`${HomepageUrl}/login}`}/>
-            }
+            <Redirect to={`${HomepageUrl}/login}`}/>}
 
             {/*redirect to current user if wrong user*/}
             {getCookieToken() !== "" && getCookieUserId() !== userId &&
-            <WrongUser/>
-            }
-
+            <WrongUser/>}
 
             <div className={classes.root}>
-
                 <AppBar position="absolute" className={classes.appBar}>
                     <Toolbar variant="dense">
-                        { /* TODO OLD DRAWER CODE (MAY BE USEFUL)
-                        isDrawerOnPage &&
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        aria-label="change drawer state"
-                        onClick={changeDrawerState}
-                        className={classes.menuButton}
-                    >
-                        {isDrawerOpen ? <ArrowBackRoundedIcon/> : <MenuRoundedIcon/>}
-                    </IconButton>
-                    */}
                         <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                             Multimarket Statistics
                         </Typography>
@@ -502,11 +452,6 @@ export default function UserSection() {
                             <Profile userId={userId} updatePopoverUser={setUser}/>
                         </Route>
                         <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
-                            { /* TODO OLD DRAWER CODE (MAY BE USEFUL)
-                        <ApplicationSection userId={userId} isDrawerOpen={isDrawerOpen}
-                                            updateUserNotifications ={updateUserNotifications}
-                                            changeDrawerState={changeDrawerState}/>
-                        */}
                             <ApplicationSection userId={userId} updateUserNotifications={updateUserNotifications}/>
                         </Route>
 

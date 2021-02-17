@@ -12,10 +12,10 @@ import FormSectionStyles from "../Styles/FormSectionStyles";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import {
-    getRegisterEmailError,
     getPasswordError,
-    getUsernameError,
+    getRegisterEmailError,
     getSlackCredentialsError,
+    getUsernameError,
     parseEmailServerError,
     parseUsernameServerError
 } from "../Helpers/ErrorHelper";
@@ -52,21 +52,10 @@ export default function Register(props) {
             createUser(userForCreate)
                 .then(result => {
                     console.log("successfully created user with id: " + result);
-                    console.log(newUser);
-                    console.log(userForCreate);
-
-                    //TODO REMOVE TEMP SOLUTION USING TOKEN
-                    //const loggedInUser = newUser;
-                    //console.log("result blob: "+result);
-                    //loggedInUser.id=result;
-                    //props.setLoggedInUser(loggedInUser);
                     const loginCredentials = getDefaultLoginCredentials();
                     loginCredentials.username=newUser.username;
                     loginCredentials.password=newUser.password;
-
                     return loginCredentials;
-                    //TODO !!! REQUEST AUTHENTICATION TOKEN
-                    //TODO !!! REDIRECT TO USER APPS LIST
                 })
                 .then(user=> {
                     const loginCredentials = getDefaultLoginCredentials();

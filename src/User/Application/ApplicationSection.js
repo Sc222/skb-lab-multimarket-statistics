@@ -124,71 +124,12 @@ export default function ApplicationSection(props) {
                 console.log("load app");
                 console.log(app);
                 setApp(app);
-                //TODO IF APP 204 -> REDIRECT TO CURRENT USER
             })
             .catch(err => console.log(err.message)); //todo if app is wrong -> redirect to homepage
     }, [userId, appId]);
 
     return (
         <div className={classes.root}>
-            {/* TODO OLD DRAWER CODE (MAY BE USEFUL)
-            <Hidden smUp>
-                <Drawer
-                    variant='temporary'
-                    classes={{
-                        paper: clsx(classes.drawerPaper, !props.isDrawerOpen && classes.drawerPaperClose),
-                    }}
-                    anchor={'left'}
-                    open={props.isDrawerOpen}
-                    onClose={props.changeDrawerState}>
-                    <Box ml={1} pr={5} my={1.5} width={'auto'} className={classes.mobileDrawerButtonsContainer}>
-                        <Button
-                            className={classes.backToAppsButton}
-                            variant="outlined"
-                            color="primary"
-                            size="medium"
-                            startIcon={<ArrowBackRoundedIcon/>}
-                            component={RouterLink}
-                            to={`${HomepageUrl}/user/${userId}/apps`}
-                        >
-                            Все приложения
-                        </Button>
-                        <IconButton className={classes.closeDrawerButton} size='small'
-                                    onClick={props.changeDrawerState}>
-                            <CloseRounded/>
-                        </IconButton>
-                    </Box>
-                    <Divider/>
-                    <DrawerMenu/>
-                </Drawer>
-            </Hidden>
-            <Hidden xsDown>
-                <Drawer
-                    variant='permanent'
-                    classes={{
-                        paper: clsx(classes.drawerPaper, !props.isDrawerOpen && classes.drawerPaperClose),
-                    }}
-                    open={props.isDrawerOpen}>
-                    <div className={classes.appBarSpacer}/>
-                    <Box mx={3} my={1.5} width={'auto'}>
-                        <Button
-                            className={classes.backToAppsButton}
-                            variant="outlined"
-                            color="primary"
-                            size="medium"
-                            startIcon={<ArrowBackRoundedIcon/>}
-                            component={RouterLink}
-                            to={`${HomepageUrl}/user/${userId}/apps`}
-                        >
-                            Все приложения
-                        </Button>
-                    </Box>
-                    <Divider/>
-                    <DrawerMenu/>
-                </Drawer>
-            </Hidden>
-            */}
-
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}/>
                 <Container maxWidth="lg" className={classes.container}>

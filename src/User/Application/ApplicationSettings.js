@@ -34,9 +34,6 @@ import {
 } from "../../Api/ApiAppHelper";
 import {HomeRounded, LoopRounded, NavigateNextRounded, SettingsRounded, UpdateRounded} from "@material-ui/icons";
 import green from "@material-ui/core/colors/green";
-import IconButton from "@material-ui/core/IconButton";
-import {Link as RouterLink} from "react-router-dom";
-import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import {HomepageUrl} from "../../App";
 import Hidden from "@material-ui/core/Hidden";
 import Fab from "@material-ui/core/Fab";
@@ -133,6 +130,15 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         height: '100%',
     },
+
+    paperNoBottomPadding: {
+        paddingTop: theme.spacing(1.5),
+        display: 'flex',
+        overflow: 'auto',
+        flexDirection: 'column',
+        height: '100%',
+    },
+
     fixedHeight: {
         height: 240,
     },
@@ -375,7 +381,7 @@ export default function ApplicationSettings(props) {
             updateApp(userId, appForUpdate)
                 .then(result => {
                     console.log("successfully updated app with new picUrl: " + result);
-                    if (result) //todo move "" regexp to some helper
+                    if (result)
                         appForUpdate.picUrl = result.replace(/^"/, "").replace(/"$/, "");
                     props.updateAppInSection(appForUpdate);
                     setStatusSuccessOpen(true);
@@ -492,7 +498,6 @@ export default function ApplicationSettings(props) {
                     </Paper>
                 </Grid>
 
-                {/* todo lg = {6} TEST   */}
                 {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
                 <Grid item xs={12}>
                     {props.app &&

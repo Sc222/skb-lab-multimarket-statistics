@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -243,7 +243,6 @@ export default function NewApplications(props) {
     const [createdAppId, setCreatedAppId] = React.useState(undefined);
 
     function getLinkByIndex(index) {
-        console.log("get link by index;")
         switch (index) {
             case PlayStoreIndex:
                 return playStoreLink;
@@ -257,8 +256,6 @@ export default function NewApplications(props) {
     }
 
     function getApplicationStoreIdByIndex(index) {
-        console.log("get store id by index");
-        console.log(newApp);
         switch (index) {
             case PlayStoreIndex:
                 return newApp.playMarketId;
@@ -281,18 +278,13 @@ export default function NewApplications(props) {
 
     function addNewApp() {
         setErrorsVisible(true);
-        console.log("add");
         if (!hasErrors(true)) {
             const appForCreate = createAppForCreate(newApp, selectedMarkets);
             createApp(userId, appForCreate)
                 .then(result => {
                     console.log("successfully created app with id: " + result);
-
                     setCreatedAppId(result);
-                    //TODO !!! REDIRECT TO APPLICATION DASHBOARD AFTER APP CREATED
-                    //TODO ПОЧЕМУ-ТО ЗАПРОСЫ НА СЕРВАК ВЛАДА МЕДЛЕННЫЕ
                     //TODO !!! ADD POSSIBILITY TO ADD APP ICON URL YOURSELF
-                    //TODO ADD APP CREATED - LOADING ALERT
                 })
                 .catch(err => {
                     console.log(err.message);
@@ -301,7 +293,6 @@ export default function NewApplications(props) {
     }
 
     function toggleMarket(index) {
-        console.log('toggle market: ' + index);
         const newSelectedMarkets = update(selectedMarkets, {[index]: {$set: !selectedMarkets[index]}});
         setSelectedMarkets(newSelectedMarkets);
     }
@@ -342,13 +333,6 @@ export default function NewApplications(props) {
         handleAppStoreLinkInput,
         handleAppGalleryLinkInput
     ];
-
-    useEffect(() => {
-        // todo load info by userId (TOKEN)
-        console.log(userId);
-        console.log(newApp);
-    }, []);
-
 
     return (
         <RouteSwitch>

@@ -20,15 +20,10 @@ export default function FormSections() {
 
     const [user, setUser] = React.useState(undefined);
 
-    {/*TODO !!! CHANGE LOGIN/REGISTER REDIRECT WHEN AUTH ADDED*/
-    }
-
     function setLoggedInUser(user) {
         console.log(user);
         setUser(user);
     }
-
-    /* todo add same height appbar spacer as in user section */
 
     return (
         <div>
@@ -45,7 +40,6 @@ export default function FormSections() {
                     <div className={classes.appBarSpacer}/>
                     <Paper elevation={2} className={classes.paper}>
                         <RouteSwitch>
-                            {/*TODO !!! CHANGE LOGIN/REGISTER REDIRECT WHEN AUTH ADDED*/}
                             {user && <Redirect to={`${HomepageUrl}/user/${user.id}/apps`}/>}
 
                             <Route exact path={`${HomepageUrl}/login`}>

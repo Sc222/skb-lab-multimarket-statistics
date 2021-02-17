@@ -239,9 +239,6 @@ export default function Applications(props) {
     }
 
     useEffect(() => {
-        console.log(userId);
-        // todo if userId !== logged in userId => redirect
-
         getApps(userId)
             .then(apps => {
                 console.log("load apps");
@@ -331,8 +328,6 @@ export default function Applications(props) {
                 );
             })
         }
-
-        // TODO if apps[userId] undefined - redirect (IN USER SECTION)
     }
 
     return (

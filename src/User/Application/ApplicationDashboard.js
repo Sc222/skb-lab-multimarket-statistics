@@ -13,8 +13,8 @@ import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
 import {
-    createLinkFromId, getLatestRatingsStartCheckDate,
-    MarketLatestRatingsDaysCheck,
+    createLinkFromId,
+    getLatestRatingsStartCheckDate,
     MarketsIndexes,
     MarketsInfo,
     MarketStarsTemplate
@@ -23,13 +23,7 @@ import MarketChipStyles from "../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
 import defaultAppIcon from "../../images/default_app_icon.png";
-import {
-    AppNameMaxLength,
-    getAppMarketsArray,
-    getMarketIdByStoreIndex,
-    getShortAppName,
-    hasMarkets
-} from "../../Api/ApiAppHelper";
+import {AppNameMaxLength, getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../Api/ApiAppHelper";
 import Button from "@material-ui/core/Button";
 import {getRatings} from "../../Api/ApiRating";
 import {deleteNotifications, getNotifications} from "../../Api/ApiNotification";
@@ -38,7 +32,8 @@ import Box from "@material-ui/core/Box";
 import {
     ArrowForwardRounded,
     HelpOutlineRounded,
-    HomeRounded, LoopRounded,
+    HomeRounded,
+    LoopRounded,
     NavigateNextRounded,
     SettingsRounded,
     StarBorderRounded,
@@ -54,7 +49,6 @@ import {getLatestRatings} from "../../Api/ApiRatingsHelper";
 import {getLatestReviews, getReviewsMultipleMarkets} from "../../Api/ApiReviewHelper";
 import {filterNotificationsByApp} from "../../Api/ApiNotificationHelper";
 import AppNoMarketsCard from "../../Components/AppNoMarketsCard";
-import Link from "@material-ui/core/Link";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
 import {formatDateShort} from "../../Helpers/UtilsHelper";
@@ -480,7 +474,6 @@ export default function ApplicationDashboard(props) {
                 </Paper>
             </Grid>
 
-            {/* todo lg = {6} TEST   */}
             {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
             <Grid item xs={12} md={7} lg={8}>
                 {props.app &&

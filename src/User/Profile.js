@@ -289,7 +289,7 @@ export default function Profile(props) {
     const classes = useStyles();
     const formClasses = useFormStyles();
 
-    //TODO CHANGE PROFILE PHOTO LOGIC
+    //TODO ADD POSSIBILITY TO CHANGE PROFILE PHOTO
     function editProfile() {
         setErrorsVisible(true);
         setCurrentPasswordServerError("");
@@ -352,7 +352,6 @@ export default function Profile(props) {
     const handleUsernameInput = (event) => {
         const newUser = update(fieldsStateUser, {username: {$set: event.target.value}});
         setFieldsStateUser(newUser);
-
         if (usernameServerError !== "")
             setUsernameServerError("");
     }
@@ -360,7 +359,6 @@ export default function Profile(props) {
     const handleEmailInput = (event) => {
         const newUser = update(fieldsStateUser, {email: {$set: event.target.value}});
         setFieldsStateUser(newUser);
-
         if (emailServerError !== "")
             setEmailServerError("");
     }
@@ -373,7 +371,6 @@ export default function Profile(props) {
     const handleCurrentPasswordInput = (event) => {
         const newUser = update(fieldsStateUser, {currentPassword: {$set: event.target.value}});
         setFieldsStateUser(newUser);
-
         if (currentPasswordServerError !== "")
             setCurrentPasswordServerError("");
     }
@@ -402,7 +399,7 @@ export default function Profile(props) {
                 const stateUser = update(fieldsStateUser, {slackCredentials: {$set: result.slackCredentials}});
                 setFieldsStateUser(stateUser);
             })
-            .catch(err => console.log(err.message)); //todo if fieldsStateUser is wrong -> redirect to homepage
+            .catch(err => console.log(err.message));
     }, []);
 
 
@@ -492,7 +489,9 @@ export default function Profile(props) {
                                         <LockRounded className={classes.extendedIcon}
                                                      color={currentUser.slackCredentials === "" ? 'action' : 'primary'}/>
                                         <Typography noWrap>
-                                            {currentUser.slackCredentials === "" ? "Уведомления выключены" : currentUser.slackCredentials}
+                                            {currentUser.slackCredentials === ""
+                                                ? "Уведомления выключены"
+                                                : currentUser.slackCredentials}
                                         </Typography>
                                     </Typography>
                                 </Box>
@@ -523,25 +522,22 @@ export default function Profile(props) {
                                             value="change-login"
                                             color="primary"/>}
                                     />
-                                    {
-                                        shouldChangeLogin &&
-                                        <TextField
-                                            error={getProfileUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username, currentUser.username, usernameServerError) !== ''}
-                                            helperText={getProfileUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username, currentUser.username, usernameServerError)}
-                                            value={fieldsStateUser.username}
-                                            onChange={handleUsernameInput}
-                                            variant="outlined"
-                                            margin="dense"
-                                            required
-                                            fullWidth
-                                            id="login"
-                                            label="Новый логин"
-                                            name="login"
-                                            autoComplete='username'
-                                        />
-                                    }
+                                    {shouldChangeLogin &&
+                                    <TextField
+                                        error={getProfileUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username, currentUser.username, usernameServerError) !== ''}
+                                        helperText={getProfileUsernameError(areErrorsVisible, shouldChangeLogin, fieldsStateUser.username, currentUser.username, usernameServerError)}
+                                        value={fieldsStateUser.username}
+                                        onChange={handleUsernameInput}
+                                        variant="outlined"
+                                        margin="dense"
+                                        required
+                                        fullWidth
+                                        id="login"
+                                        label="Новый логин"
+                                        name="login"
+                                        autoComplete='username'
+                                    />}
                                 </Box>
-
                                 <Box>
                                     <FormControlLabel
                                         label="Сменить почту"
@@ -549,24 +545,21 @@ export default function Profile(props) {
                                             checked={shouldChangeEmail}
                                             onChange={toggleEmailChange}
                                             value="change-mail"
-                                            color="primary"/>}
-                                    />
-                                    {
-                                        shouldChangeEmail &&
-                                        <TextField
-                                            error={getProfileEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email, currentUser.email, emailServerError) !== ''}
-                                            helperText={getProfileEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email, currentUser.email, emailServerError)}
-                                            value={fieldsStateUser.email}
-                                            onChange={handleEmailInput}
-                                            variant="outlined"
-                                            margin="dense"
-                                            required
-                                            fullWidth
-                                            id="email"
-                                            label="Новая почта"
-                                            name="email"
-                                            autoComplete="email"
-                                        />
+                                            color="primary"/>}/>
+                                    {shouldChangeEmail &&
+                                    <TextField
+                                        error={getProfileEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email, currentUser.email, emailServerError) !== ''}
+                                        helperText={getProfileEmailError(areErrorsVisible, shouldChangeEmail, fieldsStateUser.email, currentUser.email, emailServerError)}
+                                        value={fieldsStateUser.email}
+                                        onChange={handleEmailInput}
+                                        variant="outlined"
+                                        margin="dense"
+                                        required
+                                        fullWidth
+                                        id="email"
+                                        label="Новая почта"
+                                        name="email"
+                                        autoComplete="email"/>
                                     }
                                 </Box>
 
@@ -578,25 +571,22 @@ export default function Profile(props) {
                                                 checked={shouldChangePassword}
                                                 onChange={togglePasswordChange}
                                                 value="change-password"
-                                                color="primary"/>}
-                                    />
-                                    {
-                                        shouldChangePassword &&
-                                        <TextField
-                                            error={getProfilePasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password) !== ''}
-                                            helperText={getProfilePasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)}
-                                            value={fieldsStateUser.password}
-                                            onChange={handleNewPasswordInput}
-                                            variant="outlined"
-                                            margin="dense"
-                                            required
-                                            fullWidth
-                                            name="new-password"
-                                            label="Новый пароль"
-                                            type="password"
-                                            id="new-password"
-                                            autoComplete="new-password"
-                                        />
+                                                color="primary"/>}/>
+                                    {shouldChangePassword &&
+                                    <TextField
+                                        error={getProfilePasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password) !== ''}
+                                        helperText={getProfilePasswordError(areErrorsVisible, shouldChangePassword, fieldsStateUser.password)}
+                                        value={fieldsStateUser.password}
+                                        onChange={handleNewPasswordInput}
+                                        variant="outlined"
+                                        margin="dense"
+                                        required
+                                        fullWidth
+                                        name="new-password"
+                                        label="Новый пароль"
+                                        type="password"
+                                        id="new-password"
+                                        autoComplete="new-password"/>
                                     }
                                 </Box>
                                 <Box>
@@ -604,12 +594,9 @@ export default function Profile(props) {
                                         control={<Checkbox checked={enableNotifications}
                                                            onChange={toggleNotificationChange}
                                                            value="notifications-checkbox" color="primary"/>}
-                                        label="Включить уведомления от бота"
-                                    />
-                                    {
-                                        enableNotifications &&
-                                            <>
-
+                                        label="Включить уведомления от бота"/>
+                                    {enableNotifications &&
+                                    <>
                                         <TextField
                                             error={getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials) !== ''}
                                             helperText={getSlackCredentialsError(areErrorsVisible, enableNotifications, fieldsStateUser.slackCredentials)}
@@ -623,16 +610,15 @@ export default function Profile(props) {
                                             label="Slack-токен"
                                             name="slack-token">
                                         </TextField>
-                                                <Link
-                                                    variant='caption'
-                                                    color='primary'
-                                                    href="https://api.slack.com/messaging/webhooks"
-                                                    target="_blank"
-                                                    rel='noreferrer'>
-                                                    Как получить токен и настроить канал в Slack
-                                                </Link>
-                                        </>
-                                    }
+                                        <Link
+                                            variant='caption'
+                                            color='primary'
+                                            href="https://api.slack.com/messaging/webhooks"
+                                            target="_blank"
+                                            rel='noreferrer'>
+                                            Как получить токен и настроить канал в Slack
+                                        </Link>
+                                    </>}
                                 </Box>
                                 {shouldTypeCurrentPassword() &&
                                 <Box className={classes.sectionMarginTop}>
@@ -669,8 +655,7 @@ export default function Profile(props) {
                     color="secondary"
                     aria-label="update"
                     className={classes.fabBottom}
-                    onClick={() => editProfile()}
-                >
+                    onClick={() => editProfile()}>
                     <UpdateRounded className={classes.extendedIcon}/>
                     Обновить
                 </Fab>
@@ -683,8 +668,7 @@ export default function Profile(props) {
                     color="secondary"
                     aria-label="update"
                     className={classes.fabBottom}
-                    onClick={() => editProfile()}
-                >
+                    onClick={() => editProfile()}>
                     <UpdateRounded/>
                 </Fab>
             </Hidden>
@@ -694,7 +678,6 @@ export default function Profile(props) {
                     Данные успешно обновлены
                 </Alert>
             </Snackbar>
-
         </Container>
     );
 }
