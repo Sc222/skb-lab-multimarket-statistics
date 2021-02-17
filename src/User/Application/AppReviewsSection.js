@@ -31,16 +31,17 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import {
     GroupRounded,
-    HelpOutlineRounded, HomeRounded, LoopRounded,
+    HelpOutlineRounded,
+    HomeRounded,
+    LoopRounded,
     NavigateNextRounded,
     SettingsRounded,
     StarBorderRounded,
-    StarRounded, StarsRounded
+    StarRounded
 } from "@material-ui/icons";
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
-import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import {HomepageUrl} from "../../App";
 import Pagination from "@material-ui/lab/Pagination";
 import {scrollToTop} from "../../Helpers/UiHelper";
@@ -430,7 +431,7 @@ export default function AppReviewsSection(props) {
                                     icon={HomeRounded}
                                     text="Приложения"
                                 />
-                                {props.app===undefined &&
+                                {props.app === undefined &&
                                 <AdaptiveBreadcrumbItem
                                     link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
                                     icon={LoopRounded}
@@ -442,9 +443,9 @@ export default function AppReviewsSection(props) {
                                     maxLength={AppNameMaxLength}
 
                                     link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
-                                    icon={()=><img alt='app icon'
-                                                   src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
-                                                   className={classes.applicationIconSmall}/>}
+                                    icon={() => <img alt='app icon'
+                                                     src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
+                                                     className={classes.applicationIconSmall}/>}
                                     text={props.app.name}
                                 />}
                                 <AdaptiveBreadcrumbItem
@@ -492,6 +493,7 @@ export default function AppReviewsSection(props) {
 
             <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId} appId={props.appId}/>
 
+            {props.app && hasMarkets(props.app) &&
             <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paperNoPadding}>
                     <div className={formClasses.cardContainer}>
@@ -578,10 +580,11 @@ export default function AppReviewsSection(props) {
                                                         {review.rating !== 0
                                                             ? MarketStarsTemplate.map(value => {
                                                                 if (review.rating < value)
-                                                                    return (<StarBorderRounded key={value} fontSize='inherit'
+                                                                    return (<StarBorderRounded key={value}
+                                                                                               fontSize='inherit'
                                                                                                className={classes.reviewRating}/>)
-                                                                return (<StarRounded  key={value} fontSize='inherit'
-                                                                                      className={classes.reviewRating}/>)
+                                                                return (<StarRounded key={value} fontSize='inherit'
+                                                                                     className={classes.reviewRating}/>)
                                                             })
                                                             : MarketStarsTemplate.map(value => <HelpOutlineRounded
                                                                 key={value}
@@ -615,5 +618,6 @@ export default function AppReviewsSection(props) {
                     </div>
                 </Paper>
             </Grid>
+            }
         </Grid>);
 }

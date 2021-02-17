@@ -504,6 +504,7 @@ export default function AppRatingsSection(props) {
 
             <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId} appId={props.appId}/>
 
+            {props.app && hasMarkets(props.app) &&
             <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paperNoPadding}>
                     <div className={classes.containerTopPadded}>
@@ -618,5 +619,6 @@ export default function AppRatingsSection(props) {
                     </Alert>
                 </Snackbar>
             </Grid>
+            }
         </Grid>);
 }
