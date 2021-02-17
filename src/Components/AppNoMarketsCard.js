@@ -51,8 +51,7 @@ export default function AppNoMarketsCard(props) {
                             того, чтобы указать маркеты, где приложение опубликовано.
                         </Typography>
                         <Typography variant="body1" gutterBottom>
-                            В противном случае не удастся посмотреть <i><span className={classes.coloredText}>график изменения средней оценки</span></i> и <i><span
-                            className={classes.coloredText}>новые отзывы на приложение</span></i>.
+                            В противном случае не удастся посмотреть <i><span className={classes.coloredText}>новые оценки и отзывы на приложение</span></i>.
                         </Typography>
                     </div>
                 </Paper>

@@ -12,12 +12,24 @@ import Avatar from "@material-ui/core/Avatar";
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
-import {createLinkFromId, MarketsIndexes, MarketsInfo, MarketStarsTemplate} from "../../Helpers/MarketsInfoHelper";
+import {
+    createLinkFromId, getLatestRatingsStartCheckDate,
+    MarketLatestRatingsDaysCheck,
+    MarketsIndexes,
+    MarketsInfo,
+    MarketStarsTemplate
+} from "../../Helpers/MarketsInfoHelper";
 import MarketChipStyles from "../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
 import defaultAppIcon from "../../images/default_app_icon.png";
-import {getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../Api/ApiAppHelper";
+import {
+    AppNameMaxLength,
+    getAppMarketsArray,
+    getMarketIdByStoreIndex,
+    getShortAppName,
+    hasMarkets
+} from "../../Api/ApiAppHelper";
 import Button from "@material-ui/core/Button";
 import {getRatings} from "../../Api/ApiRating";
 import {deleteNotifications, getNotifications} from "../../Api/ApiNotification";
@@ -26,6 +38,8 @@ import Box from "@material-ui/core/Box";
 import {
     ArrowForwardRounded,
     HelpOutlineRounded,
+    HomeRounded, LoopRounded,
+    NavigateNextRounded,
     SettingsRounded,
     StarBorderRounded,
     StarRounded
@@ -33,7 +47,6 @@ import {
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
-import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import {HomepageUrl} from "../../App";
 import Hidden from "@material-ui/core/Hidden";
 import clsx from "clsx";
@@ -41,6 +54,10 @@ import {getLatestRatings} from "../../Api/ApiRatingsHelper";
 import {getLatestReviews, getReviewsMultipleMarkets} from "../../Api/ApiReviewHelper";
 import {filterNotificationsByApp} from "../../Api/ApiNotificationHelper";
 import AppNoMarketsCard from "../../Components/AppNoMarketsCard";
+import Link from "@material-ui/core/Link";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
+import {formatDateShort} from "../../Helpers/UtilsHelper";
 
 
 const drawerWidth = 260;
@@ -275,6 +292,13 @@ const useStyles = makeStyles((theme) => ({
         maxHeight: '100%'
     },
 
+    applicationIconSmall: {
+        borderRadius: "0.5em",
+        width: theme.spacing(3.5),
+        maxHeight: theme.spacing(3.5),
+        marginRight: theme.spacing(0.5)
+    },
+
     extendedIcon: {
         marginRight: theme.spacing(1),
     },
@@ -354,7 +378,7 @@ export default function ApplicationDashboard(props) {
             let markets = getAppMarketsArray(props.app);
             const requests = [];
             requests.push(getNotifications(props.userId));
-            requests.push(getRatings(props.userId, props.app.id, new Date().setDate(new Date().getDate() - 1), new Date()));
+            requests.push(getRatings(props.userId, props.app.id, getLatestRatingsStartCheckDate(new Date()), new Date()));
             requests.push(...getReviewsMultipleMarkets(props.userId, props.app.id, 0, 1, markets));
             Promise.all(requests)
                 .then(([notifications, ratings, ...reviews]) => {
@@ -395,20 +419,33 @@ export default function ApplicationDashboard(props) {
             <Grid item xs={12}>
                 <Paper elevation={1}>
                     <AppBar elevation={0} position="static" className={classes.extraToolbar}>
-                        <Toolbar variant="dense" className={classes.extraToolbar} disableGutters>
-                            <IconButton
-                                edge="start"
-                                aria-label="back to apps"
-                                component={RouterLink}
-                                to={`${HomepageUrl}/user/${props.userId}/apps`}
-                                className={classes.extraToolbarButtonBack}
-                            >
-                                {<ArrowBackRoundedIcon color="action"/>}
-                            </IconButton>
+                        <Toolbar variant="dense" className={classes.extraToolbar}>
+                            <Breadcrumbs aria-label="breadcrumb" separator={<NavigateNextRounded fontSize="small"/>}
+                                         className={classes.extraToolbarTitleNoHide}>
+                                <AdaptiveBreadcrumbItem
+                                    link={`${HomepageUrl}/user/${props.userId}/apps`}
+                                    icon={HomeRounded}
+                                    text="Приложения"
+                                />
+                                {props.app===undefined &&
+                                <AdaptiveBreadcrumbItem
+                                    link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
+                                    icon={LoopRounded}
+                                    text="Загрузка..."
+                                />
+                                }
+                                {props.app &&
+                                <AdaptiveBreadcrumbItem
+                                    maxLength={AppNameMaxLength}
+                                    isSelected
+                                    link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
+                                    icon={()=><img alt='app icon'
+                                               src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
+                                               className={classes.applicationIconSmall}/>}
+                                    text={props.app.name}
+                                />}
+                            </Breadcrumbs>
 
-                            <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
-                                Панель управления
-                            </Typography>
                             <Hidden smDown>
                                 <Button
                                     edge="end"
@@ -582,8 +619,8 @@ export default function ApplicationDashboard(props) {
                                                         {latestRatings[marketIndex].date} | <span
                                                         className={classes.textGreenBold}>{latestRatings[marketIndex].rating}</span>
                                                     </Typography>
-                                                    : <Typography variant="caption" noWrap>
-                                                        Последняя оценка за прошедший день не найдена
+                                                    : <Typography variant="caption">
+                                                        Нет данных с {formatDateShort(getLatestRatingsStartCheckDate(new Date()))}
                                                     </Typography>
                                                 }
                                             </Box>

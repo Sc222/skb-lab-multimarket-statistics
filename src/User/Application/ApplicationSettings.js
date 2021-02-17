@@ -26,8 +26,13 @@ import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../Styles/FormSectionStyles";
 import update from "immutability-helper";
 import defaultAppIcon from "../../images/default_app_icon.png";
-import {createAppForUpdate, getDefaultAppNoIdNoPic, getMarketIdByStoreIndex} from "../../Api/ApiAppHelper";
-import {UpdateRounded} from "@material-ui/icons";
+import {
+    AppNameMaxLength,
+    createAppForUpdate,
+    getDefaultAppNoIdNoPic,
+    getMarketIdByStoreIndex
+} from "../../Api/ApiAppHelper";
+import {HomeRounded, LoopRounded, NavigateNextRounded, SettingsRounded, UpdateRounded} from "@material-ui/icons";
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
@@ -40,6 +45,8 @@ import TextField from "@material-ui/core/TextField";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import {updateApp} from "../../Api/ApiApp";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
 
 const drawerWidth = 260;
 
@@ -249,6 +256,13 @@ const useStyles = makeStyles((theme) => ({
         maxHeight: '100%'
     },
 
+    applicationIconSmall: {
+        borderRadius: "0.5em",
+        width: theme.spacing(3.5),
+        maxHeight: theme.spacing(3.5),
+        marginRight: theme.spacing(0.5)
+    },
+
     extendedIcon: {
         marginRight: theme.spacing(1),
     },
@@ -441,21 +455,38 @@ export default function ApplicationSettings(props) {
                 <Grid item xs={12}>
                     <Paper elevation={1}>
                         <AppBar elevation={0} position="static" className={classes.extraToolbar}>
-                            <Toolbar variant="dense" className={classes.extraToolbar} disableGutters>
-                                <IconButton
-                                    edge="start"
-                                    aria-label="back to apps"
-                                    component={RouterLink}
-                                    to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/`}
-                                    className={classes.extraToolbarButtonBack}
-                                >
-                                    {<ArrowBackRoundedIcon color="action"/>}
-                                </IconButton>
+                            <Toolbar variant="dense" className={classes.extraToolbar}>
+                                <Breadcrumbs aria-label="breadcrumb" separator={<NavigateNextRounded fontSize="small"/>}
+                                             className={classes.extraToolbarTitleNoHide}>
+                                    <AdaptiveBreadcrumbItem
+                                        link={`${HomepageUrl}/user/${props.userId}/apps`}
+                                        icon={HomeRounded}
+                                        text="Приложения"
+                                    />
+                                    {props.app===undefined &&
+                                    <AdaptiveBreadcrumbItem
+                                        link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
+                                        icon={LoopRounded}
+                                        text="Загрузка..."
+                                    />
+                                    }
+                                    {props.app &&
+                                    <AdaptiveBreadcrumbItem
+                                        maxLength={AppNameMaxLength}
 
-                                <Typography className={classes.extraToolbarTitleNoHide} variant="h6" noWrap>
-                                    Настройки приложения
-                                </Typography>
-
+                                        link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
+                                        icon={()=><img alt='app icon'
+                                                       src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
+                                                       className={classes.applicationIconSmall}/>}
+                                        text={props.app.name}
+                                    />}
+                                    <AdaptiveBreadcrumbItem
+                                        isSelected
+                                        link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
+                                        icon={SettingsRounded}
+                                        text="Настройки"
+                                    />
+                                </Breadcrumbs>
                             </Toolbar>
                         </AppBar>
                     </Paper>

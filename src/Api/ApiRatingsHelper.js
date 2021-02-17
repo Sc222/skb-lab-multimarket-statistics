@@ -1,7 +1,7 @@
 //array of marketIndexes where app is available
 import {AppGalleryIndex, AppStoreIndex, MarketRatingPrecision, PlayStoreIndex} from "../Helpers/MarketsInfoHelper";
 import {getAppMarketsArray} from "./ApiAppHelper";
-import {format} from "date-fns";
+import {formatDateDefault} from "../Helpers/UtilsHelper";
 
 //  array of [{date:"",rating:""}]
 export function getLatestRatings(ratings,app){
@@ -21,7 +21,7 @@ export function getLatestMarketRating(ratings, marketIndex){
     while(i>=0){
         let marketRating = getMarketRatingByStoreIndex(ratings[i],marketIndex);
         if(marketRating!==undefined && marketRating!==0)
-            return {date:format(new Date(ratings[i].date), "dd/MM/yyyy HH:mm"), rating:parseFloat(marketRating).toPrecision(MarketRatingPrecision)};
+            return {date:formatDateDefault(new Date(ratings[i].date)), rating:parseFloat(marketRating).toPrecision(MarketRatingPrecision)};
         i--;
     }
     return {date:"", rating:0};

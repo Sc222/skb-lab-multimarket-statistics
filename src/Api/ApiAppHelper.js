@@ -1,6 +1,7 @@
 //appGalleryId, appStoreId, playMarketId are removed on send
 
 import {AppGalleryIndex, AppStoreIndex, PlayStoreIndex} from "../Helpers/MarketsInfoHelper";
+export const AppNameMaxLength=10;
 
 export function getDefaultAppNoIdNoPicNoMarkets(){
     return {name:"", description:""};
@@ -38,7 +39,9 @@ export function createAppForCreate(app, selectedMarkets) {
         appResult.playMarketId=app.playMarketId;
     return appResult;
 }
-
+//Настройки
+//Отзывы
+//Графики
 export function createAppForUpdate(app, appId, selectedMarkets) {
     const appResult = createAppForCreate(app,selectedMarkets);
     appResult.id=appId;

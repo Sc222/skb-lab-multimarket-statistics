@@ -1,6 +1,6 @@
 import {MarketsRequestKeys} from "../Helpers/MarketsInfoHelper";
 import {getReviews} from "./ApiReview";
-import {format} from "date-fns";
+import {formatDateDefault} from "../Helpers/UtilsHelper";
 
 export function getReviewsMultipleMarkets(userId, appId, skip, take, markets) {
     return markets.map(marketIndex => getReviews(userId, appId, skip, take, MarketsRequestKeys[marketIndex]));
@@ -15,7 +15,7 @@ export function getLatestReviews(reviews) {
         let result =getDefaultLatestReview(index);
         if(review.foundItem.length>0){
             let latest = review.foundItem[0];
-            result.date = format(new Date(latest.date), "dd/MM/yyyy HH:mm");
+            result.date = formatDateDefault(new Date(latest.date));
             result.rating = latest.rating;
             result.text = latest.text;
             if(latest.version!==undefined)

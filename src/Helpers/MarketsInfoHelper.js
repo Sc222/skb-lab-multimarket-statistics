@@ -11,7 +11,7 @@ export const AppGalleryIndex = 2;
 
 //utility constants
 export const MarketRatingPrecision = 3;
-
+export const MarketLatestRatingsDaysCheck = 3; //days before today, increase if "latest rating not found"
 export const MarketStarsTemplate = [1, 2, 3, 4, 5];
 
 export const MarketsLinks = [
@@ -131,4 +131,8 @@ export function getFirstExistingMarketRequestKey(app) {
     if (app.appGalleryId !== undefined)
         return MarketsRequestKeys[AppGalleryIndex];
     return "";
+}
+
+export function getLatestRatingsStartCheckDate(date){
+    return date.setDate(date.getDate()-MarketLatestRatingsDaysCheck);
 }
