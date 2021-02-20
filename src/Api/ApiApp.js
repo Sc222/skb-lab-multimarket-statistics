@@ -73,3 +73,20 @@ export async function getApp(userId, appId) {
             throw new Error("App get error: " + result.status);
         });
 }
+
+//doesn't work if app has not all markets
+export async function deleteApp(userId, appId) {
+    return fetch(`${ApiRoot}/api/App/${userId}/${appId}`,
+        {
+            headers: {
+                "Accept": "application/json",
+                "Authorization": `Bearer ${getCookieToken()}`
+            },
+            method: "DELETE",
+        })
+        .then(result => {
+            if (result.ok)
+                    return result.json();
+            throw new Error("App delete error: " + result.status);
+        });
+}
