@@ -1,19 +1,16 @@
 import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
-//image imports
 import {Redirect, Route, Switch as RouteSwitch, useParams} from "react-router-dom";
-import {HomepageUrl} from "../../App";
 import ApplicationDashboard from "./ApplicationDashboard";
-import {getApp} from "../../Api/ApiApp";
 import ApplicationSettings from "./ApplicationSettings";
 import AppRatingsSection from "./AppRatingsSection";
 import AppReviewsSection from "./AppReviewsSection";
-
+import {HomepageUrl} from "../../App";
+import {getApp} from "../../Api/ApiApp";
+import {NoContent} from "../../Api/ApiHelper";
 
 const drawerWidth = 260;
-
 const useStyles = makeStyles((theme) => ({
     appBarSpacer: {
         height: '48px'
@@ -109,6 +106,7 @@ export default function ApplicationSection(props) {
 
     const userId = props.userId;
     const [app, setApp] = React.useState(undefined);
+    const [appExists, setAppExists] = React.useState(true);  //todo
 
     function updateAppInSection(newApp) {
         console.log("update app from settings")
@@ -125,7 +123,11 @@ export default function ApplicationSection(props) {
                 console.log(app);
                 setApp(app);
             })
-            .catch(err => console.log(err.message)); //todo if app is wrong -> redirect to homepage
+            .catch(err => {
+                if (err.message === NoContent)
+                    setAppExists(false);
+                console.log(err.message);
+            });
     }, [userId, appId]);
 
     return (
@@ -135,18 +137,24 @@ export default function ApplicationSection(props) {
                 <Container maxWidth="lg" className={classes.container}>
 
                     <RouteSwitch>
+                        {!appExists && <Redirect to={`${HomepageUrl}/user/${userId}/apps/`}/>}
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/`}>
                             <ApplicationDashboard userId={userId} app={app} appId={appId}
-                                                  updateUserNotifications={props.updateUserNotifications}/>
+                                                  updateUserNotifications={props.updateUserNotifications}
+                                                  showStatusAlert={props.showStatusAlert}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/ratings`}>
-                            <AppRatingsSection userId={userId} app={app} appId={appId}/>
+                            <AppRatingsSection userId={userId} app={app} appId={appId}
+                                               showStatusAlert={props.showStatusAlert}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/reviews`}>
-                            <AppReviewsSection userId={userId} app={app} appId={appId}/>
+                            <AppReviewsSection userId={userId} app={app} appId={appId}
+                                               showStatusAlert={props.showStatusAlert}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
-                            <ApplicationSettings userId={userId} app={app} appId={appId} updateAppInSection={updateAppInSection}
+                            <ApplicationSettings userId={userId} app={app} appId={appId}
+                                                 showStatusAlert={props.showStatusAlert}
+                                                 updateAppInSection={updateAppInSection}
                                                  updateUserNotifications={props.updateUserNotifications}/>
                         </Route>
                         <Redirect to={`${HomepageUrl}/user/${userId}/app/${appId}/`}/>

@@ -6,28 +6,16 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Avatar from "@material-ui/core/Avatar";
-
-//image imports
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
-import {
-    createLinkFromId,
-    getLatestRatingsStartCheckDate,
-    MarketsIndexes,
-    MarketsInfo,
-    MarketStarsTemplate
-} from "../../Helpers/MarketsInfoHelper";
-import MarketChipStyles from "../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
-import defaultAppIcon from "../../images/default_app_icon.png";
-import {AppNameMaxLength, getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../Api/ApiAppHelper";
 import Button from "@material-ui/core/Button";
-import {getRatings} from "../../Api/ApiRating";
-import {deleteNotifications, getNotifications} from "../../Api/ApiNotification";
-import {getAppNotificationsAlert} from "../../Helpers/AlertsHelper";
 import Box from "@material-ui/core/Box";
+import green from "@material-ui/core/colors/green";
+import IconButton from "@material-ui/core/IconButton";
+import Hidden from "@material-ui/core/Hidden";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import {
     ArrowForwardRounded,
     HelpOutlineRounded,
@@ -38,19 +26,30 @@ import {
     StarBorderRounded,
     StarRounded
 } from "@material-ui/icons";
-import green from "@material-ui/core/colors/green";
-import IconButton from "@material-ui/core/IconButton";
+import FormSectionStyles from "../../Styles/FormSectionStyles";
+import MarketChipStyles from "../../Styles/MarketChipStyles";
 import {Link as RouterLink} from "react-router-dom";
-import {HomepageUrl} from "../../App";
-import Hidden from "@material-ui/core/Hidden";
 import clsx from "clsx";
+import {HomepageUrl} from "../../App";
+import {AppNameMaxLength, getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../Api/ApiAppHelper";
+import {getRatings} from "../../Api/ApiRating";
+import {deleteNotifications, getNotifications} from "../../Api/ApiNotification";
+import {getAppNotificationsAlert} from "../../Helpers/AlertsHelper";
 import {getLatestRatings} from "../../Api/ApiRatingsHelper";
 import {getLatestReviews, getReviewsMultipleMarkets} from "../../Api/ApiReviewHelper";
 import {filterNotificationsByApp} from "../../Api/ApiNotificationHelper";
 import AppNoMarketsCard from "../../Components/AppNoMarketsCard";
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
 import {formatDateShort} from "../../Helpers/UtilsHelper";
+import {
+    createLinkFromId,
+    getLatestRatingsStartCheckDate,
+    MarketsIndexes,
+    MarketsInfo,
+    MarketStarsTemplate
+} from "../../Helpers/MarketsInfoHelper";
+//images imports
+import defaultAppIcon from "../../images/default_app_icon.png";
 
 const drawerWidth = 260;
 
@@ -402,8 +401,10 @@ export default function ApplicationDashboard(props) {
                 if (result.ok) {
                     setAppNotifications([]);
                     reloadNotifications();
-                } else  //todo show error alert
+                } else {
+                    props.showStatusAlert("Не удалось удалить уведомления","error");
                     console.log("error deleting notifications");
+                }
             });
     }
 

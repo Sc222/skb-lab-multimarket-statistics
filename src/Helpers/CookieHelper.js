@@ -22,7 +22,7 @@ export function getCookieToken(){
     return token ? token : "";
 }
 
-export function deleteCookiesWhenLogout(){
+export function deleteAllSessionCookies(){
     const cookies = new Cookies();
     cookies.remove('userId', { path: '/' });
     cookies.remove('token', { path: '/' });

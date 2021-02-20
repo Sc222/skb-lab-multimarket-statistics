@@ -239,7 +239,6 @@ export default function NewApplications(props) {
     const [playStoreLink, setPlayStoreLink] = React.useState("");
     const [appStoreLink, setAppStoreLink] = React.useState("");
     const [appGalleryLink, setAppGalleryLink] = React.useState("");
-
     const [createdAppId, setCreatedAppId] = React.useState(undefined);
 
     function getLinkByIndex(index) {
@@ -287,6 +286,7 @@ export default function NewApplications(props) {
                     //TODO !!! ADD POSSIBILITY TO ADD APP ICON URL YOURSELF
                 })
                 .catch(err => {
+                    props.showStatusAlert("Не удалось создать приложение", "error");
                     console.log(err.message);
                 });
         }
@@ -505,7 +505,6 @@ export default function NewApplications(props) {
                             <DoneRounded/>
                         </Fab>
                     </Hidden>
-
                 </Container>
             </Route>
         </RouteSwitch>

@@ -1,9 +1,8 @@
 import React from "react";
 import Snackbar from "@material-ui/core/Snackbar";
-import { Alert } from '@material-ui/lab';
+import {Alert} from '@material-ui/lab';
 
-
-export default class StatusAlert extends React.Component{
+export default class StatusAlert extends React.Component {
 
     constructor(props) {
         super(props);
@@ -14,17 +13,17 @@ export default class StatusAlert extends React.Component{
         };
     }
 
-    show(message,severity){
-        this.setState({alertMessage:message});
-        this.setState({severity:severity});
-        this.setState({isAlertOpen:true});
+    show(message, severity) {
+        this.setState({alertMessage: message});
+        this.setState({severity: severity});
+        this.setState({isAlertOpen: true});
     }
 
     handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
         }
-        this.setState({isAlertOpen:false});
+        this.setState({isAlertOpen: false});
     };
 
     render() {

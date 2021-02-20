@@ -24,8 +24,6 @@ import {format} from 'date-fns';
 import {KeyboardDateTimePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import Button from "@material-ui/core/Button";
 import {getRatings} from "../../Api/ApiRating";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
 import {HomeRounded, LoopRounded, NavigateNextRounded, SettingsRounded, StarsRounded} from "@material-ui/icons";
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
@@ -36,7 +34,6 @@ import AppNoMarketsCard from "../../Components/AppNoMarketsCard";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
 import defaultAppIcon from "../../images/default_app_icon.png";
-
 
 const drawerWidth = 260;
 
@@ -335,6 +332,7 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(0.5)
     }
 }));
+
 const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
@@ -347,10 +345,6 @@ export default function AppRatingsSection(props) {
 
     const [selectedChartMarkets, setSelectedChartMarkets] = React.useState([false, false, false]);
     const [chartData, setChartData] = React.useState(undefined);
-
-    //for status snackbars
-    const [isChartsStatusSuccessOpen, setChartsStatusSuccessOpen] = React.useState(false);
-
     const [chartDateFrom, setChartDateFrom] = React.useState(new Date().setDate(new Date().getDate() - 1));
     const [chartDateTo, setChartDateTo] = React.useState(new Date());
     const [chartDateFromError, setChartDateFromError] = React.useState('');
@@ -394,9 +388,13 @@ export default function AppRatingsSection(props) {
         if (!hasChartErrors()) {
             getRatings(props.userId, props.app.id, chartDateFrom, chartDateTo)
                 .then(ratings => {
-                    setChartsStatusSuccessOpen(true);
+                    props.showStatusAlert("График успешно обновлен", "success");
                     fillChartDataWithRatings(ratings);
-                }).catch(err => console.log(err.message));
+                })
+                .catch(err => {
+                    props.showStatusAlert("Не удалось обновить график", "error");
+                    console.log(err.message);
+                });
         }
     }
 
@@ -404,13 +402,6 @@ export default function AppRatingsSection(props) {
         const newValue = update(selectedChartMarkets, {[index]: {$set: !selectedChartMarkets[index]}});
         setSelectedChartMarkets(newValue);
     }
-
-    const handleChartsStatusSuccessClose = (event, reason) => {
-        if (reason === 'clickaway')
-            return;
-        setChartsStatusSuccessOpen(false);
-    };
-
 
     const handleChartDateFromError = (error, _) => {
         setChartDateFromError(error);
@@ -441,7 +432,7 @@ export default function AppRatingsSection(props) {
                                     icon={HomeRounded}
                                     text="Приложения"
                                 />
-                                {props.app===undefined &&
+                                {props.app === undefined &&
                                 <AdaptiveBreadcrumbItem
                                     link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
                                     icon={LoopRounded}
@@ -453,9 +444,9 @@ export default function AppRatingsSection(props) {
                                     maxLength={AppNameMaxLength}
 
                                     link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
-                                    icon={()=><img alt='app icon'
-                                                   src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
-                                                   className={classes.applicationIconSmall}/>}
+                                    icon={() => <img alt='app icon'
+                                                     src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
+                                                     className={classes.applicationIconSmall}/>}
                                     text={props.app.name}
                                 />}
                                 <AdaptiveBreadcrumbItem
@@ -501,7 +492,8 @@ export default function AppRatingsSection(props) {
             </Grid>
 
             <Grid item xs={12}>
-            <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId} appId={props.appId}/>
+                <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId}
+                                  appId={props.appId}/>
             </Grid>
 
             {props.app && hasMarkets(props.app) &&
@@ -612,12 +604,6 @@ export default function AppRatingsSection(props) {
                         }
                     </div>
                 </Paper>
-                <Snackbar open={isChartsStatusSuccessOpen} autoHideDuration={1000}
-                          onClose={handleChartsStatusSuccessClose}>
-                    <Alert onClose={handleChartsStatusSuccessClose} severity="success">
-                        График успешно обновлён
-                    </Alert>
-                </Snackbar>
             </Grid>
             }
         </Grid>);

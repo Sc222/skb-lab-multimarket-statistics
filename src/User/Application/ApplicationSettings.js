@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -6,12 +6,27 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Avatar from "@material-ui/core/Avatar";
-
-
-//image imports
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
+import Container from "@material-ui/core/Container";
+import Hidden from "@material-ui/core/Hidden";
+import Fab from "@material-ui/core/Fab";
+import {HomeRounded, LoopRounded, NavigateNextRounded, SettingsRounded, UpdateRounded} from "@material-ui/icons";
+import green from "@material-ui/core/colors/green";
+import TextField from "@material-ui/core/TextField";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import update from "immutability-helper";
+import {Redirect, Route, Switch as RouteSwitch} from "react-router-dom";
+import MarketChipStyles from "../../Styles/MarketChipStyles";
+import FormSectionStyles from "../../Styles/FormSectionStyles";
+import {
+    AppNameMaxLength,
+    createAppForUpdate,
+    getDefaultAppNoIdNoPic,
+    getMarketIdByStoreIndex
+} from "../../Api/ApiAppHelper";
+import {HomepageUrl} from "../../App";
 import {
     AppGalleryIndex,
     AppStoreIndex,
@@ -21,30 +36,12 @@ import {
     MarketsInfo,
     PlayStoreIndex
 } from "../../Helpers/MarketsInfoHelper";
-import MarketChipStyles from "../../Styles/MarketChipStyles";
-import Container from "@material-ui/core/Container";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
-import update from "immutability-helper";
-import defaultAppIcon from "../../images/default_app_icon.png";
-import {
-    AppNameMaxLength,
-    createAppForUpdate,
-    getDefaultAppNoIdNoPic,
-    getMarketIdByStoreIndex
-} from "../../Api/ApiAppHelper";
-import {HomeRounded, LoopRounded, NavigateNextRounded, SettingsRounded, UpdateRounded} from "@material-ui/icons";
-import green from "@material-ui/core/colors/green";
-import {HomepageUrl} from "../../App";
-import Hidden from "@material-ui/core/Hidden";
-import Fab from "@material-ui/core/Fab";
 import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../../Helpers/ErrorHelper";
-import TextField from "@material-ui/core/TextField";
 import {deleteApp, updateApp} from "../../Api/ApiApp";
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
 import DeleteCardAndConfirmDialog from "../../Components/DeleteCardAndConfirmDialog";
-import StatusAlert from "../../Components/StatusAlert";
-import {Redirect, Route, Switch as RouteSwitch} from "react-router-dom";
+//image imports
+import defaultAppIcon from "../../images/default_app_icon.png";
 
 const drawerWidth = 260;
 
@@ -335,8 +332,6 @@ export default function ApplicationSettings(props) {
     const formClasses = useFormSectionStyles();
     const marketClasses = useMarketChipStyles();
 
-    const statusAlert = useRef();
-
     const [isAppDeleted, setIsAppDeleted] = React.useState(false);
     const [selectedMarkets, setSelectedMarkets] = React.useState([false, false, false]);
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
@@ -345,11 +340,8 @@ export default function ApplicationSettings(props) {
     const [appStoreLink, setAppStoreLink] = React.useState("");
     const [appGalleryLink, setAppGalleryLink] = React.useState("");
 
-
     useEffect(() => {
-
         if (props.app) {
-
             setSelectedMarkets([
                 props.app.playMarketId !== undefined,
                 props.app.appStoreId !== undefined,
@@ -357,12 +349,9 @@ export default function ApplicationSettings(props) {
             ]);
 
             setFieldsStateApp(props.app);
-
-            //console.log()
             setPlayStoreLink(createLinkFromId(PlayStoreIndex, props.app.playMarketId));
             setAppStoreLink(createLinkFromId(AppStoreIndex, props.app.appStoreId));
             setAppGalleryLink(createLinkFromId(AppGalleryIndex, props.app.appGalleryId));
-
         }
     }, [props.app]);
 
@@ -382,7 +371,7 @@ export default function ApplicationSettings(props) {
             const appForUpdate = createAppForUpdate(fieldsStateApp, props.appId, selectedMarkets);
             updateApp(userId, appForUpdate)
                 .then(result => {
-                    statusAlert.current.show("Данные успешно обновлены", "success");
+                    props.showStatusAlert("Информация о приложении успешно обновлена", "success");
                     console.log("successfully updated app with new picUrl: " + result);
                     if (result)
                         appForUpdate.picUrl = result.replace(/^"/, "").replace(/"$/, "");
@@ -390,7 +379,7 @@ export default function ApplicationSettings(props) {
                     setErrorsVisible(false);
                 })
                 .catch(err => {
-                    statusAlert.current.show("Не удалось обновить приложение", "error");
+                    props.showStatusAlert("Не удалось обновить информацию о приложении", "error");
                     console.log(err.message);
                 });
         }
@@ -404,7 +393,7 @@ export default function ApplicationSettings(props) {
             })
             .catch(err => {
                 console.log(err.message);
-                statusAlert.current.show("Не удалось удалить приложение", "error");
+                props.showStatusAlert("Не удалось удалить приложение", "error");
             })
     }
 
@@ -739,9 +728,6 @@ export default function ApplicationSettings(props) {
                         <UpdateRounded/>
                     </Fab>
                 </Hidden>
-
-                {/*TODO ERROR ALERTS EVERYWHERE*/}
-                <StatusAlert ref={statusAlert}/>
             </Route>
         </RouteSwitch>
     );

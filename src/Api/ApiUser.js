@@ -83,7 +83,7 @@ export async function deleteUser(userId) {
         })
         .then(result => {
             if (result.ok)
-                return result.json();
+                return result.text();
             throw new Error("User delete error: " + result.status);
         });
 }

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -35,8 +35,10 @@ import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
 import {getUser} from "../Api/ApiUser";
 import {getDefaultUser} from "../Api/ApiUserHelper";
-import {deleteCookiesWhenLogout, getCookieToken, getCookieUserId,} from "../Helpers/CookieHelper";
+import {deleteAllSessionCookies, getCookieToken, getCookieUserId,} from "../Helpers/CookieHelper";
 import WrongUser from "./WrongUser";
+import StatusAlert from "../Components/StatusAlert";
+import ApplicationSettings from "./Application/ApplicationSettings";
 
 const drawerWidth = 260;
 
@@ -201,6 +203,8 @@ export default function UserSection() {
     let {userId} = useParams();
     const classes = useStyles();
 
+    const statusAlert = useRef();
+
     const [notificationPopoverAnchor, setNotificationPopoverAnchor] = React.useState(null);
     const [profilePopoverAnchor, setProfilePopoverAnchor] = React.useState(null);
     const [notifications, setNotifications] = React.useState(undefined);
@@ -210,10 +214,13 @@ export default function UserSection() {
         setNotifications(newNotifications);
     };
 
+    const showStatusAlert = (message, severity) => {
+        statusAlert.current.show(message, severity)
+    };
 
     function logout() {
         setProfilePopoverAnchor(null);
-        deleteCookiesWhenLogout();
+        deleteAllSessionCookies();
     }
 
     function toggleNotificationsPopover(event) {
@@ -236,7 +243,11 @@ export default function UserSection() {
         let newNotifications = update(notifications, {$splice: [[index, 1]]});
         console.log(newNotifications);
         setNotifications(newNotifications);
-        deleteNotification(userId, notificationId).then(result => console.log(result.status));
+        deleteNotification(userId, notificationId).then(result => {
+            if (!result.ok)
+                showStatusAlert("Не удалось удалить уведомление","error");
+            console.log(result.status);
+        });
     }
 
     function deleteAllNotifications() {
@@ -248,7 +259,7 @@ export default function UserSection() {
                     setNotificationPopoverAnchor(null);
                 } else {
                     console.log("error deleting notifications");
-                    //todo show error alert
+                    showStatusAlert("Не удалось очистить уведомления","error");
                 }
             });
     }
@@ -262,9 +273,11 @@ export default function UserSection() {
                 console.log(notifications);
                 setNotifications(notifications);
                 setUser(user);
-                //if one of values is empty -> TODO SHOW ERROR ALERT
             })
-            .catch(err => console.log(err.message));
+            .catch(err => {
+                showStatusAlert("Не удалось получить данные","error");
+                console.log(err.message)
+            });
     }, []);
 
     return (
@@ -440,19 +453,22 @@ export default function UserSection() {
                     </div>
                 </Popover>
 
+
+                <StatusAlert ref={statusAlert}/>
+
                 <main className={classes.content}>
                     <RouteSwitch>
                         <Route exact path={`${HomepageUrl}/user/:userId/apps`}>
                             <Applications userId={userId}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/new-app`}>
-                            <NewApplication userId={userId}/>
+                            <NewApplication userId={userId} showStatusAlert={showStatusAlert}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/profile`}>
-                            <Profile userId={userId} updatePopoverUser={setUser}/>
+                            <Profile userId={userId} updatePopoverUser={setUser} showStatusAlert={showStatusAlert}/>
                         </Route>
                         <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
-                            <ApplicationSection userId={userId} updateUserNotifications={updateUserNotifications}/>
+                            <ApplicationSection userId={userId}  showStatusAlert={showStatusAlert} updateUserNotifications={updateUserNotifications}/>
                         </Route>
 
                         <Redirect to={`${HomepageUrl}/user/${userId}/apps`}/>

@@ -356,7 +356,6 @@ export default function AppReviewsSection(props) {
     const classes = useStyles();
     const formClasses = useFormSectionStyles();
 
-    //for reviews
     const [reviews, setReviews] = React.useState(undefined);
     const [reviewsCurrentPage, setReviewsPage] = React.useState(0);
     const [reviewsPerPage, setReviewsPerPage] = React.useState(10);
@@ -412,7 +411,7 @@ export default function AppReviewsSection(props) {
             }).catch(err => {
             console.log(err.message);
             setReviews(undefined);
-            //todo show error message can't load reviews
+            props.showStatusAlert("Не удалось загрузить отзывы", "error");
         });
     }
 
@@ -507,7 +506,6 @@ export default function AppReviewsSection(props) {
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container className={classes.containerApps}>
                             <Grid container alignItems='center' spacing={2} justify='space-between'>
-
                                 <Grid item>
                                     <FormControl variant="outlined" className={classes.selectStyle}>
                                         <InputLabel id="demo-simple-select-outlined-label">Магазин

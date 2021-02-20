@@ -68,7 +68,7 @@ export async function getApp(userId, appId) {
             if (result.ok) {
                 if (result.status === 200)
                     return result.json();
-                throw new Error("App does not exist: " + result.status);
+                throw new Error(result.status.toString());
             }
             throw new Error("App get error: " + result.status);
         });
@@ -86,7 +86,7 @@ export async function deleteApp(userId, appId) {
         })
         .then(result => {
             if (result.ok)
-                    return result.json();
+                    return result.text();
             throw new Error("App delete error: " + result.status);
         });
 }
