@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -39,11 +39,12 @@ import Hidden from "@material-ui/core/Hidden";
 import Fab from "@material-ui/core/Fab";
 import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../../Helpers/ErrorHelper";
 import TextField from "@material-ui/core/TextField";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
-import {updateApp} from "../../Api/ApiApp";
+import {deleteApp, updateApp} from "../../Api/ApiApp";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
+import DeleteCardAndConfirmDialog from "../../Components/DeleteCardAndConfirmDialog";
+import StatusAlert from "../../Components/StatusAlert";
+import {Redirect, Route, Switch as RouteSwitch} from "react-router-dom";
 
 const drawerWidth = 260;
 
@@ -328,17 +329,18 @@ const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function ApplicationSettings(props) {
     const userId = props.userId;
+    const appId = props.appId;
 
     const classes = useStyles();
     const formClasses = useFormSectionStyles();
     const marketClasses = useMarketChipStyles();
 
-    const [isStatusSuccessOpen, setStatusSuccessOpen] = React.useState(false);
+    const statusAlert = useRef();
+
+    const [isAppDeleted, setIsAppDeleted] = React.useState(false);
     const [selectedMarkets, setSelectedMarkets] = React.useState([false, false, false]);
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
-
     const [fieldsStateApp, setFieldsStateApp] = React.useState(getDefaultAppNoIdNoPic());
-
     const [playStoreLink, setPlayStoreLink] = React.useState("");
     const [appStoreLink, setAppStoreLink] = React.useState("");
     const [appGalleryLink, setAppGalleryLink] = React.useState("");
@@ -380,24 +382,31 @@ export default function ApplicationSettings(props) {
             const appForUpdate = createAppForUpdate(fieldsStateApp, props.appId, selectedMarkets);
             updateApp(userId, appForUpdate)
                 .then(result => {
+                    statusAlert.current.show("Данные успешно обновлены", "success");
                     console.log("successfully updated app with new picUrl: " + result);
                     if (result)
                         appForUpdate.picUrl = result.replace(/^"/, "").replace(/"$/, "");
                     props.updateAppInSection(appForUpdate);
-                    setStatusSuccessOpen(true);
                     setErrorsVisible(false);
                 })
                 .catch(err => {
+                    statusAlert.current.show("Не удалось обновить приложение", "error");
                     console.log(err.message);
                 });
         }
     }
 
-    const handleStatusSuccessClose = (event, reason) => {
-        if (reason === 'clickaway')
-            return;
-        setStatusSuccessOpen(false);
-    };
+    function deleteCurrentApp() {
+        deleteApp(userId, appId)
+            .then(result => {
+                console.log("successfully deleted app with result: " + result);
+                setIsAppDeleted(true);
+            })
+            .catch(err => {
+                console.log(err.message);
+                statusAlert.current.show("Не удалось удалить приложение", "error");
+            })
+    }
 
     const handleNameInput = (event) => {
         const newAppValue = update(fieldsStateApp, {name: {$set: event.target.value}});
@@ -456,261 +465,284 @@ export default function ApplicationSettings(props) {
     }
 
     return (
-        <>
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Paper elevation={1}>
-                        <AppBar elevation={0} position="static" className={classes.extraToolbar}>
-                            <Toolbar variant="dense" className={classes.extraToolbar}>
-                                <Breadcrumbs aria-label="breadcrumb" separator={<NavigateNextRounded fontSize="small"/>}
-                                             className={classes.extraToolbarTitleNoHide}>
-                                    <AdaptiveBreadcrumbItem
-                                        link={`${HomepageUrl}/user/${props.userId}/apps`}
-                                        icon={HomeRounded}
-                                        text="Приложения"
-                                    />
-                                    {props.app===undefined &&
-                                    <AdaptiveBreadcrumbItem
-                                        link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
-                                        icon={LoopRounded}
-                                        text="Загрузка..."
-                                    />
-                                    }
-                                    {props.app &&
-                                    <AdaptiveBreadcrumbItem
-                                        maxLength={AppNameMaxLength}
+        <RouteSwitch>
+            {isAppDeleted && <Redirect to={`${HomepageUrl}/user/${userId}/apps/`}/>}
+            <Route>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <Paper elevation={1}>
+                            <AppBar elevation={0} position="static" className={classes.extraToolbar}>
+                                <Toolbar variant="dense" className={classes.extraToolbar}>
+                                    <Breadcrumbs aria-label="breadcrumb"
+                                                 separator={<NavigateNextRounded fontSize="small"/>}
+                                                 className={classes.extraToolbarTitleNoHide}>
+                                        <AdaptiveBreadcrumbItem
+                                            link={`${HomepageUrl}/user/${props.userId}/apps`}
+                                            icon={HomeRounded}
+                                            text="Приложения"
+                                        />
+                                        {props.app === undefined &&
+                                        <AdaptiveBreadcrumbItem
+                                            link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
+                                            icon={LoopRounded}
+                                            text="Загрузка..."
+                                        />
+                                        }
+                                        {props.app &&
+                                        <AdaptiveBreadcrumbItem
+                                            maxLength={AppNameMaxLength}
 
-                                        link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
-                                        icon={()=><img alt='app icon'
-                                                       src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
-                                                       className={classes.applicationIconSmall}/>}
-                                        text={props.app.name}
-                                    />}
-                                    <AdaptiveBreadcrumbItem
-                                        isSelected
-                                        link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
-                                        icon={SettingsRounded}
-                                        text="Настройки"
-                                    />
-                                </Breadcrumbs>
-                            </Toolbar>
-                        </AppBar>
-                    </Paper>
-                </Grid>
+                                            link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
+                                            icon={() => <img alt='app icon'
+                                                             src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
+                                                             className={classes.applicationIconSmall}/>}
+                                            text={props.app.name}
+                                        />}
+                                        <AdaptiveBreadcrumbItem
+                                            isSelected
+                                            link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}
+                                            icon={SettingsRounded}
+                                            text="Настройки"
+                                        />
+                                    </Breadcrumbs>
+                                </Toolbar>
+                            </AppBar>
+                        </Paper>
+                    </Grid>
 
-                {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
-                <Grid item xs={12}>
-                    {props.app &&
-                    <Paper className={classes.paperNoPadding} elevation={1}>
+                    {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
+                    <Grid item xs={12}>
+                        {props.app &&
+                        <Paper className={classes.paperNoPadding} elevation={1}>
 
-                        <div className={classes.containerTopPadded}>
-                            <Typography variant="h6">
-                                Информация о приложении
-                            </Typography>
-                            <Typography variant="body2">
-                                Текущая информация о приложении
-                            </Typography>
-                        </div>
-                        <Divider className={formClasses.fullWidthDivider}/>
-                        <div className={classes.appDescriptionContainer}>
-
-                            <Grid container alignItems='center' spacing={2}>
-                                <Grid item xs={3} sm={2} md={1}>
-                                    <img alt='app icon'
-                                         src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
-                                         className={classes.applicationIcon}/>
-                                </Grid>
-                                <Grid item xs={9} sm={10} md={11}>
-                                    <Typography component="h5" variant="h6">{props.app.name}</Typography>
-                                    <Typography component="p" variant="body1">
-                                        {props.app.description}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </div>
-                        <Divider className={classes.fullWidthDivider}/>
-                        <div className={marketClasses.marketsContainer}>
-                            {
-                                MarketsIndexes.map(marketIndex => {
-                                    let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
-                                    return <Chip key={marketIndex}
-                                                 variant="outlined"
-                                                 clickable
-                                                 component='a'
-                                                 label={MarketsInfo[marketIndex].name}
-                                                 href={createLinkFromId(marketIndex, marketId)}
-                                                 target="_blank"
-                                                 rel='noreferrer'
-                                                 disabled={marketId === undefined}
-                                                 color={marketId === undefined ? "default" : "primary"}
-                                                 avatar={<Avatar className={marketClasses.transparentBg}
-                                                                 variant='square'
-                                                                 src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
-                                })
-                            }
-                        </div>
-                    </Paper>
-                    }
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Paper elevation={1} className={classes.paper}>
-                        <div className={formClasses.cardContainer}>
-                            <div className={formClasses.container}>
+                            <div className={classes.containerTopPadded}>
                                 <Typography variant="h6">
-                                    Редактирование приложения
+                                    Информация о приложении
                                 </Typography>
                                 <Typography variant="body2">
-                                    Обновите информацию о приложении
+                                    Текущая информация о приложении
                                 </Typography>
                             </div>
                             <Divider className={formClasses.fullWidthDivider}/>
-                            <Container maxWidth='sm' className={classes.containerNotCentered}>
-                                <TextField
-                                    error={getAppNameError(areErrorsVisible, fieldsStateApp.name) !== ''}
-                                    helperText={getAppNameError(areErrorsVisible, fieldsStateApp.name)}
-                                    value={fieldsStateApp.name}
-                                    onChange={handleNameInput}
-                                    variant="outlined"
-                                    margin="dense"
-                                    required
-                                    fullWidth
-                                    id="name"
-                                    label="Название приложения"
-                                    name="name"
-                                />
-                                <TextField
-                                    error={getAppDescriptionError(areErrorsVisible, fieldsStateApp.description) !== ''}
-                                    helperText={getAppDescriptionError(areErrorsVisible, fieldsStateApp.description)}
-                                    value={fieldsStateApp.description}
-                                    onChange={handleDescriptionInput}
-                                    variant="outlined"
-                                    margin="dense"
-                                    required
-                                    fullWidth
-                                    multiline
-                                    rowsMax={4}
-                                    rows={4}
-                                    name="description"
-                                    label="Описание приложения"
-                                    id="description"
-                                />
-                            </Container>
-                        </div>
-                    </Paper>
-                </Grid>
+                            <div className={classes.appDescriptionContainer}>
 
-                <Grid item xs={12}>
-                    <Paper elevation={1} className={classes.paperNoBottomPadding}>
-                        <div className={formClasses.cardContainer}>
-                            <div className={formClasses.container}>
-                                <Typography variant="h6">
-                                    Магазины приложений
-                                </Typography>
-                                <Typography variant="body2">
-                                    Укажите маркеты, в которых опубликовано ваше приложение
-                                </Typography>
+                                <Grid container alignItems='center' spacing={2}>
+                                    <Grid item xs={3} sm={2} md={1}>
+                                        <img alt='app icon'
+                                             src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
+                                             className={classes.applicationIcon}/>
+                                    </Grid>
+                                    <Grid item xs={9} sm={10} md={11}>
+                                        <Typography component="h5" variant="h6">{props.app.name}</Typography>
+                                        <Typography component="p" variant="body1">
+                                            {props.app.description}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
                             </div>
-                            <Divider className={formClasses.fullWidthDivider}/>
+                            <Divider className={classes.fullWidthDivider}/>
                             <div className={marketClasses.marketsContainer}>
                                 {
-                                    selectedMarkets.map((isSelected, index) => {
-                                        return <Chip key={MarketsInfo[index].name}
+                                    MarketsIndexes.map(marketIndex => {
+                                        let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
+                                        return <Chip key={marketIndex}
                                                      variant="outlined"
                                                      clickable
                                                      component='a'
-                                                     onClick={() => toggleMarket(index)}
-                                                     label={MarketsInfo[index].name}
-                                                     color={isSelected ? "primary" : "default"}
+                                                     label={MarketsInfo[marketIndex].name}
+                                                     href={createLinkFromId(marketIndex, marketId)}
+                                                     target="_blank"
+                                                     rel='noreferrer'
+                                                     disabled={marketId === undefined}
+                                                     color={marketId === undefined ? "default" : "primary"}
                                                      avatar={<Avatar className={marketClasses.transparentBg}
                                                                      variant='square'
-                                                                     src={MarketsInfo[index].getIcon(!isSelected)}/>}/>
+                                                                     src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
                                     })
                                 }
                             </div>
-                        </div>
-                    </Paper>
-                </Grid>
+                        </Paper>
+                        }
+                    </Grid>
 
-                {
-                    selectedMarkets.map((isSelected, index) => {
-                        return isSelected &&
-                            <Grid key={index} item xs={12}>
-                                <Paper elevation={1} className={classes.paper}>
-                                    <div className={formClasses.cardContainer}>
-                                        <div className={formClasses.container}>
-                                            <Typography variant="h6">
-                                                {MarketsInfo[index].name}
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                {MarketsInfo[index].description}
-                                            </Typography>
+                    <Grid item xs={12}>
+                        <Paper elevation={1} className={classes.paper}>
+                            <div className={formClasses.cardContainer}>
+                                <div className={formClasses.container}>
+                                    <Typography variant="h6">
+                                        Редактирование приложения
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Обновите информацию о приложении
+                                    </Typography>
+                                </div>
+                                <Divider className={formClasses.fullWidthDivider}/>
+                                <Container maxWidth='sm' className={classes.containerNotCentered}>
+                                    <TextField
+                                        error={getAppNameError(areErrorsVisible, fieldsStateApp.name) !== ''}
+                                        helperText={getAppNameError(areErrorsVisible, fieldsStateApp.name)}
+                                        value={fieldsStateApp.name}
+                                        onChange={handleNameInput}
+                                        variant="outlined"
+                                        margin="dense"
+                                        required
+                                        fullWidth
+                                        id="name"
+                                        label="Название приложения"
+                                        name="name"
+                                    />
+                                    <TextField
+                                        error={getAppDescriptionError(areErrorsVisible, fieldsStateApp.description) !== ''}
+                                        helperText={getAppDescriptionError(areErrorsVisible, fieldsStateApp.description)}
+                                        value={fieldsStateApp.description}
+                                        onChange={handleDescriptionInput}
+                                        variant="outlined"
+                                        margin="dense"
+                                        required
+                                        fullWidth
+                                        multiline
+                                        rowsMax={4}
+                                        rows={4}
+                                        name="description"
+                                        label="Описание приложения"
+                                        id="description"
+                                    />
+                                </Container>
+                            </div>
+                        </Paper>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Paper elevation={1} className={classes.paperNoBottomPadding}>
+                            <div className={formClasses.cardContainer}>
+                                <div className={formClasses.container}>
+                                    <Typography variant="h6">
+                                        Магазины приложений
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Укажите маркеты, в которых опубликовано ваше приложение
+                                    </Typography>
+                                </div>
+                                <Divider className={formClasses.fullWidthDivider}/>
+                                <div className={marketClasses.marketsContainer}>
+                                    {
+                                        selectedMarkets.map((isSelected, index) => {
+                                            return <Chip key={MarketsInfo[index].name}
+                                                         variant="outlined"
+                                                         clickable
+                                                         component='a'
+                                                         onClick={() => toggleMarket(index)}
+                                                         label={MarketsInfo[index].name}
+                                                         color={isSelected ? "primary" : "default"}
+                                                         avatar={<Avatar className={marketClasses.transparentBg}
+                                                                         variant='square'
+                                                                         src={MarketsInfo[index].getIcon(!isSelected)}/>}/>
+                                        })
+                                    }
+                                </div>
+                            </div>
+                        </Paper>
+                    </Grid>
+
+                    {
+                        selectedMarkets.map((isSelected, index) => {
+                            return isSelected &&
+                                <Grid key={index} item xs={12}>
+                                    <Paper elevation={1} className={classes.paper}>
+                                        <div className={formClasses.cardContainer}>
+                                            <div className={formClasses.container}>
+                                                <Typography variant="h6">
+                                                    {MarketsInfo[index].name}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    {MarketsInfo[index].description}
+                                                </Typography>
+                                            </div>
+                                            <Divider className={formClasses.fullWidthDivider}/>
+                                            <Container maxWidth='sm' className={classes.containerNotCentered}>
+                                                <TextField
+                                                    error={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getMarketIdByStoreIndex(fieldsStateApp, index)) !== ''}
+                                                    helperText={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getMarketIdByStoreIndex(fieldsStateApp, index))}
+                                                    value={getLinkByIndex(index)}
+                                                    onChange={handleLinkInputByIndex[index]}
+                                                    variant="outlined"
+                                                    margin="dense"
+                                                    required
+                                                    fullWidth
+                                                    id={`link-${index}`}
+                                                    label="Ссылка на приложение"
+                                                    name="store-url"
+                                                    autoComplete='url'
+                                                />
+                                                {getMarketIdByStoreIndex(props.app, index) !== undefined && getMarketIdByStoreIndex(fieldsStateApp, index) !== getMarketIdByStoreIndex(props.app, index) &&
+                                                <Typography variant="caption" color='primary'>
+                                                    С момента изменения ссылки, сервер будет получать отзывы и
+                                                    оценки на
+                                                    новое
+                                                    приложение, но <b>старые при этом сохранятся</b>
+                                                </Typography>
+                                                }
+                                            </Container>
                                         </div>
-                                        <Divider className={formClasses.fullWidthDivider}/>
-                                        <Container maxWidth='sm' className={classes.containerNotCentered}>
-                                            <TextField
-                                                error={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getMarketIdByStoreIndex(fieldsStateApp, index)) !== ''}
-                                                helperText={getAppMarketError(areErrorsVisible, index, selectedMarkets[index], getLinkByIndex(index), getMarketIdByStoreIndex(fieldsStateApp, index))}
-                                                value={getLinkByIndex(index)}
-                                                onChange={handleLinkInputByIndex[index]}
-                                                variant="outlined"
-                                                margin="dense"
-                                                required
-                                                fullWidth
-                                                id={`link-${index}`}
-                                                label="Ссылка на приложение"
-                                                name="store-url"
-                                                autoComplete='url'
-                                            />
-                                            {getMarketIdByStoreIndex(props.app, index) !== undefined && getMarketIdByStoreIndex(fieldsStateApp, index) !== getMarketIdByStoreIndex(props.app, index) &&
-                                            <Typography variant="caption" color='primary'>
-                                                С момента изменения ссылки, сервер будет получать отзывы и оценки на
-                                                новое
-                                                приложение, но <b>старые при этом сохранятся</b>
-                                            </Typography>
-                                            }
-                                        </Container>
-                                    </div>
-                                </Paper>
-                            </Grid>
-                    })
-                }
+                                    </Paper>
+                                </Grid>
+                        })
+                    }
+
+                    {props.app &&
+                    <Grid item xs={12}>
+                        <DeleteCardAndConfirmDialog
+                            cardTitle="Удаление приложения"
+                            cardSubtitle="Удаление приложения без возможности восстановления"
+                            buttonTitle="Удалить приложение"
+                            dialogTitle="Удаление приложения"
+                            dialogDescriptionComponent={
+                                () => <>
+                                    <Typography>
+                                        Это действие невозможно отменить.<br/>
+                                        Будут удалены все данные вашего приложения, в том числе информация об
+                                        отзывах,
+                                        оценках, уведомлениях.
+                                    </Typography>
+                                </>
+                            }
+                            confirmFieldLabel="Название приложение"
+                            confirmFieldExpectedValue={props.app.name}
+                            handleDeleteButton={() => deleteCurrentApp()}
+                        />
+                    </Grid>}
 
 
-            </Grid>
-            <Hidden smDown>
-                <Fab
-                    variant="extended"
-                    size="medium"
-                    color="secondary"
-                    aria-label="update"
-                    className={classes.fabBottom}
-                    onClick={() => editApp()}
-                >
-                    <UpdateRounded className={classes.extendedIcon}/>
-                    Обновить
-                </Fab>
-            </Hidden>
+                </Grid>
+                <Hidden smDown>
+                    <Fab
+                        variant="extended"
+                        size="medium"
+                        color="secondary"
+                        aria-label="update"
+                        className={classes.fabBottom}
+                        onClick={() => editApp()}
+                    >
+                        <UpdateRounded className={classes.extendedIcon}/>
+                        Обновить
+                    </Fab>
+                </Hidden>
+                <Hidden mdUp>
+                    <Fab
+                        variant="round"
+                        size="medium"
+                        color="secondary"
+                        aria-label="update"
+                        className={classes.fabBottom}
+                        onClick={() => editApp()}
+                    >
+                        <UpdateRounded/>
+                    </Fab>
+                </Hidden>
 
-            <Hidden mdUp>
-                <Fab
-                    variant="round"
-                    size="medium"
-                    color="secondary"
-                    aria-label="update"
-                    className={classes.fabBottom}
-                    onClick={() => editApp()}
-                >
-                    <UpdateRounded/>
-                </Fab>
-            </Hidden>
-
-            <Snackbar open={isStatusSuccessOpen} autoHideDuration={1000} onClose={handleStatusSuccessClose}>
-                <Alert onClose={handleStatusSuccessClose} severity="success">
-                    Данные успешно обновлены
-                </Alert>
-            </Snackbar>
-        </>
-
+                {/*TODO ERROR ALERTS EVERYWHERE*/}
+                <StatusAlert ref={statusAlert}/>
+            </Route>
+        </RouteSwitch>
     );
 }

@@ -8,7 +8,6 @@ import Paper from '@material-ui/core/Paper';
 import Chart from './Chart';
 
 
-//image imports
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
@@ -31,7 +30,6 @@ import {HomeRounded, LoopRounded, NavigateNextRounded, SettingsRounded, StarsRou
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
-import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import {HomepageUrl} from "../../App";
 import Hidden from "@material-ui/core/Hidden";
 import AppNoMarketsCard from "../../Components/AppNoMarketsCard";
@@ -383,7 +381,7 @@ export default function AppRatingsSection(props) {
         let formattedRatings = ratings.map(r => {
             let formattedRating = {};
             formattedRating.date = format(new Date(r.date), "dd/MM/yyyy HH:mm");
-            formattedRating.playMarketRating = !r.playMarketRating ? null : parseFloat(r.playMarketRating).toPrecision(MarketRatingPrecision);
+            formattedRating.playMarketRating = !r.playMarketRating || isNaN(r.playMarketRating) ? null : parseFloat(r.playMarketRating).toPrecision(MarketRatingPrecision);
             formattedRating.appStoreRating = !r.appStoreRating ? null : parseFloat(r.appStoreRating).toPrecision(MarketRatingPrecision);
             formattedRating.appGalleryRating = !r.appGalleryRating ? null : parseFloat(r.appGalleryRating).toPrecision(MarketRatingPrecision);
             return formattedRating;
@@ -502,7 +500,9 @@ export default function AppRatingsSection(props) {
                 </Paper>
             </Grid>
 
+            <Grid item xs={12}>
             <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId} appId={props.appId}/>
+            </Grid>
 
             {props.app && hasMarkets(props.app) &&
             <Grid item xs={12}>

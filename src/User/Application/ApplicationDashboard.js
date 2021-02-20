@@ -7,7 +7,6 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Avatar from "@material-ui/core/Avatar";
 
-
 //image imports
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
@@ -52,7 +51,6 @@ import AppNoMarketsCard from "../../Components/AppNoMarketsCard";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
 import {formatDateShort} from "../../Helpers/UtilsHelper";
-
 
 const drawerWidth = 260;
 
@@ -401,9 +399,10 @@ export default function ApplicationDashboard(props) {
         console.log("delete all notifications");
         deleteNotifications(props.userId, appNotifications.map(n => n.id))
             .then(result => {
-                if (result.ok)
+                if (result.ok) {
                     setAppNotifications([]);
-                else  //todo show error alert
+                    reloadNotifications();
+                } else  //todo show error alert
                     console.log("error deleting notifications");
             });
     }
@@ -421,7 +420,7 @@ export default function ApplicationDashboard(props) {
                                     icon={HomeRounded}
                                     text="Приложения"
                                 />
-                                {props.app===undefined &&
+                                {props.app === undefined &&
                                 <AdaptiveBreadcrumbItem
                                     link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
                                     icon={LoopRounded}
@@ -433,9 +432,9 @@ export default function ApplicationDashboard(props) {
                                     maxLength={AppNameMaxLength}
                                     isSelected
                                     link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
-                                    icon={()=><img alt='app icon'
-                                               src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
-                                               className={classes.applicationIconSmall}/>}
+                                    icon={() => <img alt='app icon'
+                                                     src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
+                                                     className={classes.applicationIconSmall}/>}
                                     text={props.app.name}
                                 />}
                             </Breadcrumbs>
@@ -613,7 +612,8 @@ export default function ApplicationDashboard(props) {
                                                         className={classes.textGreenBold}>{latestRatings[marketIndex].rating}</span>
                                                     </Typography>
                                                     : <Typography variant="caption">
-                                                        Нет данных с {formatDateShort(getLatestRatingsStartCheckDate(new Date()))}
+                                                        Нет данных
+                                                        с {formatDateShort(getLatestRatingsStartCheckDate(new Date()))}
                                                     </Typography>
                                                 }
                                             </Box>
@@ -766,7 +766,10 @@ export default function ApplicationDashboard(props) {
             </Grid>
             }
 
-            <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId} appId={props.appId}/>
+            <Grid item xs={12}>
+                <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId}
+                                  appId={props.appId}/>
+            </Grid>
 
         </Grid>);
 }

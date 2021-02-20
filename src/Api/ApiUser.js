@@ -1,5 +1,5 @@
 import {ApiRoot, ErrorBadRequest, ErrorConflict} from "./ApiHelper";
-import {parseLoginWrongCredentialsServerError, parseServerMailAndUsernameErrors} from "../Helpers/ErrorHelper";
+import {parseServerMailAndUsernameErrors} from "../Helpers/ErrorHelper";
 import {getCookieToken} from "../Helpers/CookieHelper";
 
 export async function createUser(user) {
@@ -72,6 +72,22 @@ export async function getUser(userId) {
         });
 }
 
+export async function deleteUser(userId) {
+    return fetch(`${ApiRoot}/api/User/${userId}`,
+        {
+            headers: {
+                "Accept": "application/json",
+                "Authorization": `Bearer ${getCookieToken()}`
+            },
+            method: "DELETE",
+        })
+        .then(result => {
+            if (result.ok)
+                return result.json();
+            throw new Error("User delete error: " + result.status);
+        });
+}
+
 export async function authenticateUser(loginCredentials) {
     return fetch(`${ApiRoot}/api/User/authenticate`,
         {
@@ -95,5 +111,5 @@ export async function authenticateUser(loginCredentials) {
             if (json.message !== undefined)
                 throw new Error(json.message);
             return json;
-        });;
+        });
 }

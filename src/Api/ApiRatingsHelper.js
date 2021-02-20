@@ -20,7 +20,7 @@ export function getLatestMarketRating(ratings, marketIndex){
     let i=ratings.length-1;
     while(i>=0){
         let marketRating = getMarketRatingByStoreIndex(ratings[i],marketIndex);
-        if(marketRating!==undefined && marketRating!==0)
+        if(marketRating!==undefined && marketRating!==0 && !isNaN(marketRating))
             return {date:formatDateDefault(new Date(ratings[i].date)), rating:parseFloat(marketRating).toPrecision(MarketRatingPrecision)};
         i--;
     }

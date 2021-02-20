@@ -1,14 +1,11 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-
-
-//image imports
-import {Link as RouterLink} from "react-router-dom";
 import Link from "@material-ui/core/Link";
+import {Link as RouterLink} from "react-router-dom";
 import {HomepageUrl} from "../App";
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -33,28 +30,28 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+//todo PROPS DOCUMENTATION
+//props: isShown, userId, appId
 export default function AppNoMarketsCard(props) {
     const classes = useStyles();
 
     return (
         <>
             {props.isShown &&
-            <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                    <div className={classes.paperContainer}>
-                        <Typography variant="h6" color="primary" gutterBottom>
-                            Не указаны магазины приложений
-                        </Typography>
-                        <Typography variant="body1" gutterBottom>
-                            Зайдите в раздел <Link component={RouterLink}
-                                                      to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}>настройки</Link> для
-                            того, чтобы указать маркеты, где приложение опубликовано.
-                        </Typography>
-                        <Typography variant="body1" gutterBottom>
-                            В противном случае не удастся посмотреть <i><span className={classes.coloredText}>новые оценки и отзывы на приложение</span></i>.
-                        </Typography>
-                    </div>
-                </Paper>
-            </Grid>}
+            <Paper className={classes.paper}>
+                <div className={classes.paperContainer}>
+                    <Typography variant="h6" color="primary" gutterBottom>
+                        Не указаны магазины приложений
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        Зайдите в раздел <Link component={RouterLink}
+                                               to={`${HomepageUrl}/user/${props.userId}/app/${props.appId}/settings`}>настройки</Link> для
+                        того, чтобы указать маркеты, где приложение опубликовано.
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        В противном случае не удастся посмотреть <Box color='primary.main' fontStyle="italic" component='span'>новые оценки и отзывы на приложение</Box>.
+                    </Typography>
+                </div>
+            </Paper>}
         </>);
 }

@@ -18,7 +18,7 @@ import {
     ClearRounded,
     LockRounded,
     MailRounded,
-    PersonRounded,
+    PersonRounded, StarsRounded,
     UpdateRounded
 } from "@material-ui/icons";
 import Fab from "@material-ui/core/Fab";
@@ -30,7 +30,7 @@ import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import {getUser, updateUser} from "../Api/ApiUser";
+import {deleteUser, getUser, updateUser} from "../Api/ApiUser";
 import {createUserForUpdate, getDefaultFieldsStateUser, getDefaultUser} from "../Api/ApiUserHelper";
 import {
     getCurrentPasswordError,
@@ -49,6 +49,11 @@ import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import IconButton from "@material-ui/core/IconButton";
 import {HomepageUrl} from "../App";
 import Link from "@material-ui/core/Link";
+import AlertTitle from "@material-ui/lab/AlertTitle";
+import Button from "@material-ui/core/Button";
+import DeleteCardAndConfirmDialog from "../Components/DeleteCardAndConfirmDialog";
+import AdaptiveBreadcrumbItem from "../Components/AdaptiveBreadcrumbItem";
+import {deleteApp} from "../Api/ApiApp";
 
 const useFormStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -325,6 +330,17 @@ export default function Profile(props) {
                     setEmailServerError(parseEmailServerError(err.message));
                 });
         }
+    }
+
+    function deleteCurrentUser(){
+        deleteUser(userId)
+            .then(result => {
+                console.log("successfully deleted user with result: " + result);
+                //TODO !!! DELETE FIX: DELETE COOKIES AND REDIRECT TO HOMEPAGE AFTER USER DELETE
+            })
+            .catch(err => {
+                console.log(err.message);
+            })
     }
 
     const handleStatusSuccessClose = (event, reason) => {
@@ -645,6 +661,27 @@ export default function Profile(props) {
                             </Container>
                         </div>
                     </Paper>
+                </Grid>
+
+                <Grid item xs={12}>
+                   <DeleteCardAndConfirmDialog
+                       cardTitle = "Удаление профиля"
+                       cardSubtitle = "Удаление профиля без возможности восстановления"
+                       buttonTitle = "Удалить профиль"
+                       dialogTitle= "Удаление профиля"
+                       dialogDescriptionComponent={
+                           ()=><>
+                               <Typography>
+                               Это действие невозможно отменить.<br/>
+                               Будут удалены все данные вашего профиля, в том числе добавленные приложения,
+                               информация об отзывах, оценках, уведомлениях.
+                               </Typography>
+                           </>
+                       }
+                       confirmFieldLabel = "Логин профиля"
+                       confirmFieldExpectedValue = {currentUser.username}
+                       handleDeleteButton = {()=>deleteCurrentUser()}
+                   />
                 </Grid>
             </Grid>
 

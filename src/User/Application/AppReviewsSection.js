@@ -488,8 +488,9 @@ export default function AppReviewsSection(props) {
                 </Paper>
             </Grid>
 
-
+            <Grid item xs={12}>
             <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId} appId={props.appId}/>
+            </Grid>
 
             {props.app && hasMarkets(props.app) &&
             <Grid item xs={12}>
