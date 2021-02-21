@@ -1,5 +1,3 @@
-//Application notifications
-
 import Alert from "@material-ui/lab/Alert";
 import React from "react";
 import AlertTitle from "@material-ui/lab/AlertTitle";

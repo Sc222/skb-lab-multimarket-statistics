@@ -11,8 +11,6 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import {HomepageUrl} from "../App";
 import {getCookieUserId} from "../Helpers/CookieHelper";
-
-
 import {Link as RouterLink} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));

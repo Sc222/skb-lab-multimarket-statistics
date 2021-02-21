@@ -7,11 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Avatar from "@material-ui/core/Avatar";
-
 import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useParams} from 'react-router-dom';
-
-//image imports
-import demoProfile from '../images/demo_profile.png';
 import {fade} from "@material-ui/core";
 import {HomepageUrl} from "../App";
 import Applications from "./Applications";
@@ -24,13 +20,11 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 import Profile from "./Profile";
-
 import {
     deleteAllNotifications as apiDeleteAllNotifications,
     deleteNotification,
     getNotifications
 } from "../Api/ApiNotification";
-
 import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
 import {getUser} from "../Api/ApiUser";
@@ -38,7 +32,8 @@ import {getDefaultUser} from "../Api/ApiUserHelper";
 import {deleteAllSessionCookies, getCookieToken, getCookieUserId,} from "../Helpers/CookieHelper";
 import WrongUser from "./WrongUser";
 import StatusAlert from "../Components/StatusAlert";
-import ApplicationSettings from "./Application/ApplicationSettings";
+//image imports
+import demoProfile from '../images/demo_profile.png';
 
 const drawerWidth = 260;
 
@@ -215,7 +210,7 @@ export default function UserSection() {
     };
 
     const showStatusAlert = (message, severity) => {
-        statusAlert.current.show(message, severity)
+        statusAlert.current?.show(message, severity)
     };
 
     function logout() {
@@ -245,7 +240,7 @@ export default function UserSection() {
         setNotifications(newNotifications);
         deleteNotification(userId, notificationId).then(result => {
             if (!result.ok)
-                showStatusAlert("Не удалось удалить уведомление","error");
+                showStatusAlert("Не удалось удалить уведомление", "error");
             console.log(result.status);
         });
     }
@@ -259,7 +254,7 @@ export default function UserSection() {
                     setNotificationPopoverAnchor(null);
                 } else {
                     console.log("error deleting notifications");
-                    showStatusAlert("Не удалось очистить уведомления","error");
+                    showStatusAlert("Не удалось очистить уведомления", "error");
                 }
             });
     }
@@ -275,7 +270,7 @@ export default function UserSection() {
                 setUser(user);
             })
             .catch(err => {
-                showStatusAlert("Не удалось получить данные","error");
+                showStatusAlert("Не удалось получить данные", "error");
                 console.log(err.message)
             });
     }, []);
@@ -468,7 +463,8 @@ export default function UserSection() {
                             <Profile userId={userId} updatePopoverUser={setUser} showStatusAlert={showStatusAlert}/>
                         </Route>
                         <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
-                            <ApplicationSection userId={userId}  showStatusAlert={showStatusAlert} updateUserNotifications={updateUserNotifications}/>
+                            <ApplicationSection userId={userId} showStatusAlert={showStatusAlert}
+                                                updateUserNotifications={updateUserNotifications}/>
                         </Route>
 
                         <Redirect to={`${HomepageUrl}/user/${userId}/apps`}/>
