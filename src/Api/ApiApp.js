@@ -1,15 +1,9 @@
-import {ApiRoot} from "./ApiHelper";
-import {getCookieToken} from "../Helpers/CookieHelper";
+import {ApiRoot, getRequestHeaders, Success} from "./ApiHelper";
 
 export async function createApp(userId, app) {
-
     return fetch(`${ApiRoot}/api/App/create/${userId}`,
         {
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": `Bearer ${getCookieToken()}`
-            },
+            headers: getRequestHeaders(true),
             body: JSON.stringify(app),
             method: "POST",
         })
@@ -21,14 +15,9 @@ export async function createApp(userId, app) {
 }
 
 export async function updateApp(userId, app) {
-
     return fetch(`${ApiRoot}/api/App/update/${userId}`,
         {
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": `Bearer ${getCookieToken()}`
-            },
+            headers: getRequestHeaders(true),
             body: JSON.stringify(app),
             method: "PUT",
         })
@@ -42,10 +31,7 @@ export async function updateApp(userId, app) {
 export async function getApps(userId) {
     return fetch(`${ApiRoot}/api/App/${userId}/apps`,
         {
-            headers: {
-                "Accept": "application/json",
-                "Authorization": `Bearer ${getCookieToken()}`
-            },
+            headers: getRequestHeaders(false),
             method: "GET",
         })
         .then(result => {
@@ -58,15 +44,12 @@ export async function getApps(userId) {
 export async function getApp(userId, appId) {
     return fetch(`${ApiRoot}/api/App/${userId}/${appId}`,
         {
-            headers: {
-                "Accept": "application/json",
-                "Authorization": `Bearer ${getCookieToken()}`
-            },
+            headers: getRequestHeaders(false),
             method: "GET",
         })
         .then(result => {
             if (result.ok) {
-                if (result.status === 200)
+                if (result.status === Success)
                     return result.json();
                 throw new Error(result.status.toString());
             }
@@ -74,19 +57,16 @@ export async function getApp(userId, appId) {
         });
 }
 
-//doesn't work if app has not all markets
+//TODO FIX doesn't work if app has not all markets
 export async function deleteApp(userId, appId) {
     return fetch(`${ApiRoot}/api/App/${userId}/${appId}`,
         {
-            headers: {
-                "Accept": "application/json",
-                "Authorization": `Bearer ${getCookieToken()}`
-            },
+            headers: getRequestHeaders(false),
             method: "DELETE",
         })
         .then(result => {
             if (result.ok)
-                    return result.text();
+                return result.text();
             throw new Error("App delete error: " + result.status);
         });
 }

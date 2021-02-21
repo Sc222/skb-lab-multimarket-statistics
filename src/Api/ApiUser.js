@@ -1,14 +1,10 @@
-import {ApiRoot, ErrorBadRequest, ErrorConflict} from "./ApiHelper";
+import {ApiRoot, ErrorBadRequest, ErrorConflict, getRequestHeaders, Success} from "./ApiHelper";
 import {parseServerMailAndUsernameErrors} from "../Helpers/ErrorHelper";
-import {getCookieToken} from "../Helpers/CookieHelper";
 
 export async function createUser(user) {
     return fetch(`${ApiRoot}/api/User/create`,
         {
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
+            headers: getRequestHeaders(false),
             body: JSON.stringify(user),
             method: "POST",
         })
@@ -30,11 +26,7 @@ export async function createUser(user) {
 export async function updateUser(user) {
     return fetch(`${ApiRoot}/api/User/update`,
         {
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": `Bearer ${getCookieToken()}`
-            },
+            headers: getRequestHeaders(true),
             body: JSON.stringify(user),
             method: "PUT",
         })
@@ -56,15 +48,12 @@ export async function updateUser(user) {
 export async function getUser(userId) {
     return fetch(`${ApiRoot}/api/User/${userId}`,
         {
-            headers: {
-                "Accept": "application/json",
-                "Authorization": `Bearer ${getCookieToken()}`
-            },
+            headers: getRequestHeaders(false),
             method: "GET",
         })
         .then(result => {
             if (result.ok) {
-                if (result.status === 200)
+                if (result.status === Success)
                     return result.json();
                 throw new Error("User does not exist: " + result.status);
             }
@@ -75,10 +64,7 @@ export async function getUser(userId) {
 export async function deleteUser(userId) {
     return fetch(`${ApiRoot}/api/User/${userId}`,
         {
-            headers: {
-                "Accept": "application/json",
-                "Authorization": `Bearer ${getCookieToken()}`
-            },
+            headers: getRequestHeaders(false),
             method: "DELETE",
         })
         .then(result => {
@@ -91,17 +77,13 @@ export async function deleteUser(userId) {
 export async function authenticateUser(loginCredentials) {
     return fetch(`${ApiRoot}/api/User/authenticate`,
         {
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
+            headers: getRequestHeaders(false),
             body: JSON.stringify(loginCredentials),
             method: "POST",
         })
         .then(result => {
-            if (result.ok) {
+            if (result.ok)
                 return result.json();
-            }
             if (result.status.toString() === ErrorBadRequest)
                 return result.json();
             throw new Error(result.status+" "+result.statusText);

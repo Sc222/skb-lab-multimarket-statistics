@@ -1,13 +1,9 @@
-import {ApiRoot} from "./ApiHelper";
-import {getCookieToken} from "../Helpers/CookieHelper";
+import {ApiRoot, getRequestHeaders} from "./ApiHelper";
 
 export async function getReviews(userId, appId, skip, take, marketKey) {
     return fetch(`${ApiRoot}/api/Review/${userId}/${appId}?skip=${skip}&take=${take}&market=${marketKey}`,
         {
-            headers: {
-                "Accept": "application/json",
-                "Authorization": `Bearer ${getCookieToken()}`
-            },
+            headers: getRequestHeaders(false),
             method: "GET",
         })
         .then(result => {

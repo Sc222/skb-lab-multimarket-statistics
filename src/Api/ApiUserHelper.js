@@ -38,7 +38,7 @@ export function createUserForUpdate(immutableUser, fieldsStateUser, enableNotifi
         user.newEmail = fieldsStateUser.email;
 
     user.currentPassword=fieldsStateUser.currentPassword;
-    //PROFILE-PHOTO
+    //TODO PROFILE-PHOTO
     return user;
 }
 

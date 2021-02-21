@@ -39,9 +39,7 @@ export function createAppForCreate(app, selectedMarkets) {
         appResult.playMarketId=app.playMarketId;
     return appResult;
 }
-//Настройки
-//Отзывы
-//Графики
+
 export function createAppForUpdate(app, appId, selectedMarkets) {
     const appResult = createAppForCreate(app,selectedMarkets);
     appResult.id=appId;
