@@ -3,19 +3,19 @@ import {AppGalleryIndex, AppStoreIndex, MarketRatingPrecision, PlayStoreIndex} f
 import {getAppMarketsArray} from "./ApiAppHelper";
 import {formatDateDefault} from "../Helpers/UtilsHelper";
 
-//  array of [{date:"",rating:""}]
+//  dict of {date:"",rating:""}
 export function getLatestRatings(ratings,app){
-    let result = [];
+    let result = {};
     let markets = getAppMarketsArray(app);
     markets.forEach(marketIndex=>{
-        let marketRating = getLatestMarketRating(ratings,marketIndex);
-        result.push({marketIndex:marketIndex, date:marketRating.date, rating:marketRating.rating});
+        result[marketIndex]=getLatestMarketRating(ratings,marketIndex);
     })
+    console.log("markets: "+markets);
     console.log(result);
     return result;
 }
 
-//  [{date:"",rating:""}]
+//  {date:"",rating:""}
 export function getLatestMarketRating(ratings, marketIndex){
     let i=ratings.length-1;
     while(i>=0){

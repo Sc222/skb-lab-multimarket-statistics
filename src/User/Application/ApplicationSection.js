@@ -115,8 +115,6 @@ export default function ApplicationSection(props) {
     }
 
     useEffect(() => {
-        console.log(userId);
-        console.log(appId);
         getApp(userId, appId)
             .then(app => {
                 console.log("load app");
