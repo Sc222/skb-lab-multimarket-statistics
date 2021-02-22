@@ -37,8 +37,9 @@ namespace MultimarketStatistics.Controllers
         [HttpPut("update/{userId}")]
         public async Task<ActionResult<string>> Update(Guid userId, [FromBody] AppContract webApp)
         {
-            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            if (!IsValidAction(userId, webApp.Id))
                 return StatusCode(StatusCodes.Status403Forbidden);
+
             var app = mapper.Map<App>(webApp);
             app.User = new User { Id = userId };
             return await appService.Update(app).ConfigureAwait(false);
@@ -50,6 +51,7 @@ namespace MultimarketStatistics.Controllers
         {
             if (!UserIdValidator.IsValidAction(HttpContext, userId))
                 return StatusCode(StatusCodes.Status403Forbidden);
+
             var apps = appService.GetAppsByUser(userId);
             return mapper.Map<AppContract[]>(apps);
         }
@@ -58,8 +60,9 @@ namespace MultimarketStatistics.Controllers
         [HttpGet("{userId}/{appId}")]
         public ActionResult<AppContract> Get(Guid userId, Guid appId)
         {
-            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            if (!IsValidAction(userId, appId))
                 return StatusCode(StatusCodes.Status403Forbidden);
+
             var app = appService.Get(appId);
             return mapper.Map<AppContract>(app);
         }
@@ -68,10 +71,16 @@ namespace MultimarketStatistics.Controllers
         [HttpDelete("{userId}/{appId}")]
         public ActionResult Delete(Guid userId, Guid appId)
         {
-            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            if (!IsValidAction(userId, appId))
                 return StatusCode(StatusCodes.Status403Forbidden);
+
             appService.Delete(appId);
             return Ok();
+        }
+
+        private bool IsValidAction(Guid userId, Guid appId)
+        {
+            return UserIdValidator.IsValidAction(HttpContext, userId) && appService.IsOwnedByUser(userId, appId);
         }
     }
 }

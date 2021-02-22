@@ -18,19 +18,22 @@ namespace MultimarketStatistics.Controllers
     {
         private readonly IMapper mapper;
         private readonly RatingService ratingService;
+        private readonly AppService appService;
 
-        public RatingController(RatingService ratingService, IMapper mapper)
+        public RatingController(RatingService ratingService, IMapper mapper, AppService appService)
         {
             this.ratingService = ratingService;
             this.mapper = mapper;
+            this.appService = appService;
         }
 
         [Authorize]
         [HttpGet("{userId}/{appId}")]
         public ActionResult<List<RatingContract>> GetAppRatings(Guid userId, Guid appId, [FromQuery] DateTime from, [FromQuery] DateTime to)
         {
-            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            if (!IsValidAction(userId, appId))
                 return StatusCode(StatusCodes.Status403Forbidden);
+
             var ratings = ratingService.GetRatingsByApp(appId, from, to);
             var byDateByMarket = ratings
                 .GroupBy(r => r.Date.Date + TimeSpan.FromHours(r.Date.Hour))
@@ -64,6 +67,9 @@ namespace MultimarketStatistics.Controllers
 
         private double CountAverage(double[] averages) => averages.Sum() / averages.Length;
 
-
+        private bool IsValidAction(Guid userId, Guid appId)
+        {
+            return UserIdValidator.IsValidAction(HttpContext, userId) && appService.IsOwnedByUser(userId, appId);
+        }
     }
 }

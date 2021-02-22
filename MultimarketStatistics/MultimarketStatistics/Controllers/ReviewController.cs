@@ -14,11 +14,13 @@ namespace MultimarketStatistics.Controllers
     {
         private readonly IMapper mapper;
         private readonly ReviewService reviewService;
+        private readonly AppService appService;
 
-        public ReviewController(ReviewService reviewService, IMapper mapper)
+        public ReviewController(ReviewService reviewService, IMapper mapper, AppService appService)
         {
             this.reviewService = reviewService;
             this.mapper = mapper;
+            this.appService = appService;
         }
 
         [Authorize]
@@ -26,11 +28,17 @@ namespace MultimarketStatistics.Controllers
         public ActionResult<SearchResult<ReviewContract[]>> GetAppReviews(Guid userId, Guid appId, [FromQuery] int? skip, [FromQuery] int? take,
             [FromQuery] string market)
         {
-            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            if (!IsValidAction(userId, appId))
                 return StatusCode(StatusCodes.Status403Forbidden);
+
             var searchResult = reviewService.GetAppReviews(appId, skip, take, market.ToMarketType());
             return new SearchResult<ReviewContract[]>(searchResult.Total, searchResult.Found,
                 mapper.Map<ReviewContract[]>(searchResult.FoundItem));
+        }
+
+        private bool IsValidAction(Guid userId, Guid appId)
+        {
+            return UserIdValidator.IsValidAction(HttpContext, userId) && appService.IsOwnedByUser(userId, appId);
         }
     }
 }

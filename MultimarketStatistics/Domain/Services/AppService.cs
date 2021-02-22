@@ -108,5 +108,10 @@ namespace Domain.Services
             ratingRepository.DeleteRange(ratings.Values.SelectMany(r => r));
             appRepository.DeleteRange(apps);
         }
+
+        public bool IsOwnedByUser(Guid userId, Guid appId)
+        {
+            return appRepository.Get(appId).User.Id == userId;
+        }
     }
 }
