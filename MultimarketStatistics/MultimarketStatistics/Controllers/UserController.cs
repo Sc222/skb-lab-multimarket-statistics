@@ -101,8 +101,9 @@ namespace MultimarketStatistics.Controllers
 
             return Ok(new AuthResult
             {
-                User = mapper.Map<UserContract>(response.Value.Item1),
-                Token = response.Value.Item2
+                User = mapper.Map<UserContract>(response.Value.User),
+                Token = response.Value.Token,
+                ExpiresIn = response.Value.ExpiresIn
             });
         }
     }

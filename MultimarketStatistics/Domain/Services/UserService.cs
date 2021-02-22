@@ -13,6 +13,7 @@ namespace Domain.Services
     {
         private readonly IRepository<User> userRepository;
         private readonly AppService appService;
+        private readonly TimeSpan expirationTime = TimeSpan.FromHours(4);
 
         public UserService(IRepository<User> userRepository, AppService appService)
         {
@@ -59,7 +60,7 @@ namespace Domain.Services
             userRepository.Delete(userId);
         }
 
-        public (User, string)? Authenticate(string username, string password)
+        public (User User, string Token, TimeSpan ExpiresIn)? Authenticate(string username, string password)
         {
             var user = userRepository.SingleOrDefault(x => x.Username == username && x.Password == password);
 
@@ -68,7 +69,7 @@ namespace Domain.Services
 
             var token = GenerateJwtToken(user);
 
-            return (user, token);
+            return (user, token, expirationTime);
         }
 
         private string GenerateJwtToken(User user)
@@ -78,7 +79,7 @@ namespace Domain.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
-                Expires = DateTime.UtcNow.AddHours(4),
+                Expires = DateTime.UtcNow + expirationTime,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

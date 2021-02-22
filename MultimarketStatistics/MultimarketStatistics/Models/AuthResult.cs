@@ -9,5 +9,7 @@ namespace MultimarketStatistics.Models
         public UserContract User { get; set; }
 
         public string Token { get; set; }
+
+        public TimeSpan ExpiresIn { get; set; }
     }
 }
