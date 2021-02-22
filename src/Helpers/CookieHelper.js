@@ -8,8 +8,6 @@ export function setCookieUserId(userId){
 export function getCookieUserId(){
     const cookies = new Cookies();
     const userId =  cookies.get('userId');
-    console.log("userCookie:");
-    console.log(userId ? userId : "");
     return userId ? userId : "";
 }
 
@@ -32,8 +30,6 @@ export function setCookieToken(token, expirationDate){
 export function getCookieToken(){
     const cookies = new Cookies();
     const token = cookies.get('token');
-    console.log("tokenCookie:");
-    console.log(token ? token : "");
     return token ? token : "";
 }
 
@@ -41,4 +37,8 @@ export function deleteAllSessionCookies(){
     const cookies = new Cookies();
     cookies.remove('userId', { path: '/' });
     cookies.remove('token', { path: '/' });
+}
+
+export function isCookieTokenExpired(){
+    return getCookieToken() === "" && getCookieUserId() !== "";
 }

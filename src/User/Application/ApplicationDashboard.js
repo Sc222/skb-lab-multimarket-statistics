@@ -599,9 +599,6 @@ export default function ApplicationDashboard(props) {
                                className={clsx(classes.containerNotCenteredSmallerPadding, classes.mYdividers, classes.flexGrowFillCenterVertical)}>
                         <Grid container alignItems='center' spacing={2}>
                             {latestRatings && getAppMarketsArray(props.app).map(marketIndex => {
-                                console.log("debug debug");
-                                console.log(getAppMarketsArray(props.app));
-                                console.log(latestRatings);
                                 return (<Grid key={marketIndex} item xs={12} sm={4} md={3} lg={3}>
                                     <Grid container alignItems='center' spacing={1} key={marketIndex}>
                                         <Grid item>

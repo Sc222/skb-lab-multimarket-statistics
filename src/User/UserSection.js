@@ -30,7 +30,7 @@ import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
 import {getUser} from "../Api/ApiUser";
 import {getDefaultUser} from "../Api/ApiUserHelper";
-import {deleteAllSessionCookies, getCookieToken, getCookieUserId} from "../Helpers/CookieHelper";
+import {deleteAllSessionCookies, getCookieToken, getCookieUserId, isCookieTokenExpired} from "../Helpers/CookieHelper";
 import WrongUser from "./WrongUser";
 import StatusAlert from "../Components/StatusAlert";
 //image imports
@@ -206,11 +206,16 @@ export default function UserSection() {
 
     const statusAlert = useRef();
 
-    const [isTokenExpired, setIsTokenExpired] = React.useState(getCookieToken() === "" && getCookieUserId() !== "");
+    const [isTokenExpired, setIsTokenExpired] = React.useState(isCookieTokenExpired());
     const [notificationPopoverAnchor, setNotificationPopoverAnchor] = React.useState(null);
     const [profilePopoverAnchor, setProfilePopoverAnchor] = React.useState(null);
     const [notifications, setNotifications] = React.useState(undefined);
     const [user, setUser] = React.useState(getDefaultUser());
+
+    React.useEffect(() => {
+        if(!isTokenExpired)
+            setIsTokenExpired(isCookieTokenExpired());
+    }, [currentUrl]);
 
     const updateUserNotifications = (newNotifications) => {
         setNotifications(newNotifications);
