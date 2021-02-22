@@ -33,7 +33,7 @@ import clsx from "clsx";
 import {HomepageUrl} from "../../App";
 import {AppNameMaxLength, getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../Api/ApiAppHelper";
 import {getRatings} from "../../Api/ApiRating";
-import {deleteNotifications, getNotifications} from "../../Api/ApiNotification";
+import {deleteAllNotificationsForApp, getNotifications} from "../../Api/ApiNotification";
 import {getAppNotificationsAlert} from "../../Helpers/AlertsHelper";
 import {getLatestRatings} from "../../Api/ApiRatingsHelper";
 import {getLatestReviews, getReviewsMultipleMarkets} from "../../Api/ApiReviewHelper";
@@ -396,13 +396,13 @@ export default function ApplicationDashboard(props) {
 
     function deleteAllAppNotifications() {
         console.log("delete all notifications");
-        deleteNotifications(props.userId, appNotifications.map(n => n.id))
+        deleteAllNotificationsForApp(props.userId, props.appId)
             .then(result => {
                 if (result.ok) {
                     setAppNotifications([]);
                     reloadNotifications();
                 } else {
-                    props.showStatusAlert("Не удалось удалить уведомления","error");
+                    props.showStatusAlert("Не удалось удалить уведомления", "error");
                     console.log("error deleting notifications");
                 }
             });

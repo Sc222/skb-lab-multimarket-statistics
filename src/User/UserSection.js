@@ -34,6 +34,8 @@ import WrongUser from "./WrongUser";
 import StatusAlert from "../Components/StatusAlert";
 //image imports
 import demoProfile from '../images/demo_profile.png';
+import {UIProperties} from "../Config";
+import {WarningRounded} from "@material-ui/icons";
 
 const drawerWidth = 260;
 
@@ -232,13 +234,13 @@ export default function UserSection() {
             setProfilePopoverAnchor(event.currentTarget.parentElement);
     }
 
-    function updateNotifications(notificationId, index) {
+    function updateNotifications(notificationId, appId, index) {
         console.log("delete notification");
         console.log(notifications);
         let newNotifications = update(notifications, {$splice: [[index, 1]]});
         console.log(newNotifications);
         setNotifications(newNotifications);
-        deleteNotification(userId, notificationId).then(result => {
+        deleteNotification(userId, appId, notificationId).then(result => {
             if (!result.ok)
                 showStatusAlert("Не удалось удалить уведомление", "error");
             console.log(result.status);
@@ -324,17 +326,30 @@ export default function UserSection() {
                     }}
                 >
                     <div className={classes.popover}>
+                        {notifications !== undefined && notifications.length > UIProperties.maxNotificationsInPopup &&
+                        <div>
+                            <div className={classes.popoverContainer}>
+                                <div className={classes.flex}>
+                                    <WarningRounded color='primary'/>
+                                    <Typography variant='body1' color='primary'>
+                                        Уведомлений: {notifications.length}
+                                    </Typography>
+                                </div>
+                                <Typography variant='body2' color='textSecondary'>
+                                    Показано уведомлений: {UIProperties.maxNotificationsInPopup}
+                                </Typography>
+                            </div>
+                            <Divider className={classes.fullWidth}/>
+                        </div>
+                        }
                         {
-                            notifications?.map((notification, index) => {
+                            notifications?.slice(0, UIProperties.maxNotificationsInPopup).map((notification, index) => {
                                 return (
                                     <div key={notification.id}>
                                         <div className={classes.popoverContainer}>
-                                            <div className={classes.flex}>
-                                                <Typography variant='body1' color='textPrimary'>
-                                                    {notification.title}
-                                                </Typography>
-                                                {/*notification.isChecked && <NewReleasesRounded color='primary'/>*/}
-                                            </div>
+                                            <Typography variant='body1' color='textPrimary'>
+                                                {notification.title}
+                                            </Typography>
                                             <Typography variant='body2'
                                                         color='textSecondary'>{notification.text}</Typography>
                                             <Typography>
@@ -351,7 +366,7 @@ export default function UserSection() {
                                                     component="button"
                                                     variant="body2"
                                                     color='error'
-                                                    onClick={() => updateNotifications(notification.id, index)}
+                                                    onClick={() => updateNotifications(notification.id, notification.appId, index)}
                                                 >
                                                     Удалить
                                                 </Link>

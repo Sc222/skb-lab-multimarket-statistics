@@ -14,16 +14,16 @@ export async function getNotifications(userId) {
         });
 }
 
-export async function deleteNotification(userId, notificationId) {
-    return fetch(`${ApiRoot}/api/Notification/${userId}?id=${notificationId}`,
+export async function deleteNotification(userId, appId, notificationId) {
+    return fetch(`${ApiRoot}/api/Notification/${userId}/${appId}/${notificationId}`,
         {
             headers: getRequestHeaders(false),
             method: "DELETE"
         });
 }
 
-export async function deleteNotifications(userId, notificationIds) {
-    return fetch(`${ApiRoot}/api/Notification/${userId}?id=${notificationIds.join(",")}`,
+export async function deleteAllNotificationsForApp(userId, appId) {
+    return fetch(`${ApiRoot}/api/Notification/${userId}/${appId}`,
         {
             headers: getRequestHeaders(false),
             method: "DELETE"
@@ -31,7 +31,7 @@ export async function deleteNotifications(userId, notificationIds) {
 }
 
 export async function deleteAllNotifications(userId) {
-    return fetch(`${ApiRoot}/api/Notification/${userId}/all`,
+    return fetch(`${ApiRoot}/api/Notification/${userId}`,
         {
             headers: getRequestHeaders(false),
             method: "DELETE"
