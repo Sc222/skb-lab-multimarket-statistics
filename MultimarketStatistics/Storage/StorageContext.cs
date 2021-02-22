@@ -11,11 +11,15 @@ namespace Storage
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Version> Versions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Locale>()
                 .HasKey(l => new {l.AppId, l.Market});
+
+            modelBuilder.Entity<Version>()
+                .HasKey(v => new {v.AppId, v.Number});
 
             modelBuilder.Entity<App>()
                 .HasOne(a => a.User)
