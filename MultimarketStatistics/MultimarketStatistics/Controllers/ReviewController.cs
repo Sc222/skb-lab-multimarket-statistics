@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using Domain;
 using Domain.Services;
@@ -26,14 +28,26 @@ namespace MultimarketStatistics.Controllers
         [Authorize]
         [HttpGet("{userId}/{appId}")]
         public ActionResult<SearchResult<ReviewContract[]>> GetAppReviews(Guid userId, Guid appId, [FromQuery] int? skip, [FromQuery] int? take,
-            [FromQuery] string market)
+            [FromQuery] string market, [FromQuery(Name = "version")] string[] versions, [FromQuery(Name = "rating")] int[] ratings,
+            [FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
             if (!IsValidAction(userId, appId))
                 return StatusCode(StatusCodes.Status403Forbidden);
 
             var searchResult = reviewService.GetAppReviews(appId, skip, take, market.ToMarketType());
-            return new SearchResult<ReviewContract[]>(searchResult.Total, searchResult.Found,
-                mapper.Map<ReviewContract[]>(searchResult.FoundItem));
+            var result = searchResult.FoundItem.AsEnumerable();
+
+            if (versions.Length != 0)
+                result = result.Where(r => versions.Contains(r.Version));
+            if (ratings.Length != 0)
+                result = result.Where(r => ratings.Contains(r.Rating));
+            if (from != null)
+                result = result.Where(r => r.Date >= from);
+            if (to != null)
+                result = result.Where(r => r.Date <= to);
+
+            return new SearchResult<ReviewContract[]>(searchResult.Total, result.Count(),
+                mapper.Map<ReviewContract[]>(result));
         }
 
         private bool IsValidAction(Guid userId, Guid appId)
