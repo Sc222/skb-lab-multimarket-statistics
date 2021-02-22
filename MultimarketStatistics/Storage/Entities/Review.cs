@@ -22,5 +22,7 @@ namespace Storage.Entities
         public DateTime Date { get; set; }
 
         public string DevResponse { get; set; }
+
+        public bool IsChecked { get; set; }
     }
 }
