@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Storage.Entities
 {
-    public class Version
+    public class Version: GuidIdentifiable
     {
         public string Number { get; set; }
 
