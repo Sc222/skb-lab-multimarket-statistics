@@ -16,7 +16,7 @@ export const MarketStarsTemplate = [1, 2, 3, 4, 5];
 
 export const MarketsLinks = [
     "https://play.google.com/store/apps/details?id=",
-    "https://apps.apple.com/app/id",
+    "https://apps.apple.com/ru/app/id",  /*TODO !!! ADD LOCALES IN APP STORE*/
     "https://appgallery.huawei.com/#/app/"
 ];
 
