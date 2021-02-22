@@ -1,6 +1,6 @@
 //appGalleryId, appStoreId, playMarketId are removed on send
 
-import {AppGalleryIndex, AppStoreIndex, PlayStoreIndex} from "../Helpers/MarketsInfoHelper";
+import {AppGalleryIndex, AppStoreIndex, PlayStoreIndex} from "../../Helpers/MarketsInfoHelper";
 export const AppNameMaxLength=10;
 
 export function getDefaultAppNoIdNoPicNoMarkets(){

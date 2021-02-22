@@ -4,7 +4,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import {Typography} from "@material-ui/core";
 import {Link as RouterLink} from "react-router-dom";
-import {HomepageUrl} from "./App";
+import {HomepageUrl} from "../App";
 import React from "react";
 import {MoodRounded} from "@material-ui/icons";
 

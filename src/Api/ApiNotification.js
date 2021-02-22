@@ -1,4 +1,4 @@
-import {ApiRoot, getRequestHeaders} from "./ApiHelper";
+import {ApiRoot, getRequestHeaders} from "./Helpers/ApiHelper";
 
 export async function getNotifications(userId) {
     return fetch(`${ApiRoot}/api/Notification/${userId}`,

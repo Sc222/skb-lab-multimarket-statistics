@@ -8,7 +8,7 @@ import Divider from "@material-ui/core/Divider";
 
 import {Link as RouterLink} from 'react-router-dom';
 
-import FormSectionStyles from "../Styles/FormSectionStyles";
+import FormSectionStyles from "../../Styles/FormSectionStyles";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import {
@@ -18,12 +18,12 @@ import {
     getUsernameError,
     parseEmailServerError,
     parseUsernameServerError
-} from "../Helpers/ErrorHelper";
-import {createUserForCreate, getDefaultLoginCredentials, getDefaultUserNoId} from "../Api/ApiUserHelper";
+} from "../../Helpers/ErrorHelper";
+import {createUserForCreate, getDefaultLoginCredentials, getDefaultUserNoId} from "../../Api/Helpers/ApiUserHelper";
 import update from "immutability-helper";
-import {authenticateUser, createUser} from "../Api/ApiUser";
-import {HomepageUrl} from "../App";
-import {setCookieUsername, setCookieToken, setCookieUserId} from "../Helpers/CookieHelper";
+import {authenticateUser, createUser} from "../../Api/ApiUser";
+import {HomepageUrl} from "../../App";
+import {setCookieUsername, setCookieToken, setCookieUserId} from "../../Helpers/CookieHelper";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 

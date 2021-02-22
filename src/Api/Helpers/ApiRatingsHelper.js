@@ -1,7 +1,7 @@
 //array of marketIndexes where app is available
-import {AppGalleryIndex, AppStoreIndex, MarketRatingPrecision, PlayStoreIndex} from "../Helpers/MarketsInfoHelper";
+import {AppGalleryIndex, AppStoreIndex, MarketRatingPrecision, PlayStoreIndex} from "../../Helpers/MarketsInfoHelper";
 import {getAppMarketsArray} from "./ApiAppHelper";
-import {formatDateDefault} from "../Helpers/UtilsHelper";
+import {formatDateDefault} from "../../Helpers/UtilsHelper";
 
 //  dict of {date:"",rating:""}
 export function getLatestRatings(ratings,app){

@@ -5,35 +5,35 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Chart from '../../Components/Chart';
+import Chart from '../../../Components/Chart';
 
 
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
-import {getChipChartColor, MarketRatingPrecision, MarketsInfo} from "../../Helpers/MarketsInfoHelper";
-import MarketChipStyles from "../../Styles/MarketChipStyles";
+import {getChipChartColor, MarketRatingPrecision, MarketsInfo} from "../../../Helpers/MarketsInfoHelper";
+import MarketChipStyles from "../../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
+import FormSectionStyles from "../../../Styles/FormSectionStyles";
 import update from "immutability-helper";
-import {AppNameMaxLength, getAppMarketsArray, hasMarkets} from "../../Api/ApiAppHelper";
+import {AppNameMaxLength, getAppMarketsArray, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
 
 import DateFnsUtils from '@date-io/date-fns';
 import {format} from 'date-fns';
 
 import {KeyboardDateTimePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import Button from "@material-ui/core/Button";
-import {getRatings} from "../../Api/ApiRating";
+import {getRatings} from "../../../Api/ApiRating";
 import {HomeRounded, LoopRounded, NavigateNextRounded, SettingsRounded, StarsRounded} from "@material-ui/icons";
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
-import {HomepageUrl} from "../../App";
+import {HomepageUrl} from "../../../App";
 import Hidden from "@material-ui/core/Hidden";
-import AppNoMarketsCard from "../../Components/AppNoMarketsCard";
+import AppNoMarketsCard from "../../../Components/AppNoMarketsCard";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
-import defaultAppIcon from "../../images/default_app_icon.png";
+import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
+import defaultAppIcon from "../../../images/default_app_icon.png";
 
 const drawerWidth = 260;
 

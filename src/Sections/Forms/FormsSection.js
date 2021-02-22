@@ -6,14 +6,14 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import {Redirect, Route, Switch as RouteSwitch, useLocation} from 'react-router-dom';
-import {HomepageUrl} from "../App";
-import FormSectionStyles from "../Styles/FormSectionStyles";
+import {HomepageUrl} from "../../App";
+import FormSectionStyles from "../../Styles/FormSectionStyles";
 import Login from "./Login";
 import Register from "./Register";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
-export default function FormSections() {
+export default function FormsSection() {
     const classes = useStyles();
 
     const urlQueryParams = new URLSearchParams(useLocation().search);

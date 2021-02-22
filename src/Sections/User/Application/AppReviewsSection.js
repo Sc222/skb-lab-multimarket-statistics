@@ -16,14 +16,14 @@ import {
     MarketsInfo,
     MarketsRequestKeys,
     MarketStarsTemplate
-} from "../../Helpers/MarketsInfoHelper";
+} from "../../../Helpers/MarketsInfoHelper";
 import Container from "@material-ui/core/Container";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
-import {AppNameMaxLength, getAppMarketsArray, hasMarkets} from "../../Api/ApiAppHelper";
+import FormSectionStyles from "../../../Styles/FormSectionStyles";
+import {AppNameMaxLength, getAppMarketsArray, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
 import {format} from 'date-fns';
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
-import {getReviews} from "../../Api/ApiReview";
+import {getReviews} from "../../../Api/ApiReview";
 import TablePagination from "@material-ui/core/TablePagination";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -42,14 +42,14 @@ import {
 import green from "@material-ui/core/colors/green";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
-import {HomepageUrl} from "../../App";
+import {HomepageUrl} from "../../../App";
 import Pagination from "@material-ui/lab/Pagination";
-import {scrollToTop} from "../../Helpers/UiHelper";
+import {scrollToTop} from "../../../Helpers/UiHelper";
 import Hidden from "@material-ui/core/Hidden";
-import AppNoMarketsCard from "../../Components/AppNoMarketsCard";
+import AppNoMarketsCard from "../../../Components/AppNoMarketsCard";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
-import defaultAppIcon from "../../images/default_app_icon.png";
+import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
+import defaultAppIcon from "../../../images/default_app_icon.png";
 
 
 const drawerWidth = 260;

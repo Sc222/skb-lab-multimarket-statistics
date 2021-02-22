@@ -8,8 +8,8 @@ import Divider from "@material-ui/core/Divider";
 
 import {Link as RouterLink} from 'react-router-dom';
 
-import FormSectionStyles from "../Styles/FormSectionStyles";
-import {HomepageUrl} from "../App";
+import FormSectionStyles from "../../Styles/FormSectionStyles";
+import {HomepageUrl} from "../../App";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 

@@ -10,10 +10,10 @@ import {WarningRounded} from "@material-ui/icons";
 import Avatar from "@material-ui/core/Avatar";
 import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useLocation, useParams} from 'react-router-dom';
 import {fade} from "@material-ui/core";
-import {HomepageUrl} from "../App";
-import Applications from "./Applications";
-import ApplicationSection from "./Application/ApplicationSection";
-import NewApplication from "./NewApplication";
+import {HomepageUrl} from "../../App";
+import Apps from "./Apps";
+import AppSection from "./Application/AppSection";
+import NewApplication from "./NewApp";
 import Popover from "@material-ui/core/Popover";
 import Divider from "@material-ui/core/Divider";
 import Box from "@material-ui/core/Box";
@@ -25,18 +25,18 @@ import {
     deleteAllNotifications as apiDeleteAllNotifications,
     deleteNotification,
     getNotifications
-} from "../Api/ApiNotification";
+} from "../../Api/ApiNotification";
 import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
-import {getUser} from "../Api/ApiUser";
-import {getDefaultUser} from "../Api/ApiUserHelper";
-import {deleteAllSessionCookies, getCookieToken, getCookieUserId, isCookieTokenExpired} from "../Helpers/CookieHelper";
+import {getUser} from "../../Api/ApiUser";
+import {getDefaultUser} from "../../Api/Helpers/ApiUserHelper";
+import {deleteAllSessionCookies, getCookieToken, getCookieUserId, isCookieTokenExpired} from "../../Helpers/CookieHelper";
 import WrongUser from "./WrongUser";
-import StatusAlert from "../Components/StatusAlert";
+import StatusAlert from "../../Components/StatusAlert";
 //image imports
-import demoProfile from '../images/demo_profile.png';
-import {UIProperties} from "../Config";
-import {ErrorUnauthorized} from "../Api/ApiHelper";
+import demoProfile from '../../images/demo_profile.png';
+import {UIProperties} from "../../Config";
+import {ErrorUnauthorized} from "../../Api/Helpers/ApiHelper";
 
 const drawerWidth = 260;
 
@@ -488,7 +488,7 @@ export default function UserSection() {
                 <main className={classes.content}>
                     <RouteSwitch>
                         <Route exact path={`${HomepageUrl}/user/:userId/apps`}>
-                            <Applications userId={userId}/>
+                            <Apps userId={userId}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/new-app`}>
                             <NewApplication updateIsTokenExpired={updateIsTokenExpired} userId={userId} showStatusAlert={showStatusAlert}/>
@@ -497,8 +497,8 @@ export default function UserSection() {
                             <Profile updateIsTokenExpired={updateIsTokenExpired} userId={userId} updatePopoverUser={setUser} showStatusAlert={showStatusAlert}/>
                         </Route>
                         <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
-                            <ApplicationSection updateIsTokenExpired={updateIsTokenExpired} userId={userId} showStatusAlert={showStatusAlert}
-                                                updateUserNotifications={updateUserNotifications}/>
+                            <AppSection updateIsTokenExpired={updateIsTokenExpired} userId={userId} showStatusAlert={showStatusAlert}
+                                        updateUserNotifications={updateUserNotifications}/>
                         </Route>
 
                         <Redirect to={`${HomepageUrl}/user/${userId}/apps`}/>

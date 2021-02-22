@@ -1,4 +1,4 @@
-import {ApiRoot, getRequestHeaders} from "./ApiHelper";
+import {ApiRoot, getRequestHeaders} from "./Helpers/ApiHelper";
 
 export async function getReviews(userId, appId, skip, take, marketKey) {
     return fetch(`${ApiRoot}/api/Review/${userId}/${appId}?skip=${skip}&take=${take}&market=${marketKey}`,

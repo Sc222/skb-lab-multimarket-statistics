@@ -1,4 +1,4 @@
-import {ApiRoot, getRequestHeaders, Success} from "./ApiHelper";
+import {ApiRoot, getRequestHeaders, Success} from "./Helpers/ApiHelper";
 
 export async function createApp(userId, app) {
     return fetch(`${ApiRoot}/api/App/create/${userId}`,

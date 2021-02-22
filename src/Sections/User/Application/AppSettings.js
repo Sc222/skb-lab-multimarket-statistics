@@ -18,15 +18,15 @@ import TextField from "@material-ui/core/TextField";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import update from "immutability-helper";
 import {Redirect, Route, Switch as RouteSwitch} from "react-router-dom";
-import MarketChipStyles from "../../Styles/MarketChipStyles";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
+import MarketChipStyles from "../../../Styles/MarketChipStyles";
+import FormSectionStyles from "../../../Styles/FormSectionStyles";
 import {
     AppNameMaxLength,
     createAppForUpdate,
     getDefaultAppNoIdNoPic,
     getMarketIdByStoreIndex
-} from "../../Api/ApiAppHelper";
-import {HomepageUrl} from "../../App";
+} from "../../../Api/Helpers/ApiAppHelper";
+import {HomepageUrl} from "../../../App";
 import {
     AppGalleryIndex,
     AppStoreIndex,
@@ -35,13 +35,13 @@ import {
     MarketsIndexes,
     MarketsInfo,
     PlayStoreIndex
-} from "../../Helpers/MarketsInfoHelper";
-import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../../Helpers/ErrorHelper";
-import {deleteApp, updateApp} from "../../Api/ApiApp";
-import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
-import DeleteCardAndConfirmDialog from "../../Components/DeleteCardAndConfirmDialog";
+} from "../../../Helpers/MarketsInfoHelper";
+import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../../../Helpers/ErrorHelper";
+import {deleteApp, updateApp} from "../../../Api/ApiApp";
+import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
+import DeleteCardAndConfirmDialog from "../../../Components/DeleteCardAndConfirmDialog";
 //image imports
-import defaultAppIcon from "../../images/default_app_icon.png";
+import defaultAppIcon from "../../../images/default_app_icon.png";
 
 const drawerWidth = 260;
 
@@ -324,7 +324,7 @@ const useStyles = makeStyles((theme) => ({
 const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
-export default function ApplicationSettings(props) {
+export default function AppSettings(props) {
     const userId = props.userId;
     const appId = props.appId;
 

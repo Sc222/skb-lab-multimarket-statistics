@@ -5,12 +5,12 @@ import Paper from "@material-ui/core/Paper";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import FormSectionStyles from "../Styles/FormSectionStyles";
+import FormSectionStyles from "../../Styles/FormSectionStyles";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import {HomepageUrl} from "../App";
-import {getCookieUserId} from "../Helpers/CookieHelper";
+import {HomepageUrl} from "../../App";
+import {getCookieUserId} from "../../Helpers/CookieHelper";
 import {Link as RouterLink} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));

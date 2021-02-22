@@ -26,30 +26,30 @@ import {
     StarBorderRounded,
     StarRounded
 } from "@material-ui/icons";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
-import MarketChipStyles from "../../Styles/MarketChipStyles";
+import FormSectionStyles from "../../../Styles/FormSectionStyles";
+import MarketChipStyles from "../../../Styles/MarketChipStyles";
 import {Link as RouterLink} from "react-router-dom";
 import clsx from "clsx";
-import {HomepageUrl} from "../../App";
-import {AppNameMaxLength, getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../Api/ApiAppHelper";
-import {getRatings} from "../../Api/ApiRating";
-import {deleteAllNotificationsForApp, getNotifications} from "../../Api/ApiNotification";
-import {getAppNotificationsAlert} from "../../Helpers/AlertsHelper";
-import {getLatestRatings} from "../../Api/ApiRatingsHelper";
-import {getLatestReviews, getReviewsMultipleMarkets} from "../../Api/ApiReviewHelper";
-import {filterNotificationsByApp} from "../../Api/ApiNotificationHelper";
-import AppNoMarketsCard from "../../Components/AppNoMarketsCard";
-import AdaptiveBreadcrumbItem from "../../Components/AdaptiveBreadcrumbItem";
-import {formatDateShort} from "../../Helpers/UtilsHelper";
+import {HomepageUrl} from "../../../App";
+import {AppNameMaxLength, getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
+import {getRatings} from "../../../Api/ApiRating";
+import {deleteAllNotificationsForApp, getNotifications} from "../../../Api/ApiNotification";
+import {getAppNotificationsAlert} from "../../../Helpers/AlertsHelper";
+import {getLatestRatings} from "../../../Api/Helpers/ApiRatingsHelper";
+import {getLatestReviews, getReviewsMultipleMarkets} from "../../../Api/Helpers/ApiReviewHelper";
+import {filterNotificationsByApp} from "../../../Api/Helpers/ApiNotificationHelper";
+import AppNoMarketsCard from "../../../Components/AppNoMarketsCard";
+import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
+import {formatDateShort} from "../../../Helpers/UtilsHelper";
 import {
     createLinkFromId,
     getLatestRatingsStartCheckDate,
     MarketsIndexes,
     MarketsInfo,
     MarketStarsTemplate
-} from "../../Helpers/MarketsInfoHelper";
+} from "../../../Helpers/MarketsInfoHelper";
 //images imports
-import defaultAppIcon from "../../images/default_app_icon.png";
+import defaultAppIcon from "../../../images/default_app_icon.png";
 
 const drawerWidth = 260;
 
@@ -353,7 +353,7 @@ const useStyles = makeStyles((theme) => ({
 const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
-export default function ApplicationDashboard(props) {
+export default function AppDashboard(props) {
 
     const theme = useTheme();
     const classes = useStyles();

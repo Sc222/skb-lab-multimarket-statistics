@@ -1,4 +1,4 @@
-import {getCookieToken} from "../Helpers/CookieHelper";
+import {getCookieToken} from "../../Helpers/CookieHelper";
 
 export const ApiRoot="http://localhost:5000";
 export const HttpStatusCodeLength = 3;

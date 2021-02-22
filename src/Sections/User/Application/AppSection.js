@@ -2,13 +2,13 @@ import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {Redirect, Route, Switch as RouteSwitch, useParams} from "react-router-dom";
-import ApplicationDashboard from "./ApplicationDashboard";
-import ApplicationSettings from "./ApplicationSettings";
+import AppDashboard from "./AppDashboard";
+import AppSettings from "./AppSettings";
 import AppRatingsSection from "./AppRatingsSection";
 import AppReviewsSection from "./AppReviewsSection";
-import {HomepageUrl} from "../../App";
-import {getApp} from "../../Api/ApiApp";
-import {NoContent} from "../../Api/ApiHelper";
+import {HomepageUrl} from "../../../App";
+import {getApp} from "../../../Api/ApiApp";
+import {NoContent} from "../../../Api/Helpers/ApiHelper";
 
 const drawerWidth = 260;
 const useStyles = makeStyles((theme) => ({
@@ -99,7 +99,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function ApplicationSection(props) {
+export default function AppSection(props) {
     const classes = useStyles();
 
     let {appId} = useParams();
@@ -137,10 +137,10 @@ export default function ApplicationSection(props) {
                     <RouteSwitch>
                         {!appExists && <Redirect to={`${HomepageUrl}/user/${userId}/apps/`}/>}
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/`}>
-                            <ApplicationDashboard userId={userId} app={app} appId={appId}
-                                                  updateIsTokenExpired={props.updateIsTokenExpired}
-                                                  updateUserNotifications={props.updateUserNotifications}
-                                                  showStatusAlert={props.showStatusAlert}/>
+                            <AppDashboard userId={userId} app={app} appId={appId}
+                                          updateIsTokenExpired={props.updateIsTokenExpired}
+                                          updateUserNotifications={props.updateUserNotifications}
+                                          showStatusAlert={props.showStatusAlert}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/ratings`}>
                             <AppRatingsSection userId={userId} app={app} appId={appId}
@@ -153,11 +153,11 @@ export default function ApplicationSection(props) {
                                                showStatusAlert={props.showStatusAlert}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
-                            <ApplicationSettings userId={userId} app={app} appId={appId}
-                                                 showStatusAlert={props.showStatusAlert}
-                                                 updateAppInSection={updateAppInSection}
-                                                 updateIsTokenExpired={props.updateIsTokenExpired}
-                                                 updateUserNotifications={props.updateUserNotifications}/>
+                            <AppSettings userId={userId} app={app} appId={appId}
+                                         showStatusAlert={props.showStatusAlert}
+                                         updateAppInSection={updateAppInSection}
+                                         updateIsTokenExpired={props.updateIsTokenExpired}
+                                         updateUserNotifications={props.updateUserNotifications}/>
                         </Route>
                         <Redirect to={`${HomepageUrl}/user/${userId}/app/${appId}/`}/>
                     </RouteSwitch>

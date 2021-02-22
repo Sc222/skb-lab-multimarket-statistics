@@ -21,19 +21,19 @@ import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import TextField from "@material-ui/core/TextField";
 import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
-import FormSectionStyles from "../Styles/FormSectionStyles";
-import MarketChipStyles from "../Styles/MarketChipStyles";
+import FormSectionStyles from "../../Styles/FormSectionStyles";
+import MarketChipStyles from "../../Styles/MarketChipStyles";
 import {
     AppGalleryIndex,
     AppStoreIndex,
     getAppIdFromUrl,
     MarketsInfo,
     PlayStoreIndex
-} from "../Helpers/MarketsInfoHelper";
-import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../Helpers/ErrorHelper";
-import {createApp} from "../Api/ApiApp";
-import {createAppForCreate, getDefaultAppNoIdNoPic} from "../Api/ApiAppHelper";
-import {HomepageUrl} from "../App";
+} from "../../Helpers/MarketsInfoHelper";
+import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../../Helpers/ErrorHelper";
+import {createApp} from "../../Api/ApiApp";
+import {createAppForCreate, getDefaultAppNoIdNoPic} from "../../Api/Helpers/ApiAppHelper";
+import {HomepageUrl} from "../../App";
 
 const drawerWidth = 260;
 

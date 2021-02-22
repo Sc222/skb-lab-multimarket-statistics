@@ -1,6 +1,6 @@
-import {MarketsRequestKeys} from "../Helpers/MarketsInfoHelper";
-import {getReviews} from "./ApiReview";
-import {formatDateDefault} from "../Helpers/UtilsHelper";
+import {MarketsRequestKeys} from "../../Helpers/MarketsInfoHelper";
+import {getReviews} from "../ApiReview";
+import {formatDateDefault} from "../../Helpers/UtilsHelper";
 
 export function getReviewsMultipleMarkets(userId, appId, skip, take, markets) {
     return markets.map(marketIndex => getReviews(userId, appId, skip, take, MarketsRequestKeys[marketIndex]));

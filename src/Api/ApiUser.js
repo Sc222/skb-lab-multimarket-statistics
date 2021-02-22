@@ -1,4 +1,4 @@
-import {ApiRoot, ErrorBadRequest, ErrorConflict, getRequestHeaders, Success} from "./ApiHelper";
+import {ApiRoot, ErrorBadRequest, ErrorConflict, getRequestHeaders, Success} from "./Helpers/ApiHelper";
 import {parseServerMailAndUsernameErrors} from "../Helpers/ErrorHelper";
 
 export async function createUser(user) {

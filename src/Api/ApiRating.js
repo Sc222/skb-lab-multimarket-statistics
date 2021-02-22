@@ -1,4 +1,4 @@
-import {ApiRoot, getRequestHeaders} from "./ApiHelper";
+import {ApiRoot, getRequestHeaders} from "./Helpers/ApiHelper";
 
 export async function getRatings(userId,appId, dateFrom, dateTo) {
     console.log(dateFrom);

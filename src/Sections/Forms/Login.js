@@ -6,13 +6,13 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
 import {Link as RouterLink} from 'react-router-dom';
-import FormSectionStyles from "../Styles/FormSectionStyles";
-import {getDefaultLoginCredentials} from "../Api/ApiUserHelper";
-import {authenticateUser} from "../Api/ApiUser";
+import FormSectionStyles from "../../Styles/FormSectionStyles";
+import {getDefaultLoginCredentials} from "../../Api/Helpers/ApiUserHelper";
+import {authenticateUser} from "../../Api/ApiUser";
 import update from "immutability-helper";
-import {getPasswordError, getUsernameError, parseLoginWrongCredentialsServerError} from "../Helpers/ErrorHelper";
-import {HomepageUrl} from "../App";
-import {setCookieUsername, setCookieToken, setCookieUserId, getCookieUsername} from "../Helpers/CookieHelper";
+import {getPasswordError, getUsernameError, parseLoginWrongCredentialsServerError} from "../../Helpers/ErrorHelper";
+import {HomepageUrl} from "../../App";
+import {setCookieUsername, setCookieToken, setCookieUserId, getCookieUsername} from "../../Helpers/CookieHelper";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 

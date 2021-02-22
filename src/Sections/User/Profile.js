@@ -10,7 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import update from "immutability-helper";
 
 //image imports
-import demoProfile from '../images/demo_profile.png';
+import demoProfile from '../../images/demo_profile.png';
 
 import {fade} from "@material-ui/core";
 import {
@@ -24,14 +24,14 @@ import {
 import Fab from "@material-ui/core/Fab";
 import Divider from "@material-ui/core/Divider";
 import Hidden from "@material-ui/core/Hidden";
-import FormSectionStyles from "../Styles/FormSectionStyles";
+import FormSectionStyles from "../../Styles/FormSectionStyles";
 import TextField from "@material-ui/core/TextField";
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import {deleteUser, getUser, updateUser} from "../Api/ApiUser";
-import {createUserForUpdate, getDefaultFieldsStateUser, getDefaultUser} from "../Api/ApiUserHelper";
+import {deleteUser, getUser, updateUser} from "../../Api/ApiUser";
+import {createUserForUpdate, getDefaultFieldsStateUser, getDefaultUser} from "../../Api/Helpers/ApiUserHelper";
 import {
     getCurrentPasswordError,
     getProfileEmailError,
@@ -41,15 +41,15 @@ import {
     parseCurrentPasswordServerError,
     parseEmailServerError,
     parseUsernameServerError
-} from "../Helpers/ErrorHelper";
+} from "../../Helpers/ErrorHelper";
 import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch} from "react-router-dom";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import IconButton from "@material-ui/core/IconButton";
-import {HomepageUrl} from "../App";
+import {HomepageUrl} from "../../App";
 import Link from "@material-ui/core/Link";
-import DeleteCardAndConfirmDialog from "../Components/DeleteCardAndConfirmDialog";
-import {deleteAllSessionCookies} from "../Helpers/CookieHelper";
-import {ErrorInternalServerErr, HttpStatusCodeLength} from "../Api/ApiHelper";
+import DeleteCardAndConfirmDialog from "../../Components/DeleteCardAndConfirmDialog";
+import {deleteAllSessionCookies} from "../../Helpers/CookieHelper";
+import {ErrorInternalServerErr, HttpStatusCodeLength} from "../../Api/Helpers/ApiHelper";
 
 const useFormStyles = makeStyles((theme) => FormSectionStyles(theme));
 

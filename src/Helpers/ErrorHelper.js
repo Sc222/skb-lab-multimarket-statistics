@@ -4,7 +4,7 @@ import {
     ErrorNotUniqueEmail,
     ErrorNotUniqueUsername,
     ErrorNotUniqueUsernameAndEmail
-} from "../Api/ApiHelper";
+} from "../Api/Helpers/ApiHelper";
 import {MarketsInfo} from "./MarketsInfoHelper";
 
 export function getSlackCredentialsError(areErrorsVisible, enableNotifications, slackCredentials) {

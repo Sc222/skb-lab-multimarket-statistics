@@ -8,7 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 
 //image imports
-import defaultAppIcon from "../images/default_app_icon.png";
+import defaultAppIcon from "../../images/default_app_icon.png";
 
 import {fade} from "@material-ui/core";
 import {AddRounded, SearchRounded} from "@material-ui/icons";
@@ -20,12 +20,12 @@ import Avatar from "@material-ui/core/Avatar";
 import Hidden from "@material-ui/core/Hidden";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import {Link as RouterLink} from "react-router-dom";
-import MarketChipStyles from "../Styles/MarketChipStyles";
-import {createLinkFromId, MarketsIndexes, MarketsInfo} from "../Helpers/MarketsInfoHelper";
-import {getApps} from "../Api/ApiApp";
-import {getMarketIdByStoreIndex} from "../Api/ApiAppHelper";
-import {escapeRegex} from "../Helpers/UtilsHelper";
-import {HomepageUrl} from "../App";
+import MarketChipStyles from "../../Styles/MarketChipStyles";
+import {createLinkFromId, MarketsIndexes, MarketsInfo} from "../../Helpers/MarketsInfoHelper";
+import {getApps} from "../../Api/ApiApp";
+import {getMarketIdByStoreIndex} from "../../Api/Helpers/ApiAppHelper";
+import {escapeRegex} from "../../Helpers/UtilsHelper";
+import {HomepageUrl} from "../../App";
 import Link from "@material-ui/core/Link";
 
 const drawerWidth = 260;
@@ -222,7 +222,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
-export default function Applications(props) {
+export default function Apps(props) {
     let userId = props.userId;
     const [apps, setApps] = React.useState(undefined);
     const [appsNameFilter, setAppsNameFilter] = React.useState('');
