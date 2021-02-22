@@ -91,7 +91,7 @@ namespace Domain.Services
             return reviews.Select(r => new Version
                 {
                     AppId = r.App.Id,
-                    Number = r.Version,
+                    Number = string.IsNullOrEmpty(r.Version) ? null : r.Version,
                     Market = r.Market
                 })
                 .DistinctBy(v => new  {v.Number, v.Market})
