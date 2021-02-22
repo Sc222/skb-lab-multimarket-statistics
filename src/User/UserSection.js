@@ -6,8 +6,9 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import {WarningRounded} from "@material-ui/icons";
 import Avatar from "@material-ui/core/Avatar";
-import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useParams} from 'react-router-dom';
+import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useParams, useLocation} from 'react-router-dom';
 import {fade} from "@material-ui/core";
 import {HomepageUrl} from "../App";
 import Applications from "./Applications";
@@ -29,13 +30,12 @@ import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
 import {getUser} from "../Api/ApiUser";
 import {getDefaultUser} from "../Api/ApiUserHelper";
-import {deleteAllSessionCookies, getCookieToken, getCookieUserId,} from "../Helpers/CookieHelper";
+import {deleteAllSessionCookies, getCookieToken, getCookieUserId} from "../Helpers/CookieHelper";
 import WrongUser from "./WrongUser";
 import StatusAlert from "../Components/StatusAlert";
 //image imports
 import demoProfile from '../images/demo_profile.png';
 import {UIProperties} from "../Config";
-import {WarningRounded} from "@material-ui/icons";
 
 const drawerWidth = 260;
 
@@ -198,7 +198,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserSection() {
     let {userId} = useParams();
-    const classes = useStyles();
+
+    let currentUrl = useLocation(); //used to redirect when token cookie expires
+
+    const classes = useStyles()
 
     const statusAlert = useRef();
 
@@ -279,12 +282,16 @@ export default function UserSection() {
 
     return (
         <RouteSwitch>
-            {/*redirect to login if no token*/}
-            {getCookieToken() === "" &&
-            <Redirect to={`${HomepageUrl}/login}`}/>}
+            {console.log("WE ARE IN USER SECTION")}
+
+            {/*redirect to login if userId exists but no token*/}
+            {getCookieToken() === "" && getCookieUserId() !== "" &&
+            <Redirect to={{pathname:`${HomepageUrl}/login`,search: `?referer=${currentUrl.pathname}`}}/>}
+
+            {getCookieToken() === "" && getCookieUserId() !== "" &&console.log("redirect to:"+currentUrl.pathname)}
 
             {/*redirect to current user if wrong user*/}
-            {getCookieToken() !== "" && getCookieUserId() !== userId &&
+            {getCookieToken() !== "" && getCookieUserId()!=="" && getCookieUserId() !== userId &&
             <WrongUser/>}
 
             <div className={classes.root}>

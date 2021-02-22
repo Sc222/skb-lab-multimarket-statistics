@@ -23,7 +23,7 @@ import {createUserForCreate, getDefaultLoginCredentials, getDefaultUserNoId} fro
 import update from "immutability-helper";
 import {authenticateUser, createUser} from "../Api/ApiUser";
 import {HomepageUrl} from "../App";
-import {setCookieToken, setCookieUserId} from "../Helpers/CookieHelper";
+import {setCookieUsername, setCookieToken, setCookieUserId} from "../Helpers/CookieHelper";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -53,23 +53,23 @@ export default function Register(props) {
                 .then(result => {
                     console.log("successfully created user with id: " + result);
                     const loginCredentials = getDefaultLoginCredentials();
-                    loginCredentials.username=newUser.username;
-                    loginCredentials.password=newUser.password;
+                    loginCredentials.username = newUser.username;
+                    loginCredentials.password = newUser.password;
                     return loginCredentials;
                 })
-                .then(user=> {
-                    const loginCredentials = getDefaultLoginCredentials();
-                    loginCredentials.username=user.username;
-                    loginCredentials.password=user.password;
+                .then(user => {
+                        const loginCredentials = getDefaultLoginCredentials();
+                        loginCredentials.username = user.username;
+                        loginCredentials.password = user.password;
                         authenticateUser(loginCredentials).then(result => {
                             setCookieUserId(result.user.id);
                             setCookieToken(result.token);
+                            setCookieUsername(result.user.username);
 
                             //set user and redirect
                             props.setLoggedInUser(result.user);
                         })
                     }
-
                 )
                 .catch(err => {
                     console.log(err.message);

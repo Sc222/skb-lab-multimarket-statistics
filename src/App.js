@@ -19,12 +19,13 @@ export default function App() {
                 <RouteSwitch>
                     {/* TODO LANDING PAGE WITH LOGIN FORM ON TOP (LIKE GITHUB)*/}
                     <Route exact path={`${HomepageUrl}/`} component={Homepage}/>
+
                     <Route path={`${HomepageUrl}/user/:userId/`} component={UserSection}/>
 
                     {getCookieToken() !== "" && getCookieUserId() !== "" &&
                     <Redirect to={`${HomepageUrl}/user/${getCookieUserId()}/apps`}/>}
 
-                    <Route path={`${HomepageUrl}/(login|register)/`} component={FormSections}/>
+                    <Route path={`${HomepageUrl}/(login|register)`} component={FormSections}/>
 
                     {/*TODO REDIRECT TO HOME IF NOT LOGGED IN AND REDIRECT TO DASHBOARD IF LOGGED IN*/}
                     {/*TODO REDIRECT TO 404 NOT FOUND PAGE*/}

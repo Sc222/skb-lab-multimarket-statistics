@@ -5,20 +5,14 @@ import Grid from '@material-ui/core/Grid';
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
-
 import {Link as RouterLink} from 'react-router-dom';
-
 import FormSectionStyles from "../Styles/FormSectionStyles";
-import {getDefaultLoginCredentials, getDefaultUser} from "../Api/ApiUserHelper";
+import {getDefaultLoginCredentials} from "../Api/ApiUserHelper";
 import {authenticateUser} from "../Api/ApiUser";
 import update from "immutability-helper";
-import {
-    getPasswordError,
-    getUsernameError,
-    parseLoginWrongCredentialsServerError
-} from "../Helpers/ErrorHelper";
+import {getPasswordError, getUsernameError, parseLoginWrongCredentialsServerError} from "../Helpers/ErrorHelper";
 import {HomepageUrl} from "../App";
-import {setCookieToken, setCookieUserId} from "../Helpers/CookieHelper";
+import {setCookieUsername, setCookieToken, setCookieUserId, getCookieUsername} from "../Helpers/CookieHelper";
 
 const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
@@ -26,8 +20,10 @@ export default function Login(props) {
     const classes = useStyles();
 
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
-    const [loginCredentials, setLoginCredentials] = React.useState(getDefaultLoginCredentials());
     const [wrongCredentials, setWrongCredentials] = React.useState(false);
+    const startCredentials = getDefaultLoginCredentials();
+    startCredentials.username=getCookieUsername();
+    const [loginCredentials, setLoginCredentials] = React.useState(startCredentials);
 
     function hasErrors(areErrorsVisible, wrongCredentials) {
         return !wrongCredentials &&
@@ -42,18 +38,19 @@ export default function Login(props) {
 
         if (!hasErrors(true, false)) {
 
-        authenticateUser(loginCredentials)
-            .then(result => {
-                setCookieUserId(result.user.id);
-                setCookieToken(result.token);
+            authenticateUser(loginCredentials)
+                .then(result => {
+                    setCookieUserId(result.user.id);
+                    setCookieToken(result.token, new Date(result.expires));
+                    setCookieUsername(result.user.username);
 
-                //set user and redirect
-                props.setLoggedInUser(result.user);
-            })
-            .catch(err => {
-                console.log(err.message);
-                setWrongCredentials(parseLoginWrongCredentialsServerError(err.message));
-            });
+                    //set user and redirect
+                    props.setLoggedInUser(result.user);
+                })
+                .catch(err => {
+                    console.log(err.message);
+                    setWrongCredentials(parseLoginWrongCredentialsServerError(err.message));
+                });
         }
     }
 

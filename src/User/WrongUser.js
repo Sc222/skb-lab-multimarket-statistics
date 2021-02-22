@@ -44,8 +44,22 @@ export default function WrongUser() {
                             <Divider className={classes.fullWidthDivider}/>
                             <div className={classes.container}>
                                 <Grid spacing={2} container className={classes.buttonGrid}>
-                                    <Grid item>
+                                    <Grid item xs={4}>
                                         <Button
+                                            fullWidth
+                                            size='medium'
+                                            disableElevation
+                                            variant="outlined"
+                                            color="primary"
+                                            component={RouterLink}
+                                            to={`${HomepageUrl}/`}
+                                        >
+                                            Главная
+                                        </Button>
+                                    </Grid>
+                                    <Grid item xs={8}>
+                                        <Button
+                                            fullWidth
                                             size='medium'
                                             disableElevation
                                             variant="contained"

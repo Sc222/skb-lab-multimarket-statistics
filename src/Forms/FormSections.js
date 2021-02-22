@@ -5,9 +5,7 @@ import Paper from "@material-ui/core/Paper";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-
-import {Redirect, Route, Switch as RouteSwitch} from 'react-router-dom';
-
+import {Redirect, Route, Switch as RouteSwitch, useLocation} from 'react-router-dom';
 import {HomepageUrl} from "../App";
 import FormSectionStyles from "../Styles/FormSectionStyles";
 import Login from "./Login";
@@ -17,6 +15,9 @@ const useStyles = makeStyles((theme) => FormSectionStyles(theme));
 
 export default function FormSections() {
     const classes = useStyles();
+
+    const urlQueryParams = new URLSearchParams(useLocation().search);
+    const referer = urlQueryParams.get("referer");
 
     const [user, setUser] = React.useState(undefined);
 
@@ -40,7 +41,9 @@ export default function FormSections() {
                     <div className={classes.appBarSpacer}/>
                     <Paper elevation={2} className={classes.paper}>
                         <RouteSwitch>
-                            {user && <Redirect to={`${HomepageUrl}/user/${user.id}/apps`}/>}
+                            {console.log("WE ARE IN FORM SECTIONS")}
+                            {user && console.log("redirect to apps")}
+                            {user && <Redirect to={referer? referer : `${HomepageUrl}/user/${user.id}/apps`}/>}
 
                             <Route exact path={`${HomepageUrl}/login`}>
                                 <Login setLoggedInUser={setLoggedInUser}/>
