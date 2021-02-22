@@ -389,30 +389,27 @@ export default function AppReviewsSection(props) {
     };
 
     useEffect(() => {
-
         if (props.app) {
             const defaultMarketKey = getFirstExistingMarketRequestKey(props.app);
-
             if (defaultMarketKey)
                 setReviewsSelectedMarket(defaultMarketKey);
-
             getReviews(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, defaultMarketKey)
                 .then(reviews => setReviews(reviews))
                 .catch(err => console.log(err.message));
         }
     }, [props.app]);
 
-
     function loadNextReviewsPage(page, perPage, selectedMarket) {
         getReviews(props.userId, props.app.id, (page) * perPage, perPage, selectedMarket)
             .then(reviews => {
                 setReviews(reviews);
-
-            }).catch(err => {
-            console.log(err.message);
-            setReviews(undefined);
-            props.showStatusAlert("Не удалось загрузить отзывы", "error");
-        });
+            })
+            .catch(err => {
+                props.updateIsTokenExpired(err.message);
+                props.showStatusAlert("Не удалось загрузить отзывы", "error");
+                console.log(err.message);
+                setReviews(undefined);
+            });
     }
 
     return (
@@ -488,7 +485,8 @@ export default function AppReviewsSection(props) {
             </Grid>
 
             <Grid item xs={12}>
-            <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId} appId={props.appId}/>
+                <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId}
+                                  appId={props.appId}/>
             </Grid>
 
             {props.app && hasMarkets(props.app) &&

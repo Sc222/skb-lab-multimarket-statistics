@@ -391,7 +391,11 @@ export default function ApplicationDashboard(props) {
                 const newAppNotifications = notifications.filter(notification => notification.appId === props.app.id);
                 setAppNotifications(newAppNotifications)
             })
-            .catch(err => console.log(err.message));
+            .catch(err => {
+                props.updateIsTokenExpired(err.message);
+                props.showStatusAlert("Не удалось обновить уведомления", "error");
+                console.log(err.message);
+            });
     }
 
     function deleteAllAppNotifications() {
@@ -401,7 +405,8 @@ export default function ApplicationDashboard(props) {
                 if (result.ok) {
                     setAppNotifications([]);
                     reloadNotifications();
-                } else {
+                } else{
+                    props.updateIsTokenExpired(result.status.toString());
                     props.showStatusAlert("Не удалось удалить уведомления", "error");
                     console.log("error deleting notifications");
                 }

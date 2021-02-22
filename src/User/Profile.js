@@ -319,6 +319,7 @@ export default function Profile(props) {
                     setShouldChangePassword(false);
                 })
                 .catch(err => {
+                    props.updateIsTokenExpired(err.message);
                     if (err.message.length > HttpStatusCodeLength || err.message === ErrorInternalServerErr)
                         props.showStatusAlert("Не удалось обновить данные", "error");
                     console.log(err.message);
@@ -336,7 +337,8 @@ export default function Profile(props) {
                 deleteAllSessionCookies();
                 setIsUserDeleted(true);
             })
-            .catch(err => {
+            .catch(err =>{
+                props.updateIsTokenExpired(err.message);
                 props.showStatusAlert("Не удалось удалить пользователя", "error");
                 console.log(err.message);
             })

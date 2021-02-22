@@ -392,6 +392,7 @@ export default function AppRatingsSection(props) {
                     fillChartDataWithRatings(ratings);
                 })
                 .catch(err => {
+                    props.updateIsTokenExpired(err.message);
                     props.showStatusAlert("Не удалось обновить график", "error");
                     console.log(err.message);
                 });

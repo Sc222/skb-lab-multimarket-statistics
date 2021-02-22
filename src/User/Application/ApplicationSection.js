@@ -138,21 +138,25 @@ export default function ApplicationSection(props) {
                         {!appExists && <Redirect to={`${HomepageUrl}/user/${userId}/apps/`}/>}
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/`}>
                             <ApplicationDashboard userId={userId} app={app} appId={appId}
+                                                  updateIsTokenExpired={props.updateIsTokenExpired}
                                                   updateUserNotifications={props.updateUserNotifications}
                                                   showStatusAlert={props.showStatusAlert}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/ratings`}>
                             <AppRatingsSection userId={userId} app={app} appId={appId}
+                                               updateIsTokenExpired={props.updateIsTokenExpired}
                                                showStatusAlert={props.showStatusAlert}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/reviews`}>
                             <AppReviewsSection userId={userId} app={app} appId={appId}
+                                               updateIsTokenExpired={props.updateIsTokenExpired}
                                                showStatusAlert={props.showStatusAlert}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/settings`}>
                             <ApplicationSettings userId={userId} app={app} appId={appId}
                                                  showStatusAlert={props.showStatusAlert}
                                                  updateAppInSection={updateAppInSection}
+                                                 updateIsTokenExpired={props.updateIsTokenExpired}
                                                  updateUserNotifications={props.updateUserNotifications}/>
                         </Route>
                         <Redirect to={`${HomepageUrl}/user/${userId}/app/${appId}/`}/>

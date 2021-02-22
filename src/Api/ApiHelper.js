@@ -4,6 +4,7 @@ export const ApiRoot="http://localhost:5000";
 export const HttpStatusCodeLength = 3;
 export const ErrorInternalServerErr = "500";
 export const ErrorBadRequest = "400";
+export const ErrorUnauthorized = "401";
 export const ErrorForbidden = "403";
 export const ErrorConflict = "409";
 export const NoContent = "204"; //treat as error if app does not exist for ex

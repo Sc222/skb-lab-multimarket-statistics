@@ -379,6 +379,7 @@ export default function ApplicationSettings(props) {
                     setErrorsVisible(false);
                 })
                 .catch(err => {
+                    props.updateIsTokenExpired(err.message);
                     props.showStatusAlert("Не удалось обновить информацию о приложении", "error");
                     console.log(err.message);
                 });
@@ -392,8 +393,9 @@ export default function ApplicationSettings(props) {
                 setIsAppDeleted(true);
             })
             .catch(err => {
-                console.log(err.message);
+                props.updateIsTokenExpired(err.message);
                 props.showStatusAlert("Не удалось удалить приложение", "error");
+                console.log(err.message);
             })
     }
 

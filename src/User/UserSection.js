@@ -8,7 +8,7 @@ import Badge from '@material-ui/core/Badge';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import {WarningRounded} from "@material-ui/icons";
 import Avatar from "@material-ui/core/Avatar";
-import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useParams, useLocation} from 'react-router-dom';
+import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useLocation, useParams} from 'react-router-dom';
 import {fade} from "@material-ui/core";
 import {HomepageUrl} from "../App";
 import Applications from "./Applications";
@@ -36,6 +36,7 @@ import StatusAlert from "../Components/StatusAlert";
 //image imports
 import demoProfile from '../images/demo_profile.png';
 import {UIProperties} from "../Config";
+import {ErrorUnauthorized} from "../Api/ApiHelper";
 
 const drawerWidth = 260;
 
@@ -205,6 +206,7 @@ export default function UserSection() {
 
     const statusAlert = useRef();
 
+    const [isTokenExpired, setIsTokenExpired] = React.useState(getCookieToken() === "" && getCookieUserId() !== "");
     const [notificationPopoverAnchor, setNotificationPopoverAnchor] = React.useState(null);
     const [profilePopoverAnchor, setProfilePopoverAnchor] = React.useState(null);
     const [notifications, setNotifications] = React.useState(undefined);
@@ -217,6 +219,13 @@ export default function UserSection() {
     const showStatusAlert = (message, severity) => {
         statusAlert.current?.show(message, severity)
     };
+
+    function updateIsTokenExpired(message) {
+        if(!isTokenExpired && message.endsWith(ErrorUnauthorized)) {
+            console.log("TOKEN IS EXPIRED: "+message);
+            setIsTokenExpired(true);
+        }
+    }
 
     function logout() {
         setProfilePopoverAnchor(null);
@@ -244,8 +253,10 @@ export default function UserSection() {
         console.log(newNotifications);
         setNotifications(newNotifications);
         deleteNotification(userId, appId, notificationId).then(result => {
-            if (!result.ok)
+            if (!result.ok) {
                 showStatusAlert("Не удалось удалить уведомление", "error");
+                updateIsTokenExpired(result.status.toString());
+            }
             console.log(result.status);
         });
     }
@@ -259,7 +270,8 @@ export default function UserSection() {
                     setNotificationPopoverAnchor(null);
                 } else {
                     console.log("error deleting notifications");
-                    showStatusAlert("Не удалось очистить уведомления", "error");
+                    showStatusAlert("Не удалось очистить уведомления", "error")
+                    updateIsTokenExpired(result.status.toString());
                 }
             });
     }
@@ -276,23 +288,19 @@ export default function UserSection() {
             })
             .catch(err => {
                 showStatusAlert("Не удалось получить данные", "error");
+                updateIsTokenExpired(err.message);
                 console.log(err.message)
             });
     }, []);
 
     return (
         <RouteSwitch>
-            {console.log("WE ARE IN USER SECTION")}
-
             {/*redirect to login if userId exists but no token*/}
-            {getCookieToken() === "" && getCookieUserId() !== "" &&
-            <Redirect to={{pathname:`${HomepageUrl}/login`,search: `?referer=${currentUrl.pathname}`}}/>}
-
-            {getCookieToken() === "" && getCookieUserId() !== "" &&console.log("redirect to:"+currentUrl.pathname)}
+            {isTokenExpired &&
+            <Redirect to={{pathname: `${HomepageUrl}/login`, search: `?referer=${currentUrl.pathname}`}}/>}
 
             {/*redirect to current user if wrong user*/}
-            {getCookieToken() !== "" && getCookieUserId()!=="" && getCookieUserId() !== userId &&
-            <WrongUser/>}
+            {getCookieToken() !== "" && getCookieUserId() !== "" && getCookieUserId() !== userId && <WrongUser/>}
 
             <div className={classes.root}>
                 <AppBar position="absolute" className={classes.appBar}>
@@ -470,7 +478,6 @@ export default function UserSection() {
                     </div>
                 </Popover>
 
-
                 <StatusAlert ref={statusAlert}/>
 
                 <main className={classes.content}>
@@ -479,13 +486,13 @@ export default function UserSection() {
                             <Applications userId={userId}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/new-app`}>
-                            <NewApplication userId={userId} showStatusAlert={showStatusAlert}/>
+                            <NewApplication updateIsTokenExpired={updateIsTokenExpired} userId={userId} showStatusAlert={showStatusAlert}/>
                         </Route>
                         <Route exact path={`${HomepageUrl}/user/:userId/profile`}>
-                            <Profile userId={userId} updatePopoverUser={setUser} showStatusAlert={showStatusAlert}/>
+                            <Profile updateIsTokenExpired={updateIsTokenExpired} userId={userId} updatePopoverUser={setUser} showStatusAlert={showStatusAlert}/>
                         </Route>
                         <Route path={`${HomepageUrl}/user/:userId/app/:appId`}>
-                            <ApplicationSection userId={userId} showStatusAlert={showStatusAlert}
+                            <ApplicationSection updateIsTokenExpired={updateIsTokenExpired} userId={userId} showStatusAlert={showStatusAlert}
                                                 updateUserNotifications={updateUserNotifications}/>
                         </Route>
 

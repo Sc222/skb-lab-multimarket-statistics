@@ -287,6 +287,7 @@ export default function NewApplications(props) {
                 })
                 .catch(err => {
                     props.showStatusAlert("Не удалось создать приложение", "error");
+                    props.updateIsTokenExpired(err.message);
                     console.log(err.message);
                 });
         }
