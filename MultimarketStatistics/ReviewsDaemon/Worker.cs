@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 using Domain.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MoreLinq;
 using Storage.Entities;
+using Storage.Repositories;
+using Version = Storage.Entities.Version;
 
 namespace ReviewsDaemon
 {
@@ -18,9 +21,11 @@ namespace ReviewsDaemon
         private readonly NotificationService notificationService;
         private readonly RatingService ratingService;
         private readonly ReviewService reviewService;
+        private readonly IRepository<Version> versionRepository;
 
         public Worker(ILogger<Worker> logger, AppService appService, ReviewService reviewService,
-            RatingService ratingService, NotificationService notificationService, FetcherService fetcherService)
+            RatingService ratingService, NotificationService notificationService,
+            FetcherService fetcherService, IRepository<Version> versionRepository)
         {
             _logger = logger;
             this.appService = appService;
@@ -28,6 +33,7 @@ namespace ReviewsDaemon
             this.ratingService = ratingService;
             this.notificationService = notificationService;
             this.fetcherService = fetcherService;
+            this.versionRepository = versionRepository;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -47,6 +53,7 @@ namespace ReviewsDaemon
                 var reviewsToAdd = new List<Review>();
                 var ratingsToAdd = new List<Rating>();
                 var notificationsToAdd = new List<Notification>();
+                var versionsToAdd = new List<Version>();
 
                 try
                 {
@@ -61,12 +68,17 @@ namespace ReviewsDaemon
                             .FetchAppRating(app).ConfigureAwait(false));
 
                         notificationsToAdd.AddRange(notificationService.GetNotificationsFromReviews(app, newReviews));
+
+                        var appVersions = MoreEnumerable.ToHashSet(appService.GetAppVersions(app.Id).Select(v => new {v.Market, v.Number}));
+                        var foundVersions = fetcherService.GetVersionsFromReviews(newReviews);
+                        versionsToAdd.AddRange(foundVersions.Where(v => !appVersions.Contains(new {v.Market, v.Number})));
                     }
 
 
                     reviewService.CreateRange(reviewsToAdd);
                     ratingService.CreateRange(ratingsToAdd);
                     notificationService.CreateRange(notificationsToAdd);
+                    versionRepository.CreateRange(versionsToAdd);
                 }
                 catch (Exception e)
                 {

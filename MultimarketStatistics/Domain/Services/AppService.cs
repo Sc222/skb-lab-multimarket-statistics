@@ -49,8 +49,10 @@ namespace Domain.Services
             {
                 var reviews = await fetcherService.FetchAppReviews(app).ConfigureAwait(false);
                 var rating = await fetcherService.FetchAppRating(app).ConfigureAwait(false);
+                var versions = fetcherService.GetVersionsFromReviews(reviews);
                 reviewRepository.CreateRange(reviews);
                 ratingRepository.CreateRange(rating);
+                versionRepository.CreateRange(versions);
             }
             catch (Exception e)
             {
@@ -118,11 +120,9 @@ namespace Domain.Services
             return appRepository.Get(appId).User.Id == userId;
         }
 
-        public string[] GetAppVersions(Guid appId)
+        public Version[] GetAppVersions(Guid appId)
         {
-            return versionRepository.Find(v => v.AppId == appId)
-                .Select(v => v.Number)
-                .ToArray();
+            return versionRepository.Find(v => v.AppId == appId);
         }
     }
 }
