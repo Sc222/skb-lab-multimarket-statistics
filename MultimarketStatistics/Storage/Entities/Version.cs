@@ -9,5 +9,7 @@ namespace Storage.Entities
         public string Number { get; set; }
 
         public Guid AppId { get; set; }
+
+        public MarketType Market { get; set; }
     }
 }
