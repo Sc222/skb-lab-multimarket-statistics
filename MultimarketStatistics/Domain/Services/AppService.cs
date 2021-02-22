@@ -92,9 +92,9 @@ namespace Domain.Services
             var notifications = notificationService.GetAllByApps(new []{app});
             var reviews = reviewService.GetAllByApps(new[] {app});
             var ratings = ratingService.GetAllByApps(new[] {app});
-            notificationRepository.DeleteRange(notifications[appId]);
-            reviewRepository.DeleteRange(reviews[appId]);
-            ratingRepository.DeleteRange(ratings[appId]);
+            notificationRepository.DeleteRange(notifications.Values.SelectMany(n => n));
+            reviewRepository.DeleteRange(reviews.Values.SelectMany(r => r));
+            ratingRepository.DeleteRange(ratings.Values.SelectMany(r => r));
             appRepository.Delete(appId);
         }
 
