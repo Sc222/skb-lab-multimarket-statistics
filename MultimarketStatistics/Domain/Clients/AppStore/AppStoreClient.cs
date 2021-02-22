@@ -95,6 +95,6 @@ namespace Domain.Clients.AppStore
         }
 
         private string GetAppInfoRequestUri(string appId) =>
-            appInfoUrl + $"?id={appId}";
+            appInfoUrl + $"?country=ru&id={appId}";
     }
 }
