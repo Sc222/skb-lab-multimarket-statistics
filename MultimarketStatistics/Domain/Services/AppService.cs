@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Storage.Entities;
@@ -98,9 +99,11 @@ namespace Domain.Services
             var notifications = notificationService.GetAllByApps(new []{app});
             var reviews = reviewService.GetAllByApps(new[] {app});
             var ratings = ratingService.GetAllByApps(new[] {app});
+            var versions = GetAppVersions(appId);
             notificationRepository.DeleteRange(notifications.Values.SelectMany(n => n));
             reviewRepository.DeleteRange(reviews.Values.SelectMany(r => r));
             ratingRepository.DeleteRange(ratings.Values.SelectMany(r => r));
+            versionRepository.DeleteRange(versions);
             appRepository.Delete(appId);
         }
 
@@ -109,9 +112,11 @@ namespace Domain.Services
             var notifications = notificationService.GetAllByApps(apps);
             var reviews = reviewService.GetAllByApps(apps);
             var ratings = ratingService.GetAllByApps(apps);
+            var versions = GetVersionsByApps(apps.Select(a => a.Id));
             notificationRepository.DeleteRange(notifications.Values.SelectMany(n => n));
             reviewRepository.DeleteRange(reviews.Values.SelectMany(r => r));
             ratingRepository.DeleteRange(ratings.Values.SelectMany(r => r));
+            versionRepository.DeleteRange(versions);
             appRepository.DeleteRange(apps);
         }
 
@@ -123,6 +128,11 @@ namespace Domain.Services
         public Version[] GetAppVersions(Guid appId)
         {
             return versionRepository.Find(v => v.AppId == appId);
+        }
+
+        private Version[] GetVersionsByApps(IEnumerable<Guid> appsIds)
+        {
+            return versionRepository.Find(v => appsIds.Contains(v.AppId));
         }
     }
 }
