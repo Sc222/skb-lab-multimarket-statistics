@@ -4,7 +4,7 @@ import {parseServerMailAndUsernameErrors} from "../Helpers/ErrorHelper";
 export async function createUser(user) {
     return fetch(`${ApiRoot}/api/User/create`,
         {
-            headers: getRequestHeaders(false),
+            headers: getRequestHeaders(true),
             body: JSON.stringify(user),
             method: "POST",
         })
