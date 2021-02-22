@@ -103,7 +103,7 @@ namespace MultimarketStatistics.Controllers
             {
                 User = mapper.Map<UserContract>(response.Value.User),
                 Token = response.Value.Token,
-                ExpiresIn = response.Value.ExpiresIn
+                Expires = response.Value.Expires
             });
         }
     }

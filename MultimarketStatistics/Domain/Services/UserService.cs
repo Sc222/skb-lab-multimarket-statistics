@@ -60,7 +60,7 @@ namespace Domain.Services
             userRepository.Delete(userId);
         }
 
-        public (User User, string Token, TimeSpan ExpiresIn)? Authenticate(string username, string password)
+        public (User User, string Token, DateTime Expires)? Authenticate(string username, string password)
         {
             var user = userRepository.SingleOrDefault(x => x.Username == username && x.Password == password);
 
@@ -69,13 +69,14 @@ namespace Domain.Services
 
             var token = GenerateJwtToken(user);
 
-            return (user, token, expirationTime);
+            return (user, token.Item1, token.Item2);
         }
 
-        private string GenerateJwtToken(User user)
+        private (string, DateTime) GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("absolutelysecretkey)))");
+            var expires = DateTime.UtcNow + expirationTime;
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
@@ -83,7 +84,7 @@ namespace Domain.Services
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            return (tokenHandler.WriteToken(token), expires);
         }
     }
 }

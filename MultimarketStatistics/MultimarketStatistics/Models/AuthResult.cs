@@ -10,6 +10,6 @@ namespace MultimarketStatistics.Models
 
         public string Token { get; set; }
 
-        public TimeSpan ExpiresIn { get; set; }
+        public DateTime Expires { get; set; }
     }
 }
