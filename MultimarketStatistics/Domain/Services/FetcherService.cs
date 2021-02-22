@@ -94,7 +94,7 @@ namespace Domain.Services
                     Number = r.Version,
                     Market = r.Market
                 })
-                .DistinctBy(v => v.Number)
+                .DistinctBy(v => new  {v.Number, v.Market})
                 .ToList();
         }
     }
