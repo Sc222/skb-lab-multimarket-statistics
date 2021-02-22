@@ -19,7 +19,7 @@ namespace Storage
                 .HasKey(l => new {l.AppId, l.Market});
 
             modelBuilder.Entity<Version>()
-                .HasKey(v => new {v.AppId, v.Number});
+                .HasKey(v => new {v.AppId, v.Number, v.Market});
 
             modelBuilder.Entity<App>()
                 .HasOne(a => a.User)
