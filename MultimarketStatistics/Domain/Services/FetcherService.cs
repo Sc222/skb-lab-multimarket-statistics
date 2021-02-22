@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Domain.Clients.AppGallery;
 using Domain.Clients.AppStore;
 using Domain.Clients.PlayMarket;
+using MoreLinq;
 using Storage.Entities;
+using Version = Storage.Entities.Version;
 
 namespace Domain.Services
 {
@@ -84,6 +84,18 @@ namespace Domain.Services
                 return picUrl;
 
             return await appStore.GetAppPicUrl(app).ConfigureAwait(false);
+        }
+
+        public List<Version> GetVersionsFromReviews(List<Review> reviews)
+        {
+            return reviews.Select(r => new Version
+                {
+                    AppId = r.App.Id,
+                    Number = r.Version,
+                    Market = r.Market
+                })
+                .DistinctBy(v => v.Number)
+                .ToList();
         }
     }
 }
