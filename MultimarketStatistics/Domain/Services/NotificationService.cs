@@ -24,7 +24,8 @@ namespace Domain.Services
 
         public Dictionary<Guid, Notification[]> GetAllByApps(IEnumerable<App> apps)
         {
-            return notificationRepository.Find(n => apps.Contains(n.App)).GroupBy(n => n.App.Id)
+            return notificationRepository.Find(n => apps.Contains(n.App))
+                .GroupBy(n => n.App.Id)
                 .ToDictionary(g => g.Key, g => g.ToArray());
         }
 
@@ -33,14 +34,20 @@ namespace Domain.Services
             return notificationRepository.Find(n => userIds.Contains(n.User.Id) && !n.IsChecked);
         }
 
-        public void Delete(IEnumerable<Notification> notifications)
+        public void Delete(Guid notificationId)
         {
-            notificationRepository.DeleteRange(notifications);
+            notificationRepository.Delete(notificationId);
         }
 
         public void DeleteByUser(Guid userId)
         {
             var notificationsToDelete = notificationRepository.Find(n => n.User.Id == userId);
+            notificationRepository.DeleteRange(notificationsToDelete);
+        }
+
+        public void DeleteByApp(Guid appId)
+        {
+            var notificationsToDelete = notificationRepository.Find(n => n.App.Id == appId);
             notificationRepository.DeleteRange(notificationsToDelete);
         }
 
@@ -60,6 +67,11 @@ namespace Domain.Services
                     Text = $"New {g.Count()} reviews for {app.Name}",
                     Date = DateTime.Now
                 });
+        }
+
+        public bool IsOwnedByApp(Guid notificationId, Guid appId)
+        {
+            return notificationRepository.Get(notificationId).App.Id == appId;
         }
     }
 }

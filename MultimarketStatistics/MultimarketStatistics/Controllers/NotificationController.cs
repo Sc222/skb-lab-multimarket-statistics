@@ -15,12 +15,14 @@ namespace MultimarketStatistics.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly IMapper mapper;
+        private readonly AppService appService;
         private readonly NotificationService notificationService;
 
-        public NotificationController(NotificationService notificationService, IMapper mapper)
+        public NotificationController(NotificationService notificationService, IMapper mapper, AppService appService)
         {
             this.notificationService = notificationService;
             this.mapper = mapper;
+            this.appService = appService;
         }
 
         [Authorize]
@@ -34,21 +36,37 @@ namespace MultimarketStatistics.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{userId}")]
-        public ActionResult Delete(Guid userId, [FromQuery(Name = "id")] IEnumerable<Guid> notificationIds)
+        [HttpDelete("{userId}/{appId}/{notificationId}")]
+        public ActionResult Delete(Guid userId, Guid appId, Guid notificationId)
         {
-            if (!UserIdValidator.IsValidAction(HttpContext, userId))
+            if (!UserIdValidator.IsValidAction(HttpContext, userId) ||
+                !appService.IsOwnedByUser(userId, appId) ||
+                !notificationService.IsOwnedByApp(notificationId, appId))
                 return StatusCode(StatusCodes.Status403Forbidden);
-            notificationService.Delete(notificationIds.Select(id => new Notification { Id = id }));
+
+            notificationService.Delete(notificationId);
             return new OkResult();
         }
 
         [Authorize]
-        [HttpDelete("{userId}/all")]
+        [HttpDelete("{userId}/{appId}")]
+        public ActionResult Delete(Guid userId, Guid appId)
+        {
+            if (!UserIdValidator.IsValidAction(HttpContext, userId) ||
+                !appService.IsOwnedByUser(userId, appId))
+                return StatusCode(StatusCodes.Status403Forbidden);
+
+            notificationService.DeleteByApp(appId);
+            return new OkResult();
+        }
+
+        [Authorize]
+        [HttpDelete("{userId}")]
         public ActionResult DeleteByUser(Guid userId)
         {
             if (!UserIdValidator.IsValidAction(HttpContext, userId))
                 return StatusCode(StatusCodes.Status403Forbidden);
+
             notificationService.DeleteByUser(userId);
             return new OkResult();
         }
