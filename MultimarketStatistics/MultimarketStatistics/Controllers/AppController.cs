@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Domain;
 using Domain.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -76,6 +79,19 @@ namespace MultimarketStatistics.Controllers
 
             appService.Delete(appId);
             return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("{userId}/{appId}/versions")]
+        public ActionResult<string[]> GetAppVersions(Guid userId, Guid appId, [FromQuery] string market)
+        {
+            if (!IsValidAction(userId, appId))
+                return StatusCode(StatusCodes.Status403Forbidden);
+
+            var versions = appService.GetAppVersions(appId);
+            return versions.Where(v => v.Market == market.ToMarketType())
+                .Select(v => v.Number)
+                .ToArray();
         }
 
         private bool IsValidAction(Guid userId, Guid appId)
