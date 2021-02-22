@@ -10,8 +10,8 @@ using Storage;
 namespace Storage.Migrations
 {
     [DbContext(typeof(StorageContext))]
-    [Migration("20210222182259_Versions")]
-    partial class Versions
+    [Migration("20210222191855_Clean")]
+    partial class Clean
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -207,13 +207,20 @@ namespace Storage.Migrations
 
             modelBuilder.Entity("Storage.Entities.Version", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("AppId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Market")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Number")
                         .HasColumnType("text");
 
-                    b.HasKey("AppId", "Number");
+                    b.HasKey("Id");
 
                     b.ToTable("Versions");
                 });
