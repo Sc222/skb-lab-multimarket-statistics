@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Storage.Entities;
 using Storage.Repositories;
+using Version = Storage.Entities.Version;
 
 namespace Domain.Services
 {
@@ -16,10 +17,12 @@ namespace Domain.Services
         private readonly IRepository<Rating> ratingRepository;
         private readonly IRepository<Review> reviewRepository;
         private readonly IRepository<Notification> notificationRepository;
+        private readonly IRepository<Version> versionRepository;
 
         public AppService(IRepository<App> appRepository, FetcherService fetcherService,
             IRepository<Review> reviewRepository, IRepository<Rating> ratingRepository, ReviewService reviewService,
-            RatingService ratingService, NotificationService notificationService, IRepository<Notification> notificationRepository)
+            RatingService ratingService, NotificationService notificationService,
+            IRepository<Notification> notificationRepository, IRepository<Version> versionRepository)
         {
             this.appRepository = appRepository;
             this.fetcherService = fetcherService;
@@ -29,6 +32,7 @@ namespace Domain.Services
             this.ratingService = ratingService;
             this.notificationService = notificationService;
             this.notificationRepository = notificationRepository;
+            this.versionRepository = versionRepository;
         }
 
         public async Task<Guid> Create(App app)
@@ -112,6 +116,13 @@ namespace Domain.Services
         public bool IsOwnedByUser(Guid userId, Guid appId)
         {
             return appRepository.Get(appId).User.Id == userId;
+        }
+
+        public string[] GetAppVersions(Guid appId)
+        {
+            return versionRepository.Find(v => v.AppId == appId)
+                .Select(v => v.Number)
+                .ToArray();
         }
     }
 }
