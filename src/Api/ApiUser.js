@@ -77,7 +77,7 @@ export async function deleteUser(userId) {
 export async function authenticateUser(loginCredentials) {
     return fetch(`${ApiRoot}/api/User/authenticate`,
         {
-            headers: getRequestHeaders(false),
+            headers: getRequestHeaders(true),
             body: JSON.stringify(loginCredentials),
             method: "POST",
         })
