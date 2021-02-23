@@ -6,8 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Chart from '../../../Components/Chart';
-
-
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
@@ -17,11 +15,7 @@ import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../../Styles/FormSectionStyles";
 import update from "immutability-helper";
 import {AppNameMaxLength, getAppMarketsArray, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
-
-import DateFnsUtils from '@date-io/date-fns';
 import {format} from 'date-fns';
-
-import {KeyboardDateTimePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import Button from "@material-ui/core/Button";
 import {getRatings} from "../../../Api/ApiRating";
 import {HomeRounded, LoopRounded, NavigateNextRounded, SettingsRounded, StarsRounded} from "@material-ui/icons";
@@ -34,6 +28,7 @@ import AppNoMarketsCard from "../../../Components/AppNoMarketsCard";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
 import defaultAppIcon from "../../../images/default_app_icon.png";
+import DateTimePickerFromTo from "../../../Components/DateTimePickerFromTo";
 
 const drawerWidth = 260;
 
@@ -404,22 +399,6 @@ export default function AppRatingsSection(props) {
         setSelectedChartMarkets(newValue);
     }
 
-    const handleChartDateFromError = (error, _) => {
-        setChartDateFromError(error);
-    }
-
-    const handleChartDateToError = (error, _) => {
-        setChartDateToError(error);
-    }
-
-    const handleChartDateFromInput = (date) => {
-        setChartDateFrom(date);
-    };
-
-    const handleChartDateToInput = (date) => {
-        setChartDateTo(date);
-    };
-
     return (
         <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -511,73 +490,17 @@ export default function AppRatingsSection(props) {
                     <Divider className={formClasses.fullWidthDivider}/>
 
                     <Container maxWidth='md' className={classes.containerNotCentered}>
-                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <Grid container spacing={2} justify='flex-start' alignItems='stretch'
-                                  className={classes.chartSelectsContainer}>
-                                <Grid item xs={7} sm={10} md={3}>
-                                    {/*TODO MIN AND MAX DATE IGNORE HOURS AND MINUTES :(*/}
-                                    <KeyboardDateTimePicker
-                                        fullWidth
-                                        size="small"
-                                        disableFuture
-                                        value={chartDateFrom}
-                                        onChange={handleChartDateFromInput}
-                                        maxDate={chartDateTo}
-                                        onError={handleChartDateFromError}
-                                        error={!chartDateFrom || chartDateFromError !== ""}
-                                        helperText={!chartDateFrom
-                                            ? "Укажите начальную дату"
-                                            : chartDateFromError
-                                        }
-                                        format="dd/MM/yyyy HH:mm"
-                                        inputVariant="outlined"
-                                        ampm={false}
-                                        label="От"
-                                        id="date-picker-from"
-                                        variant="inline"
-                                        KeyboardButtonProps={{
-                                            'aria-label': 'change date',
-                                        }}
-                                        invalidDateMessage='Неверный формат даты'
-                                        maxDateMessage='Дата не может быть позднее даты в поле «До»'
-                                    />
-                                </Grid>
-                                <Grid item xs={7} sm={10} md={3}>
-                                    <KeyboardDateTimePicker
-                                        fullWidth
-                                        size="small"
-                                        disableFuture
-                                        value={chartDateTo}
-                                        onChange={handleChartDateToInput}
-                                        minDate={chartDateFrom}
-                                        onError={handleChartDateToError}
-                                        error={!chartDateTo || chartDateToError !== ""}
-                                        helperText={!chartDateTo
-                                            ? "Укажите конечную дату"
-                                            : chartDateToError
-                                        }
-                                        format="dd/MM/yyyy HH:mm"
-                                        inputVariant="outlined"
-                                        ampm={false}
-                                        label="До"
-                                        id="date-picker-to"
-                                        variant="inline"
-                                        KeyboardButtonProps={{
-                                            'aria-label': 'change date',
-                                        }}
-                                        invalidDateMessage='Неверный формат даты'
-                                        maxDateMessage='Дата не может быть позднее текущего времени'
-                                        minDateMessage='Дата не может быть раньше даты в поле «От»'
-                                    />
-                                </Grid>
-                                <Grid item xs={7} sm={8} md={4}>
-                                    <Button disableElevation variant="contained" color="primary" size='medium'
-                                            onClick={() => loadChartRatingsData()}>
-                                        Показать
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </MuiPickersUtilsProvider>
+                        <DateTimePickerFromTo
+                            dateFrom={chartDateFrom}
+                            setDateFrom={setChartDateFrom}
+                            dateFromError={chartDateFromError}
+                            setDateFromError={setChartDateFromError}
+                            dateTo={chartDateTo}
+                            setDateTo={setChartDateTo}
+                            dateToError={chartDateToError}
+                            setDateToError={setChartDateToError}
+                            handleShowButton={() => loadChartRatingsData()}
+                        />
                     </Container>
 
                     <Chart data={chartData} selectedMarkets={selectedChartMarkets}/>
