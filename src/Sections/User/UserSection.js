@@ -12,7 +12,7 @@ import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useLocation,
 import {fade} from "@material-ui/core";
 import {HomepageUrl} from "../../App";
 import Apps from "./Apps";
-import AppSection from "./Application/AppSection";
+import AppSection from "./App/AppSection";
 import NewApplication from "./NewApp";
 import Popover from "@material-ui/core/Popover";
 import Divider from "@material-ui/core/Divider";
