@@ -13,6 +13,7 @@ import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import {
     getFirstExistingMarketRequestKey,
+    MarketAllVersions,
     MarketsInfo,
     MarketsRequestKeys,
     MarketStarsTemplate
@@ -30,6 +31,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import {
+    FilterListRounded,
     GroupRounded,
     HelpOutlineRounded,
     HomeRounded,
@@ -50,6 +52,9 @@ import AppNoMarketsCard from "../../../Components/AppNoMarketsCard";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
 import defaultAppIcon from "../../../images/default_app_icon.png";
+import {getAppVersions} from "../../../Api/ApiApp";
+import {UIProperties} from "../../../Config";
+import ReviewsFilterAddDialog from "../../../Components/ReviewsFilterSelectDialog";
 
 
 const drawerWidth = 260;
@@ -356,10 +361,14 @@ export default function AppReviewsSection(props) {
     const classes = useStyles();
     const formClasses = useFormSectionStyles();
 
+    const [dialogFiltersOpen, setDialogFiltersOpen] = React.useState(false);
+
     const [reviews, setReviews] = React.useState(undefined);
     const [reviewsCurrentPage, setReviewsPage] = React.useState(0);
-    const [reviewsPerPage, setReviewsPerPage] = React.useState(10);
-    const [reviewsSelectedMarket, setReviewsSelectedMarket] = React.useState(MarketsRequestKeys[1]);
+    const [reviewsPerPage, setReviewsPerPage] = React.useState(UIProperties.reviewsPerPageDefault);
+    const [reviewsSelectedMarket, setReviewsSelectedMarket] = React.useState(MarketsRequestKeys[0]);
+    const [reviewsSelectedVersions, setReviewsSelectedVersions] = React.useState([MarketAllVersions]);
+    const [appVersions, setAppVersions] = React.useState([MarketAllVersions]);
 
     const reviewsTopRef = useRef(null);
 
@@ -379,6 +388,22 @@ export default function AppReviewsSection(props) {
         setReviewsSelectedMarket(selectedMarket);
         setReviewsPage(0);
         loadNextReviewsPage(0, reviewsPerPage, selectedMarket);
+        loadAppVersions(selectedMarket);
+    };
+
+    const handleReviewsSelectedVersionChange = (event) => {
+        console.log(event.target.value);
+        console.log("VERSIONS")
+
+        //TODO FIX ALL VERSIONS
+        if (event.target.value.indexOf(MarketAllVersions) > -1)
+            setReviewsSelectedVersions(appVersions);
+        else {
+            if (appVersions.indexOf(MarketAllVersions) > -1)
+                setReviewsSelectedVersions([]);
+            else
+                setReviewsSelectedVersions(event.target.value);
+        }
     };
 
     const handleChangeReviewsPerPage = (event) => {
@@ -386,6 +411,10 @@ export default function AppReviewsSection(props) {
         setReviewsPerPage(newReviewsPerPage);
         setReviewsPage(0);
         loadNextReviewsPage(0, newReviewsPerPage, reviewsSelectedMarket);
+    };
+
+    const handleDialogOpen = () => {
+        setDialogFiltersOpen(true);
     };
 
     useEffect(() => {
@@ -398,6 +427,18 @@ export default function AppReviewsSection(props) {
                 .catch(err => console.log(err.message));
         }
     }, [props.app]);
+
+    function loadAppVersions(selectedMarket) {
+        getAppVersions(props.userId, props.app.id, selectedMarket)
+            .then(versions => {
+                console.log("versions: " + versions);
+                versions.unshift(MarketAllVersions);
+                setAppVersions(versions);
+            })
+            .catch(err => {
+                console.log(err.message);
+            })
+    }
 
     function loadNextReviewsPage(page, perPage, selectedMarket) {
         getReviews(props.userId, props.app.id, (page) * perPage, perPage, selectedMarket)
@@ -503,14 +544,24 @@ export default function AppReviewsSection(props) {
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container className={classes.containerApps}>
+                            <Button onClick={handleDialogOpen} startIcon={<FilterListRounded />} variant="outlined" color="primary">
+                                Добавить фильтр
+                            </Button>
+                            <ReviewsFilterAddDialog
+                                dialogOpen={dialogFiltersOpen}
+                                setDialogOpen={setDialogFiltersOpen}
+                            />
+                        </Container>
+                        <Divider className={formClasses.fullWidthDivider}/>
+                        <Container className={classes.containerApps}>
                             <Grid container alignItems='center' spacing={2} justify='space-between'>
                                 <Grid item>
                                     <FormControl variant="outlined" className={classes.selectStyle}>
-                                        <InputLabel id="demo-simple-select-outlined-label">Магазин
+                                        <InputLabel id="market-select-label">Магазин
                                             приложений</InputLabel>
                                         <Select
-                                            labelId="demo-simple-select-outlined-label"
-                                            id="demo-simple-select-outlined"
+                                            labelId="market-select-label"
+                                            id="market-select"
                                             value={reviewsSelectedMarket}
                                             onChange={handleReviewsSelectedMarketChange}
                                             label="Магазин приложений"
@@ -525,6 +576,28 @@ export default function AppReviewsSection(props) {
                                         </Select>
                                     </FormControl>
                                 </Grid>
+                                {/*<Grid item>
+                                    <FormControl variant="outlined" className={classes.selectStyle}>
+                                        <InputLabel id="version-select-label">Версия приложения</InputLabel>
+                                        <Select
+                                            multiple
+                                            labelId="version-select-label"
+                                            id="version-select"
+                                            value={reviewsSelectedVersions}
+                                            renderValue={(selected) => selected.length === 0
+                                                ? "Выбраны все версии"
+                                                : `Выбрано версий: ${selected.length}`}
+                                            onChange={handleReviewsSelectedVersionChange}
+                                            label="Версия приложения"
+                                        >
+                                            {appVersions?.map((value, index) =>
+                                                <MenuItem key={index} value={value}>
+                                                    <Checkbox checked={reviewsSelectedVersions.indexOf(value) > -1}/>
+                                                    <ListItemText primary={value}/>
+                                                </MenuItem>)}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>*/}
                                 <Grid item>
                                     <Box border={1} mt={1} mb={1} borderRadius={4} borderColor="grey.400">
                                         <TablePagination
@@ -532,7 +605,7 @@ export default function AppReviewsSection(props) {
                                             labelRowsPerPage='На странице'
                                             count={!reviews ? 0 : reviews.total}
                                             page={reviewsCurrentPage}
-                                            rowsPerPageOptions={[5, 10, 25, 50, 100, 250]}
+                                            rowsPerPageOptions={UIProperties.reviewsPerPageVariants}
                                             onChangePage={handleChangeReviewsCurrentPage}
                                             rowsPerPage={reviewsPerPage}
                                             onChangeRowsPerPage={handleChangeReviewsPerPage}

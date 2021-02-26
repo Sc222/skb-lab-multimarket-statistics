@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import React from "react";
 import useTheme from "@material-ui/core/styles/useTheme";
 import {useMarginStyles} from "../Styles/MarginStyles";
+import clsx from "clsx";
 
 DateTimePickerFromTo.defaultProps = {
     dateFrom: new Date(),
@@ -15,7 +16,7 @@ DateTimePickerFromTo.defaultProps = {
     setDateTo: (date)=>console.log("specify setDateTo prop: "+date),
     dateToError: "",
     setDateToError: (error)=>console.log("specify setDateToError prop: "+error),
-    handleShowButton: () => console.log("Показать данные в указанном периоде")
+    handleShowButton: undefined
 }
 
 export default function DateTimePickerFromTo(props){
@@ -40,8 +41,9 @@ export default function DateTimePickerFromTo(props){
 
     return (
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Grid container spacing={2} justify='flex-start' alignItems='stretch' className={margins.m1}>
-                    <Grid item xs={7} sm={10} md={3}>
+                <Grid container spacing={2} justify='flex-start' alignItems='stretch'
+                      className={clsx(margins.m1Y,margins.m05X)}>
+                    <Grid item xs={8} sm={7} md={props.handleShowButton?3:5}>
                         <KeyboardDateTimePicker
                             fullWidth
                             size="small"
@@ -68,7 +70,7 @@ export default function DateTimePickerFromTo(props){
                             maxDateMessage='Дата не может быть позднее даты в поле «До»'
                         />
                     </Grid>
-                    <Grid item xs={7} sm={10} md={3}>
+                    <Grid item xs={8} sm={7} md={props.handleShowButton?3:5}>
                         <KeyboardDateTimePicker
                             fullWidth
                             size="small"
@@ -96,12 +98,14 @@ export default function DateTimePickerFromTo(props){
                             minDateMessage='Дата не может быть раньше даты в поле «От»'
                         />
                     </Grid>
+                    {props.handleShowButton &&
                     <Grid item xs={7} sm={8} md={4}>
                         <Button disableElevation variant="contained" color="primary" size='medium'
                                 onClick={props.handleShowButton}>
                             Показать
                         </Button>
                     </Grid>
+                    }
                 </Grid>
             </MuiPickersUtilsProvider>
     );

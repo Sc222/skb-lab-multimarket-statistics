@@ -356,9 +356,9 @@ const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 export default function AppDashboard(props) {
 
     const theme = useTheme();
-    const classes = useStyles(theme);
-    const formClasses = useFormSectionStyles(theme);
-    const marketClasses = useMarketChipStyles(theme);
+    const classes = useStyles();
+    const formClasses = useFormSectionStyles();
+    const marketClasses = useMarketChipStyles();
 
     const [appNotifications, setAppNotifications] = React.useState(undefined);
     const [latestRatings, setLatestRatings] = React.useState(undefined);

@@ -106,7 +106,7 @@ export default function AppSection(props) {
 
     const userId = props.userId;
     const [app, setApp] = React.useState(undefined);
-    const [appExists, setAppExists] = React.useState(true);  //todo
+    const [appExists, setAppExists] = React.useState(true);
 
     function updateAppInSection(newApp) {
         console.log("update app from settings")
@@ -133,7 +133,6 @@ export default function AppSection(props) {
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}/>
                 <Container maxWidth="lg" className={classes.container}>
-
                     <RouteSwitch>
                         {!appExists && <Redirect to={`${HomepageUrl}/user/${userId}/apps/`}/>}
                         <Route exact path={`${HomepageUrl}/user/:userId/app/:appId/`}>

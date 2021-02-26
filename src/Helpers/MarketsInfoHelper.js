@@ -14,6 +14,23 @@ export const MarketRatingPrecision = 3;
 export const MarketLatestRatingsDaysCheck = 3; //days before today, increase if "latest rating not found"
 export const MarketStarsTemplate = [1, 2, 3, 4, 5];
 
+//TODO MOVE TO SPECIAL CONSTANT TYPES
+export const ReviewFilterDateKey = "date";
+export const ReviewFilterVersionKey = "version";
+export const ReviewFilterRatingKey = "rating";
+export const ReviewFilterRatings = [
+    {name: "5 звезд", value: 5},
+    {name: "4 звезды", value: 4},
+    {name: "3 звезды", value: 3},
+    {name: "2 звезды", value: 2},
+    {name: "1 звезда", value: 1},
+];
+export const ReviewFilterTypes = [
+    {name: "Дата", value: ReviewFilterDateKey, disabled: false},
+    {name: "Версия", value: ReviewFilterVersionKey, disabled: false},
+    {name: "Оценка", value: ReviewFilterRatingKey, disabled: false}
+];
+
 export const MarketsLinks = [
     "https://play.google.com/store/apps/details?id=",
     "https://apps.apple.com/ru/app/id",  /*TODO !!! ADD LOCALES IN APP STORE*/
@@ -38,8 +55,9 @@ export const MarketsLinksRegex = [
 
 export const MarketsIndexes = [PlayStoreIndex, AppStoreIndex, AppGalleryIndex]; // starts with 0 and +1
 
+export const MarketAllVersions = "Все версии";
 export const MarketsRequestKeys = ["playMarket", "appStore", "appGallery"];
-export const IndexByRequestKey = MarketsRequestKeys.reduce((a, val, index) => ({...a, [val]: index}),{});
+export const IndexByRequestKey = MarketsRequestKeys.reduce((a, val, index) => ({...a, [val]: index}), {});
 
 export const MarketsRatingKeys = ["playMarketRating", "appStoreRating", "appGalleryRating"];
 
@@ -133,6 +151,6 @@ export function getFirstExistingMarketRequestKey(app) {
     return "";
 }
 
-export function getLatestRatingsStartCheckDate(date){
-    return date.setDate(date.getDate()-MarketLatestRatingsDaysCheck);
+export function getLatestRatingsStartCheckDate(date) {
+    return date.setDate(date.getDate() - MarketLatestRatingsDaysCheck);
 }

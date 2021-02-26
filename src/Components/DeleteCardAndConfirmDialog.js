@@ -74,7 +74,7 @@ export default function DeleteCardAndConfirmDialog(props) {
 
     const handleConfirmFieldInput = (event) => {
         setConfirmFieldValue(event.target.value);
-    }
+    };
 
     function isDeleteAllowed() {
         return confirmFieldValue !== props.confirmFieldExpectedValue;

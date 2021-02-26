@@ -57,7 +57,22 @@ export async function getApp(userId, appId) {
         });
 }
 
-//TODO FIX doesn't work if app has not all markets
+export async function getAppVersions(userId, appId, marketKey) {
+    return fetch(`${ApiRoot}/api/App/${userId}/${appId}/versions?market=${marketKey}`,
+        {
+            headers: getRequestHeaders(false),
+            method: "GET",
+        })
+        .then(result => {
+            if (result.ok) {
+                if (result.status === Success)
+                    return result.json();
+                throw new Error(result.status.toString());
+            }
+            throw new Error("App get error: " + result.status);
+        });
+}
+
 export async function deleteApp(userId, appId) {
     return fetch(`${ApiRoot}/api/App/${userId}/${appId}`,
         {
