@@ -318,8 +318,6 @@ export default function Apps(props) {
                                                      avatar={<Avatar className={marketClasses.transparentBg}
                                                                      variant='square'
                                                                      src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
-
-
                                     })
                                 }
                             </div>

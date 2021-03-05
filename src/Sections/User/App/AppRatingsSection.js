@@ -29,6 +29,7 @@ import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
 import defaultAppIcon from "../../../images/default_app_icon.png";
 import DateTimePickerFromTo from "../../../Components/DateTimePickerFromTo";
+import {UIDefaultValues} from "../../../Config";
 
 const drawerWidth = 260;
 
@@ -340,7 +341,7 @@ export default function AppRatingsSection(props) {
 
     const [selectedChartMarkets, setSelectedChartMarkets] = React.useState([false, false, false]);
     const [chartData, setChartData] = React.useState(undefined);
-    const [chartDateFrom, setChartDateFrom] = React.useState(new Date().setDate(new Date().getDate() - 1));
+    const [chartDateFrom, setChartDateFrom] = React.useState(UIDefaultValues.dateTimePickerFrom());
     const [chartDateTo, setChartDateTo] = React.useState(new Date());
     const [chartDateFromError, setChartDateFromError] = React.useState('');
     const [chartDateToError, setChartDateToError] = React.useState('');
@@ -359,7 +360,7 @@ export default function AppRatingsSection(props) {
                 props.app.appGalleryId !== undefined
             ]);
 
-            getRatings(props.userId, props.app.id, new Date().setDate(new Date().getDate() - 1), new Date())
+            getRatings(props.userId, props.app.id, UIDefaultValues.dateTimePickerFrom(), new Date())
                 .then(ratings => fillChartDataWithRatings(ratings))
                 .catch(err => console.log(err.message));
         }

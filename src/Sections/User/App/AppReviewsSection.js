@@ -7,20 +7,18 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Avatar from "@material-ui/core/Avatar";
 
-
 //image imports
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import {
     getFirstExistingMarketRequestKey,
-    MarketAllVersions,
     MarketsInfo,
     MarketsRequestKeys,
     MarketStarsTemplate
 } from "../../../Helpers/MarketsInfoHelper";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../../Styles/FormSectionStyles";
-import {AppNameMaxLength, getAppMarketsArray, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
+import {AppNameMaxLength, AppVersionNullKey, getAppMarketsArray, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
 import {format} from 'date-fns';
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
@@ -53,9 +51,9 @@ import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
 import defaultAppIcon from "../../../images/default_app_icon.png";
 import {getAppVersions} from "../../../Api/ApiApp";
-import {UIProperties} from "../../../Config";
+import {UIDefaultValues, UIProperties} from "../../../Config";
 import ReviewsFilterAddDialog from "../../../Components/ReviewsFilterSelectDialog";
-
+import update from "immutability-helper";
 
 const drawerWidth = 260;
 
@@ -63,7 +61,6 @@ const useStyles = makeStyles((theme) => ({
     appBarSpacer: {
         height: '48px'
     },
-
     root: {
         display: 'flex',
     },
@@ -72,22 +69,18 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         justifyContent: 'flex-end',
     },
-
     backToAppsButton: {
         width: '100%'
     },
-
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
     },
-
     menuButton: {
         marginRight: theme.spacing(2),
     },
     title: {
         flexGrow: 1,
     },
-
     drawerPaper: {
         position: 'relative',
         whiteSpace: 'nowrap',
@@ -105,7 +98,6 @@ const useStyles = makeStyles((theme) => ({
         }),
         width: 0,
     },
-
     containerNotCentered: {
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(2),
@@ -113,7 +105,6 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 0,
         marginRight: 0
     },
-
     containerNotCenteredSmallerPadding: {
         paddingLeft: theme.spacing(1.5),
         paddingRight: theme.spacing(1.5),
@@ -121,7 +112,6 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 0,
         marginRight: 0
     },
-
     containerApps: {
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(2),
@@ -131,7 +121,6 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 0,
         marginRight: 0
     },
-
     content: {
         flexGrow: 1,
         height: '100vh',
@@ -141,7 +130,6 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: theme.spacing(4),
         paddingBottom: theme.spacing(4),
     },
-
     paper: {
         paddingTop: theme.spacing(1.5),
         paddingBottom: theme.spacing(1.5),
@@ -161,37 +149,31 @@ const useStyles = makeStyles((theme) => ({
         width: theme.spacing(4.5),
         height: theme.spacing(4.5),
     },
-
     fabBottom: {
         position: 'absolute',
         bottom: theme.spacing(2),
         right: theme.spacing(2),
     },
-
     paperNoPadding: {
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
         height: '100%',
     },
-
     paperContainer: {
         flexGrow: 1,
         paddingLeft: theme.spacing(1.5),
         paddingRight: theme.spacing(1.5),
         width: '100%'
     },
-
     flexGrowFillCenterVertical: {
         flexGrow: 1,
         display: 'flex',
         alignItems: 'center'
     },
-
     flexGrowFill: {
         flexGrow: 1
     },
-
     containerTopPadded: {
         flexGrow: 1,
         textAlign: "left",
@@ -200,11 +182,9 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: theme.spacing(2),
         width: '100%'
     },
-
     primaryRipple: {
         color: theme.palette.primary.light
     },
-
     appDescriptionContainer: {
         flexGrow: 1,
         textAlign: "left",
@@ -215,12 +195,11 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: theme.spacing(1),
         width: '100%'
     },
-
-
     appIcon: {
         width: 128,
         height: 128
     },
+
     //search toolbar styles
     extraToolbar: {
         background: "transparent",
@@ -233,17 +212,14 @@ const useStyles = makeStyles((theme) => ({
             display: 'block',
         },
     },
-
     extraToolbarTitleNoHide: {
         flexGrow: 1,
         display: 'block',
     },
-
     extraToolbarButtonBack: {
         marginLeft: theme.spacing(0.5),
         marginRight: theme.spacing(0.5),
     },
-
     search: {
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
@@ -288,14 +264,12 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: "100%",
         maxHeight: '100%'
     },
-
     applicationIconSmall: {
         borderRadius: "0.5em",
         width: theme.spacing(3.5),
         maxHeight: theme.spacing(3.5),
         marginRight: theme.spacing(0.5)
     },
-
     extendedIcon: {
         marginRight: theme.spacing(1),
     },
@@ -309,17 +283,14 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1)
     },
-
     selectStyle: {
         minWidth: '200px',
     },
-
     textWithIcon: {
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'wrap'
     },
-
     reviewAvatar: {
         color: theme.palette.white,
         backgroundColor: theme.palette.primary.light,
@@ -327,16 +298,13 @@ const useStyles = makeStyles((theme) => ({
         height: theme.spacing(7),
         fontSize: "32px"
     },
-
     reviewRating: {
         fill: green[400]
     },
-
     textGreenBold: {
         fontWeight: "bold",
         color: green[400]
     },
-
     reviewCard: {
         height: '100%',
         paddingTop: theme.spacing(1.5),
@@ -344,11 +312,9 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: theme.spacing(1.5),
         paddingBottom: theme.spacing(1)
     },
-
     mT: {
         marginTop: theme.spacing(1.5)
     },
-
     mYdividers: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(0.5)
@@ -362,13 +328,13 @@ export default function AppReviewsSection(props) {
     const formClasses = useFormSectionStyles();
 
     const [dialogFiltersOpen, setDialogFiltersOpen] = React.useState(false);
+    const [reviewsFilters, setReviewsFilters] = React.useState(UIDefaultValues.reviewFilters);
 
     const [reviews, setReviews] = React.useState(undefined);
     const [reviewsCurrentPage, setReviewsPage] = React.useState(0);
     const [reviewsPerPage, setReviewsPerPage] = React.useState(UIProperties.reviewsPerPageDefault);
     const [reviewsSelectedMarket, setReviewsSelectedMarket] = React.useState(MarketsRequestKeys[0]);
-    const [reviewsSelectedVersions, setReviewsSelectedVersions] = React.useState([MarketAllVersions]);
-    const [appVersions, setAppVersions] = React.useState([MarketAllVersions]);
+    const [appVersions, setAppVersions] = React.useState([]);
 
     const reviewsTopRef = useRef(null);
 
@@ -391,21 +357,6 @@ export default function AppReviewsSection(props) {
         loadAppVersions(selectedMarket);
     };
 
-    const handleReviewsSelectedVersionChange = (event) => {
-        console.log(event.target.value);
-        console.log("VERSIONS")
-
-        //TODO FIX ALL VERSIONS
-        if (event.target.value.indexOf(MarketAllVersions) > -1)
-            setReviewsSelectedVersions(appVersions);
-        else {
-            if (appVersions.indexOf(MarketAllVersions) > -1)
-                setReviewsSelectedVersions([]);
-            else
-                setReviewsSelectedVersions(event.target.value);
-        }
-    };
-
     const handleChangeReviewsPerPage = (event) => {
         const newReviewsPerPage = parseInt(event.target.value, 10);
         setReviewsPerPage(newReviewsPerPage);
@@ -417,22 +368,38 @@ export default function AppReviewsSection(props) {
         setDialogFiltersOpen(true);
     };
 
+    const handleAddReviewsFilter = (filter, value) => {
+        //setDialogFiltersOpen(true);
+        const newReviewsFilters = update(reviewsFilters,{[filter]:{$set:value}});
+        setReviewsFilters(newReviewsFilters);
+        console.log(newReviewsFilters);
+    };
+
     useEffect(() => {
         if (props.app) {
             const defaultMarketKey = getFirstExistingMarketRequestKey(props.app);
             if (defaultMarketKey)
                 setReviewsSelectedMarket(defaultMarketKey);
-            getReviews(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, defaultMarketKey)
-                .then(reviews => setReviews(reviews))
-                .catch(err => console.log(err.message));
+            const requests = [];
+            requests.push(getReviews(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, defaultMarketKey));
+            requests.push(getAppVersions(props.userId, props.app.id, defaultMarketKey));
+            Promise.all(requests)
+                .then(([reviews,versions])=>{
+                    setReviews(reviews);
+                    if(versions[0]===null)
+                        versions[0]=AppVersionNullKey;
+                    setAppVersions(versions);
+                    })
+                .catch(err=>console.log(err.message));
         }
     }, [props.app]);
 
     function loadAppVersions(selectedMarket) {
         getAppVersions(props.userId, props.app.id, selectedMarket)
             .then(versions => {
+                if(versions[0]===null)
+                    versions[0]=AppVersionNullKey;
                 console.log("versions: " + versions);
-                versions.unshift(MarketAllVersions);
                 setAppVersions(versions);
             })
             .catch(err => {
@@ -544,12 +511,15 @@ export default function AppReviewsSection(props) {
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container className={classes.containerApps}>
-                            <Button onClick={handleDialogOpen} startIcon={<FilterListRounded />} variant="outlined" color="primary">
+                            <Button onClick={handleDialogOpen} startIcon={<FilterListRounded/>} variant="outlined"
+                                    color="primary">
                                 Добавить фильтр
                             </Button>
                             <ReviewsFilterAddDialog
+                                filterVersions={appVersions}
                                 dialogOpen={dialogFiltersOpen}
                                 setDialogOpen={setDialogFiltersOpen}
+                                handleAddFilter={handleAddReviewsFilter}
                             />
                         </Container>
                         <Divider className={formClasses.fullWidthDivider}/>
@@ -576,28 +546,6 @@ export default function AppReviewsSection(props) {
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                {/*<Grid item>
-                                    <FormControl variant="outlined" className={classes.selectStyle}>
-                                        <InputLabel id="version-select-label">Версия приложения</InputLabel>
-                                        <Select
-                                            multiple
-                                            labelId="version-select-label"
-                                            id="version-select"
-                                            value={reviewsSelectedVersions}
-                                            renderValue={(selected) => selected.length === 0
-                                                ? "Выбраны все версии"
-                                                : `Выбрано версий: ${selected.length}`}
-                                            onChange={handleReviewsSelectedVersionChange}
-                                            label="Версия приложения"
-                                        >
-                                            {appVersions?.map((value, index) =>
-                                                <MenuItem key={index} value={value}>
-                                                    <Checkbox checked={reviewsSelectedVersions.indexOf(value) > -1}/>
-                                                    <ListItemText primary={value}/>
-                                                </MenuItem>)}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>*/}
                                 <Grid item>
                                     <Box border={1} mt={1} mb={1} borderRadius={4} borderColor="grey.400">
                                         <TablePagination
@@ -612,7 +560,6 @@ export default function AppReviewsSection(props) {
                                         />
                                     </Box>
                                 </Grid>
-
                             </Grid>
                             <Grid container alignItems='stretch' justify='center' spacing={2}>
                                 {reviews && reviews.foundItem.length !== 0 &&
@@ -670,7 +617,6 @@ export default function AppReviewsSection(props) {
                                     </Grid>)
                                 }
                             </Grid>
-
                             <Grid container justify="center">
                                 <Grid item>
                                     <Box border={1} mt={2} py={1} borderRadius={4} borderColor="grey.400">
