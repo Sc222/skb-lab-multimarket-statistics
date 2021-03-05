@@ -34,6 +34,9 @@ namespace MultimarketStatistics.Controllers
             if (!IsValidAction(userId, appId))
                 return StatusCode(StatusCodes.Status403Forbidden);
 
+            if (versions.Contains("notMentioned"))
+                versions = versions.Append(null).ToArray();
+
             var searchResult = reviewService.GetAppReviews(appId, skip, take, market.ToMarketType());
             var result = searchResult.FoundItem.AsEnumerable();
 
