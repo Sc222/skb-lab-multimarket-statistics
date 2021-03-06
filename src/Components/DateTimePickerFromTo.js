@@ -20,7 +20,7 @@ DateTimePickerFromTo.defaultProps = {
 }
 
 export default function DateTimePickerFromTo(props){
-    const theme = useTheme();//todo custom theme
+    const theme = useTheme();
     const margins = useMarginStyles(theme);
 
     const handleDateFromError = (error, _) => {

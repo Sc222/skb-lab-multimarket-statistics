@@ -9,7 +9,8 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import {
-    ReviewFilterDateKey, ReviewFilterInfo,
+    ReviewFilterDateKey,
+    ReviewFilterInfo,
     ReviewFilterRatingKey,
     ReviewFilterRatings,
     ReviewFilterTypes,
@@ -81,7 +82,7 @@ export default function ReviewsFilterSelectDialog(props) {
     const [filterDateToError, setFilterDateToError] = React.useState('');
 
     React.useEffect(() => {
-        if(props.filterToEdit.key!=="") {
+        if (props.filterToEdit.key !== "") {
             setSelectedFilter(props.filterToEdit.key);
             setFilterToEditValue(props.filterToEdit);
         }
@@ -103,7 +104,7 @@ export default function ReviewsFilterSelectDialog(props) {
         handleDialogClose();
     };
 
-    function setFilterToEditValue(filterToEdit){
+    function setFilterToEditValue(filterToEdit) {
         switch (filterToEdit.key) {
             case ReviewFilterDateKey:
                 setFilterDateFrom(filterToEdit.value.dateFrom);
@@ -169,13 +170,13 @@ export default function ReviewsFilterSelectDialog(props) {
     };
 
     const handleSelectedRatings = (event) => {
-        setFilterSelectedRatings(event.target.value.sort((r1,r2)=>r1>r2));
+        setFilterSelectedRatings(event.target.value.sort((r1, r2) => r1 > r2));
     };
 
     return (
         <Dialog open={props.dialogOpen} onClose={handleDialogClose} fullWidth maxWidth='sm'>
             <DialogTitle>
-                {props.filterToEdit.key!==""?"Редактирование фильтра":"Добавление фильтра"}
+                {props.filterToEdit.key !== "" ? "Редактирование фильтра" : "Добавление фильтра"}
             </DialogTitle>
             <DialogContent>
                 <FormControl variant="outlined" className={clsx(classes.selectStyle, margins.m1)}>
@@ -258,7 +259,7 @@ export default function ReviewsFilterSelectDialog(props) {
                 </Button>
                 <Button onClick={handleAddButton} disabled={isAddProhibited()} color="primary"
                         disableElevation variant='contained'>
-                    {props.filterToEdit.key!==""?"Редактировать фильтр":"Добавить фильтр"}
+                    {props.filterToEdit.key !== "" ? "Редактировать фильтр" : "Добавить фильтр"}
                 </Button>
             </DialogActions>
         </Dialog>

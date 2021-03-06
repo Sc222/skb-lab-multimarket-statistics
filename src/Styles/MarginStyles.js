@@ -8,6 +8,9 @@ function MarginStyles(theme) {
             marginLeft: theme.spacing(0.5),
             marginRight: theme.spacing(0.5)
         },
+        m05R:{
+            marginRight: theme.spacing(0.5)
+        },
         m1: {
             marginTop: theme.spacing(1),
             marginBottom: theme.spacing(1),

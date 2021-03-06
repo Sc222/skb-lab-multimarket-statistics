@@ -29,7 +29,6 @@ Chart.defaultProps = {
 
 export default function Chart(props) {
     const theme = useTheme();
-
     const chartClasses = useChartStyles(theme);
 
     if (!props.selectedMarkets.some(isSelected => isSelected)) {
