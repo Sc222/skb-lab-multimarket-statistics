@@ -1,5 +1,4 @@
 import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Button from "@material-ui/core/Button";
@@ -8,13 +7,11 @@ import Divider from "@material-ui/core/Divider";
 
 import {Link as RouterLink} from 'react-router-dom';
 
-import FormSectionStyles from "../../Styles/FormSectionStyles";
+import {useFormSectionStyles} from "../../Styles/FormSectionStyles";
 import {HomepageUrl} from "../../App";
 
-const useStyles = makeStyles((theme) => FormSectionStyles(theme));
-
 export default function PasswordReset() {
-    const classes = useStyles();
+    const classes = useFormSectionStyles();
 
     function submitPasswordReset() {
         //TODO PASSWORD-RESET IN DEVELOPMENT: validate inputs, get inputs value and send server request

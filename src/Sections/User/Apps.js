@@ -20,7 +20,7 @@ import Avatar from "@material-ui/core/Avatar";
 import Hidden from "@material-ui/core/Hidden";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import {Link as RouterLink} from "react-router-dom";
-import MarketChipStyles from "../../Styles/MarketChipStyles";
+import {useMarketChipStyles} from "../../Styles/MarketChipStyles";
 import {createLinkFromId, MarketsIndexes, MarketsInfo} from "../../Helpers/MarketsInfoHelper";
 import {getApps} from "../../Api/ApiApp";
 import {getMarketIdByStoreIndex} from "../../Api/Helpers/ApiAppHelper";
@@ -220,15 +220,15 @@ const useStyles = makeStyles((theme) => ({
     }
 
 }));
-const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function Apps(props) {
     let userId = props.userId;
-    const [apps, setApps] = React.useState(undefined);
-    const [appsNameFilter, setAppsNameFilter] = React.useState('');
 
     const classes = useStyles();
     const marketClasses = useMarketChipStyles();
+
+    const [apps, setApps] = React.useState(undefined);
+    const [appsNameFilter, setAppsNameFilter] = React.useState('');
 
     const handleAppsNameFilterInput = (event) => {
         setAppsNameFilter(event.target.value);

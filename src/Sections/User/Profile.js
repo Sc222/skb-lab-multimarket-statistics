@@ -24,7 +24,7 @@ import {
 import Fab from "@material-ui/core/Fab";
 import Divider from "@material-ui/core/Divider";
 import Hidden from "@material-ui/core/Hidden";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
+import {useFormSectionStyles} from "../../Styles/FormSectionStyles";
 import TextField from "@material-ui/core/TextField";
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
@@ -51,38 +51,30 @@ import DeleteCardAndConfirmDialog from "../../Components/DeleteCardAndConfirmDia
 import {deleteAllSessionCookies} from "../../Helpers/CookieHelper";
 import {ErrorInternalServerErr, HttpStatusCodeLength} from "../../Api/Helpers/ApiHelper";
 
-const useFormStyles = makeStyles((theme) => FormSectionStyles(theme));
 
 const useStyles = makeStyles((theme) => ({
-
     fabBottom: {
         position: 'absolute',
         bottom: theme.spacing(2),
         right: theme.spacing(2),
     },
-
     appBarSpacer: {
         height: '48px'
     },
-
     root: {
         display: 'flex',
     },
-
     toolbarIcon: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-end',
     },
-
     backToAppsButton: {
         width: '100%'
     },
-
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
     },
-
     extraToolbarButtonBack: {
         marginLeft: theme.spacing(0.5),
         marginRight: theme.spacing(0.5),
@@ -90,7 +82,6 @@ const useStyles = makeStyles((theme) => ({
     title: {
         flexGrow: 1,
     },
-
     content: {
         flexGrow: 1,
         height: '100vh',
@@ -115,18 +106,15 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         height: '100%',
     },
-
     paperContainer: {
         flexGrow: 1,
         paddingLeft: theme.spacing(1.5),
         paddingRight: theme.spacing(1.5),
         width: '100%'
     },
-
     primaryRipple: {
         color: theme.palette.primary.light
     },
-
     appDescriptionContainer: {
         flexGrow: 1,
         textAlign: "left",
@@ -137,12 +125,10 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: theme.spacing(1),
         width: '100%'
     },
-
     appIcon: {
         width: 128,
         height: 128
     },
-
     marketsContainer: {
         display: 'flex',
         justifyContent: 'left',
@@ -156,7 +142,6 @@ const useStyles = makeStyles((theme) => ({
             marginRight: theme.spacing(0.5),
         },
     },
-
     fixedHeight: {
         height: 240,
     },
@@ -168,6 +153,7 @@ const useStyles = makeStyles((theme) => ({
         width: theme.spacing(4.5),
         height: theme.spacing(4.5),
     },
+
     //search toolbar styles
     extraToolbar: {
         background: "transparent",
@@ -177,7 +163,6 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         display: 'block',
     },
-
     searchCard: {
         display: 'block',
         borderRadius: theme.shape.borderRadius,
@@ -215,16 +200,13 @@ const useStyles = makeStyles((theme) => ({
             width: '45ch'
         },
     },
-
     extendedIcon: {
         marginRight: theme.spacing(1),
     },
-
     fullWidthDivider: {
         width: '100%',
         marginBottom: theme.spacing(0.5),
     },
-
     containerNotCentered: {
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(2),
@@ -232,14 +214,11 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 0,
         marginRight: 0
     },
-
-
     textWithIcon: {
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'nowrap'
     },
-
 
     //profile settings
     avatarIconContainer: {
@@ -266,7 +245,6 @@ const useStyles = makeStyles((theme) => ({
         bottom: '0',
         left: '0'
     },
-
     sectionMarginTop: {
         marginTop: theme.spacing(1)
     },
@@ -288,7 +266,7 @@ export default function Profile(props) {
     const [emailServerError, setEmailServerError] = React.useState("");
 
     const classes = useStyles();
-    const formClasses = useFormStyles();
+    const formClasses = useFormSectionStyles();
 
     //TODO ADD POSSIBILITY TO CHANGE PROFILE PHOTO
     function editProfile() {

@@ -18,8 +18,8 @@ import TextField from "@material-ui/core/TextField";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import update from "immutability-helper";
 import {Redirect, Route, Switch as RouteSwitch} from "react-router-dom";
-import MarketChipStyles from "../../../Styles/MarketChipStyles";
-import FormSectionStyles from "../../../Styles/FormSectionStyles";
+import {useMarketChipStyles} from "../../../Styles/MarketChipStyles";
+import {useFormSectionStyles} from "../../../Styles/FormSectionStyles";
 import {
     AppNameMaxLength,
     createAppForUpdate,
@@ -32,7 +32,6 @@ import {
     AppStoreIndex,
     createLinkFromId,
     getAppIdFromUrl,
-    MarketsIndexes,
     MarketsInfo,
     PlayStoreIndex
 } from "../../../Helpers/MarketsInfoHelper";
@@ -42,6 +41,7 @@ import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
 import DeleteCardAndConfirmDialog from "../../../Components/DeleteCardAndConfirmDialog";
 //image imports
 import defaultAppIcon from "../../../images/default_app_icon.png";
+import AppInfoCard from "../../../Components/AppInfoCard";
 
 const drawerWidth = 260;
 
@@ -321,8 +321,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 }));
-const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
-const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function AppSettings(props) {
     const userId = props.userId;
@@ -500,59 +498,11 @@ export default function AppSettings(props) {
                         </Paper>
                     </Grid>
 
-                    {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
+                    {props.app &&
                     <Grid item xs={12}>
-                        {props.app &&
-                        <Paper className={classes.paperNoPadding} elevation={1}>
-                            <div className={classes.containerTopPadded}>
-                                <Typography variant="h6">
-                                    Информация о приложении
-                                </Typography>
-                                <Typography variant="body2">
-                                    Текущая информация о приложении
-                                </Typography>
-                            </div>
-                            <Divider className={formClasses.fullWidthDivider}/>
-                            <div className={classes.appDescriptionContainer}>
-
-                                <Grid container alignItems='center' spacing={2}>
-                                    <Grid item xs={3} sm={2} md={1}>
-                                        <img alt='app icon'
-                                             src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
-                                             className={classes.applicationIcon}/>
-                                    </Grid>
-                                    <Grid item xs={9} sm={10} md={11}>
-                                        <Typography component="h5" variant="h6">{props.app.name}</Typography>
-                                        <Typography component="p" variant="body1">
-                                            {props.app.description}
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </div>
-                            <Divider className={classes.fullWidthDivider}/>
-                            <div className={marketClasses.marketsContainer}>
-                                {
-                                    MarketsIndexes.map(marketIndex => {
-                                        let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
-                                        return <Chip key={marketIndex}
-                                                     variant="outlined"
-                                                     clickable
-                                                     component='a'
-                                                     label={MarketsInfo[marketIndex].name}
-                                                     href={createLinkFromId(marketIndex, marketId)}
-                                                     target="_blank"
-                                                     rel='noreferrer'
-                                                     disabled={marketId === undefined}
-                                                     color={marketId === undefined ? "default" : "primary"}
-                                                     avatar={<Avatar className={marketClasses.transparentBg}
-                                                                     variant='square'
-                                                                     src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
-                                    })
-                                }
-                            </div>
-                        </Paper>
-                        }
+                        <AppInfoCard app={props.app} iconGridMd={1}/>
                     </Grid>
+                    }
 
                     <Grid item xs={12}>
                         <Paper elevation={1} className={classes.paper}>

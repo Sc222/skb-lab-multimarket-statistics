@@ -21,8 +21,8 @@ import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import TextField from "@material-ui/core/TextField";
 import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
-import MarketChipStyles from "../../Styles/MarketChipStyles";
+import {useFormSectionStyles} from "../../Styles/FormSectionStyles";
+import {useMarketChipStyles} from "../../Styles/MarketChipStyles";
 import {
     AppGalleryIndex,
     AppStoreIndex,
@@ -223,8 +223,6 @@ const useStyles = makeStyles((theme) => ({
     }
 
 }));
-const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
-const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function NewApplications(props) {
     const userId = props.userId;

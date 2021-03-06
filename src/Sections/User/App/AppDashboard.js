@@ -8,7 +8,6 @@ import Paper from '@material-ui/core/Paper';
 import Avatar from "@material-ui/core/Avatar";
 import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
-import Chip from "@material-ui/core/Chip";
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
@@ -26,17 +25,12 @@ import {
     StarBorderRounded,
     StarRounded
 } from "@material-ui/icons";
-import FormSectionStyles from "../../../Styles/FormSectionStyles";
-import MarketChipStyles from "../../../Styles/MarketChipStyles";
+import {useFormSectionStyles} from "../../../Styles/FormSectionStyles";
+import {useMarketChipStyles} from "../../../Styles/MarketChipStyles";
 import {Link as RouterLink} from "react-router-dom";
 import clsx from "clsx";
 import {HomepageUrl} from "../../../App";
-import {
-    AppNameMaxLength,
-    getAppMarketsArray,
-    getMarketIdByStoreIndex,
-    hasMarkets
-} from "../../../Api/Helpers/ApiAppHelper";
+import {AppNameMaxLength, getAppMarketsArray, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
 import {getRatings} from "../../../Api/ApiRating";
 import {deleteAllNotificationsForApp, getNotifications} from "../../../Api/ApiNotification";
 import {getAppNotificationsAlert} from "../../../Helpers/AlertsHelper";
@@ -46,15 +40,10 @@ import {filterNotificationsByApp} from "../../../Api/Helpers/ApiNotificationHelp
 import AppNoMarketsCard from "../../../Components/AppNoMarketsCard";
 import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
 import {formatDateShort} from "../../../Helpers/UtilsHelper";
-import {
-    createLinkFromId,
-    getLatestRatingsStartCheckDate,
-    MarketsIndexes,
-    MarketsInfo,
-    MarketStarsTemplate
-} from "../../../Helpers/MarketsInfoHelper";
+import {getLatestRatingsStartCheckDate, MarketsInfo, MarketStarsTemplate} from "../../../Helpers/MarketsInfoHelper";
 //images imports
 import defaultAppIcon from "../../../images/default_app_icon.png";
+import AppInfoCard from "../../../Components/AppInfoCard";
 
 const drawerWidth = 260;
 
@@ -355,15 +344,13 @@ const useStyles = makeStyles((theme) => ({
 
 
 }));
-const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
-const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function AppDashboard(props) {
 
     const theme = useTheme();
     const classes = useStyles();
     const formClasses = useFormSectionStyles();
-    const marketClasses = useMarketChipStyles();
+    const marketChipClasses = useMarketChipStyles();
 
     const [appNotifications, setAppNotifications] = React.useState(undefined);
     const [latestRatings, setLatestRatings] = React.useState(undefined);
@@ -410,7 +397,7 @@ export default function AppDashboard(props) {
                 if (result.ok) {
                     setAppNotifications([]);
                     reloadNotifications();
-                } else{
+                } else {
                     props.updateIsTokenExpired(result.status.toString());
                     props.showStatusAlert("Не удалось удалить уведомления", "error");
                     console.log("error deleting notifications");
@@ -484,60 +471,11 @@ export default function AppDashboard(props) {
                 </Paper>
             </Grid>
 
-            {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
+            {props.app &&
             <Grid item xs={12} md={7} lg={8}>
-                {props.app &&
-                <Paper className={classes.paperNoPadding} elevation={1}>
-                    <div className={classes.containerTopPadded}>
-                        <Typography variant="h6">
-                            Информация о приложении
-                        </Typography>
-                        <Typography variant="body2">
-                            Текущая информация о приложении
-                        </Typography>
-                    </div>
-                    <Divider className={formClasses.fullWidthDivider}/>
-                    <div className={classes.appDescriptionContainer}>
-                        <Grid container alignItems='center' spacing={2}>
-                            <Grid item xs={3} sm={2} md={2}>
-                                <img alt='app icon'
-                                     src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
-                                     className={classes.applicationIcon}/>
-                            </Grid>
-                            <Grid item xs={9} sm={10} md={10}>
-                                <Typography component="h5" variant="h6">{props.app.name}</Typography>
-                                <Typography component="p" variant="body1">
-                                    {props.app.description}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                    </div>
-                    <Divider className={classes.fullWidthDivider}/>
-                    <div className={marketClasses.marketsContainer}>
-                        {
-                            MarketsIndexes.map(marketIndex => {
-                                let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
-                                return <Chip key={marketIndex}
-                                             variant="outlined"
-                                             clickable
-                                             component='a'
-                                             label={MarketsInfo[marketIndex].name}
-                                             href={createLinkFromId(marketIndex, marketId)}
-                                             target="_blank"
-                                             rel='noreferrer'
-                                             disabled={marketId === undefined}
-                                             color={marketId === undefined ? "default" : "primary"}
-                                             avatar={<Avatar className={marketClasses.transparentBg}
-                                                             variant='square'
-                                                             src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
-
-
-                            })
-                        }
-                    </div>
-                </Paper>
-                }
+                <AppInfoCard app={props.app} iconGridMd={2}/>
             </Grid>
+            }
 
             <Grid item xs={12} md={5} lg={4}>
                 <Paper elevation={1} className={classes.paper}>
@@ -607,7 +545,7 @@ export default function AppDashboard(props) {
                                     <Grid container alignItems='center' spacing={1} key={marketIndex}>
                                         <Grid item>
                                             <Avatar
-                                                className={marketClasses.marketAvatar}
+                                                className={marketChipClasses.marketAvatar}
                                                 variant='square'
                                                 src={MarketsInfo[marketIndex].getIcon(false)}/>
                                         </Grid>
@@ -711,7 +649,7 @@ export default function AppDashboard(props) {
                                                     <Box pl={0.5}>
                                                         <Typography variant="body1" className={classes.textWithIcon}>
                                                 <span> <Avatar
-                                                    className={clsx(marketClasses.marketAvatarSmall, marketClasses.iconMargin)}
+                                                    className={clsx(marketChipClasses.marketAvatarSmall, marketChipClasses.iconMargin)}
                                                     variant='square'
                                                     src={MarketsInfo[review.marketIndex].getIcon(false)}/></span>
                                                             <b>

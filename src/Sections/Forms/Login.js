@@ -1,23 +1,20 @@
 import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
 import {Link as RouterLink} from 'react-router-dom';
-import FormSectionStyles from "../../Styles/FormSectionStyles";
+import {useFormSectionStyles} from "../../Styles/FormSectionStyles";
 import {getDefaultLoginCredentials} from "../../Api/Helpers/ApiUserHelper";
 import {authenticateUser} from "../../Api/ApiUser";
 import update from "immutability-helper";
 import {getPasswordError, getUsernameError, parseLoginWrongCredentialsServerError} from "../../Helpers/ErrorHelper";
 import {HomepageUrl} from "../../App";
-import {setCookieUsername, setCookieToken, setCookieUserId, getCookieUsername} from "../../Helpers/CookieHelper";
-
-const useStyles = makeStyles((theme) => FormSectionStyles(theme));
+import {getCookieUsername, setCookieToken, setCookieUserId, setCookieUsername} from "../../Helpers/CookieHelper";
 
 export default function Login(props) {
-    const classes = useStyles();
+    const classes = useFormSectionStyles();
 
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
     const [wrongCredentials, setWrongCredentials] = React.useState(false);

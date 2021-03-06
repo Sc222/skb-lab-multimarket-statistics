@@ -1,4 +1,8 @@
-export default function FormSectionStyles(theme) {
+import {makeStyles} from "@material-ui/core/styles";
+
+export const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
+
+function FormSectionStyles(theme) {
     return {
         //todo create new theme with theme.mixins.toolbar height set to 48 ALWAYS (dense toolbar breaks spacer)
         appBarSpacer: {

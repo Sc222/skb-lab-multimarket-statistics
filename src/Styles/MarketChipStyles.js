@@ -1,4 +1,8 @@
-export default function MarketChipStyles(theme) {
+import {makeStyles} from "@material-ui/core/styles";
+
+export const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
+
+function MarketChipStyles(theme) {
     return {
 
         marketAvatar: {

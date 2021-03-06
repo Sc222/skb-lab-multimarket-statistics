@@ -10,9 +10,9 @@ import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
 import {getChipChartColor, MarketRatingPrecision, MarketsInfo} from "../../../Helpers/MarketsInfoHelper";
-import MarketChipStyles from "../../../Styles/MarketChipStyles";
+import {useMarketChipStyles} from "../../../Styles/MarketChipStyles";
 import Container from "@material-ui/core/Container";
-import FormSectionStyles from "../../../Styles/FormSectionStyles";
+import {useFormSectionStyles} from "../../../Styles/FormSectionStyles";
 import update from "immutability-helper";
 import {AppNameMaxLength, getAppMarketsArray, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
 import {format} from 'date-fns';
@@ -329,8 +329,6 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
-const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function AppRatingsSection(props) {
 

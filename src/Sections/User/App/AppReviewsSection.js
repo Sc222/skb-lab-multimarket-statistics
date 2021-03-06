@@ -22,7 +22,7 @@ import {
     ReviewFilterVersionKey
 } from "../../../Helpers/MarketsInfoHelper";
 import Container from "@material-ui/core/Container";
-import FormSectionStyles from "../../../Styles/FormSectionStyles";
+import {useFormSectionStyles} from "../../../Styles/FormSectionStyles";
 import {AppNameMaxLength, AppVersionNullKey, getAppMarketsArray, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
 import {format} from 'date-fns';
 import Button from "@material-ui/core/Button";
@@ -336,7 +336,6 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(0.5)
     }
 }));
-const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
 
 export default function AppReviewsSection(props) {
 
