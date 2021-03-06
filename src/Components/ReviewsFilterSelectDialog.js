@@ -9,7 +9,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import {
-    ReviewFilterDateKey,
+    ReviewFilterDateKey, ReviewFilterInfo,
     ReviewFilterRatingKey,
     ReviewFilterRatings,
     ReviewFilterTypes,
@@ -61,7 +61,8 @@ const useStyles = makeStyles((theme) => ({
 ReviewsFilterSelectDialog.defaultProps = {
     dialogOpen: false,
     setDialogOpen: (value) => console.log("specify setDialogOpen prop: " + value),
-    filterTypes: ReviewFilterTypes,
+    filterTypes: ReviewFilterTypes(UIDefaultValues.reviewFilters),
+    filterToEdit: UIDefaultValues.reviewFilterToEdit,
     filterVersions: [],
     filterRatings: ReviewFilterRatings,
     handleAddFilter: (filterType, filterValue) => console.log(`Добавление фильтра: ${filterType} ${filterValue}`)
@@ -79,6 +80,13 @@ export default function ReviewsFilterSelectDialog(props) {
     const [filterDateFromError, setFilterDateFromError] = React.useState('');
     const [filterDateToError, setFilterDateToError] = React.useState('');
 
+    React.useEffect(() => {
+        if(props.filterToEdit.key!=="") {
+            setSelectedFilter(props.filterToEdit.key);
+            setFilterToEditValue(props.filterToEdit);
+        }
+    }, [props.filterToEdit])
+
     function hasFilterDateErrors() {
         return !filterDateFrom || !filterDateTo ||
             filterDateFromError + filterDateToError !== "";
@@ -94,6 +102,21 @@ export default function ReviewsFilterSelectDialog(props) {
         props.handleAddFilter(selectedFilter, getFilterValue());
         handleDialogClose();
     };
+
+    function setFilterToEditValue(filterToEdit){
+        switch (filterToEdit.key) {
+            case ReviewFilterDateKey:
+                setFilterDateFrom(filterToEdit.value.dateFrom);
+                setFilterDateTo(filterToEdit.value.dateTo);
+                break;
+            case ReviewFilterVersionKey:
+                setFilterSelectedVersions(filterToEdit.value);
+                break;
+            case ReviewFilterRatingKey:
+                setFilterSelectedRatings(filterToEdit.value);
+                break;
+        }
+    }
 
     function getFilterValue() {
         switch (selectedFilter) {
@@ -151,7 +174,9 @@ export default function ReviewsFilterSelectDialog(props) {
 
     return (
         <Dialog open={props.dialogOpen} onClose={handleDialogClose} fullWidth maxWidth='sm'>
-            <DialogTitle>Добавление фильтра</DialogTitle>
+            <DialogTitle>
+                {props.filterToEdit.key!==""?"Редактирование фильтра":"Добавление фильтра"}
+            </DialogTitle>
             <DialogContent>
                 <FormControl variant="outlined" className={clsx(classes.selectStyle, margins.m1)}>
                     <InputLabel id="filter-select-label">Тип фильтра</InputLabel>
@@ -188,9 +213,7 @@ export default function ReviewsFilterSelectDialog(props) {
                         multiple
                         labelId="version-select-label"
                         id="version-select"
-                        renderValue={(selected) => selected.length === props.filterVersions.length
-                            ? "Любая"
-                            : `Выбрано версий: ${selected.length}`}
+                        renderValue={(selected) => ReviewFilterInfo[ReviewFilterVersionKey].getLabel(selected, props.filterVersions)}
                         label="Версия"
                         value={filterSelectedVersions}
                         onChange={handleSelectedVersions}
@@ -214,10 +237,7 @@ export default function ReviewsFilterSelectDialog(props) {
                         multiple
                         labelId="rating-select-label"
                         id="rating-select"
-                        renderValue={(selected) => selected.length === props.filterRatings.length
-                            ? "Любая"
-                            : selected.join(', ')
-                        }
+                        renderValue={(selected) => ReviewFilterInfo[ReviewFilterRatingKey].getLabel(selected)}
                         label="Оценка"
                         value={filterSelectedRatings}
                         onChange={handleSelectedRatings}
@@ -238,7 +258,7 @@ export default function ReviewsFilterSelectDialog(props) {
                 </Button>
                 <Button onClick={handleAddButton} disabled={isAddProhibited()} color="primary"
                         disableElevation variant='contained'>
-                    Добавить фильтр
+                    {props.filterToEdit.key!==""?"Редактировать фильтр":"Добавить фильтр"}
                 </Button>
             </DialogActions>
         </Dialog>

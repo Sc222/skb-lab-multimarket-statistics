@@ -18,6 +18,9 @@ function MarginStyles(theme) {
             marginTop: theme.spacing(1),
             marginBottom: theme.spacing(1),
         },
+        m1T:{
+            marginTop: theme.spacing(1),
+        }
 
     };
 }

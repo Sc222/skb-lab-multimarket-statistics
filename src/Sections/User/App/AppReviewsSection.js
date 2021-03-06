@@ -14,7 +14,9 @@ import {
     getFirstExistingMarketRequestKey,
     MarketsInfo,
     MarketsRequestKeys,
-    MarketStarsTemplate
+    MarketStarsTemplate, ReviewFilterDateKey,
+    ReviewFilterInfo, ReviewFilterRatingKey,
+    ReviewFilterTypes, ReviewFilterVersionKey
 } from "../../../Helpers/MarketsInfoHelper";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../../Styles/FormSectionStyles";
@@ -54,6 +56,8 @@ import {getAppVersions} from "../../../Api/ApiApp";
 import {UIDefaultValues, UIProperties} from "../../../Config";
 import ReviewsFilterAddDialog from "../../../Components/ReviewsFilterSelectDialog";
 import update from "immutability-helper";
+import Chip from "@material-ui/core/Chip";
+import {useMarginStyles} from "../../../Styles/MarginStyles";
 
 const drawerWidth = 260;
 
@@ -117,6 +121,15 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: theme.spacing(2),
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
+        width: '100%',
+        marginLeft: 0,
+        marginRight: 0
+    },
+    containerFilters: {
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(2),
+        paddingTop: theme.spacing(2),
+        paddingBottom: theme.spacing(1),
         width: '100%',
         marginLeft: 0,
         marginRight: 0
@@ -326,9 +339,11 @@ export default function AppReviewsSection(props) {
 
     const classes = useStyles();
     const formClasses = useFormSectionStyles();
+    const margins = useMarginStyles();
 
+    const [filterToEdit, setFilterToEdit] = React.useState(UIDefaultValues.reviewFilterToEdit);
     const [dialogFiltersOpen, setDialogFiltersOpen] = React.useState(false);
-    const [reviewsFilters, setReviewsFilters] = React.useState(UIDefaultValues.reviewFilters);
+    const [reviewsSelectedFilters, setReviewsSelectedFilters] = React.useState(UIDefaultValues.reviewFilters);
 
     const [reviews, setReviews] = React.useState(undefined);
     const [reviewsCurrentPage, setReviewsPage] = React.useState(0);
@@ -340,7 +355,7 @@ export default function AppReviewsSection(props) {
 
     const handleChangeReviewsCurrentPage = (event, newPage) => {
         setReviewsPage(newPage);
-        loadNextReviewsPage(newPage, reviewsPerPage, reviewsSelectedMarket);
+        loadNextReviewsPage(newPage, reviewsPerPage, reviewsSelectedMarket, reviewsSelectedFilters);
     };
 
     //TablePagination starts from zero, default Pagination starts from 1 + scroll to top
@@ -353,26 +368,45 @@ export default function AppReviewsSection(props) {
         const selectedMarket = event.target.value;
         setReviewsSelectedMarket(selectedMarket);
         setReviewsPage(0);
-        loadNextReviewsPage(0, reviewsPerPage, selectedMarket);
+        loadNextReviewsPage(0, reviewsPerPage, selectedMarket, reviewsSelectedFilters);
         loadAppVersions(selectedMarket);
+
+        // new market so reset version filter
+        const newReviewsFilters = update(reviewsSelectedFilters, {[ReviewFilterVersionKey]: {$set: undefined}});
+        setReviewsSelectedFilters(newReviewsFilters);
     };
 
     const handleChangeReviewsPerPage = (event) => {
         const newReviewsPerPage = parseInt(event.target.value, 10);
         setReviewsPerPage(newReviewsPerPage);
         setReviewsPage(0);
-        loadNextReviewsPage(0, newReviewsPerPage, reviewsSelectedMarket);
+        loadNextReviewsPage(0, newReviewsPerPage, reviewsSelectedMarket, reviewsSelectedFilters);
     };
 
     const handleDialogOpen = () => {
         setDialogFiltersOpen(true);
     };
 
+    const handleFilterEdit = (filter) => () => {
+        // set filter to edit flag and open edit filter dialog (same as add filter dialog)
+        setFilterToEdit({key:filter,value:reviewsSelectedFilters[filter]});
+        handleDialogOpen();
+    };
+
+    //LIFEHACK TO PASS ARGUMENTS AND NOT CALL FUNCTION
+    const handleFilterDelete = (filter) => () => {
+        handleAddReviewsFilter(filter, undefined);
+    };
+
     const handleAddReviewsFilter = (filter, value) => {
-        //setDialogFiltersOpen(true);
-        const newReviewsFilters = update(reviewsFilters,{[filter]:{$set:value}});
-        setReviewsFilters(newReviewsFilters);
-        console.log(newReviewsFilters);
+        const newReviewsFilters = update(reviewsSelectedFilters, {[filter]: {$set: value}});
+        setReviewsSelectedFilters(newReviewsFilters);
+        setReviewsPage(0);
+        loadNextReviewsPage(0, reviewsPerPage, reviewsSelectedMarket, newReviewsFilters);
+
+        // reset filter to edit flag
+        if(filterToEdit.key!=="")
+            setFilterToEdit(UIDefaultValues.reviewFilterToEdit);
     };
 
     useEffect(() => {
@@ -384,21 +418,21 @@ export default function AppReviewsSection(props) {
             requests.push(getReviews(props.userId, props.app.id, (reviewsCurrentPage) * reviewsPerPage, reviewsPerPage, defaultMarketKey));
             requests.push(getAppVersions(props.userId, props.app.id, defaultMarketKey));
             Promise.all(requests)
-                .then(([reviews,versions])=>{
+                .then(([reviews, versions]) => {
                     setReviews(reviews);
-                    if(versions[0]===null)
-                        versions[0]=AppVersionNullKey;
+                    if (versions[0] === null)
+                        versions[0] = AppVersionNullKey;
                     setAppVersions(versions);
-                    })
-                .catch(err=>console.log(err.message));
+                })
+                .catch(err => console.log(err.message));
         }
     }, [props.app]);
 
     function loadAppVersions(selectedMarket) {
         getAppVersions(props.userId, props.app.id, selectedMarket)
             .then(versions => {
-                if(versions[0]===null)
-                    versions[0]=AppVersionNullKey;
+                if (versions[0] === null)
+                    versions[0] = AppVersionNullKey;
                 console.log("versions: " + versions);
                 setAppVersions(versions);
             })
@@ -407,8 +441,13 @@ export default function AppReviewsSection(props) {
             })
     }
 
-    function loadNextReviewsPage(page, perPage, selectedMarket) {
-        getReviews(props.userId, props.app.id, (page) * perPage, perPage, selectedMarket)
+    function loadNextReviewsPage(page, perPage, selectedMarket, filters) {
+        const date = filters[ReviewFilterDateKey];
+        const versions = filters[ReviewFilterVersionKey];
+        const ratings = filters[ReviewFilterRatingKey];
+        console.log("GET: ");
+        console.log(filters);
+        getReviews(props.userId, props.app.id, (page) * perPage, perPage, selectedMarket, date, versions, ratings)
             .then(reviews => {
                 setReviews(reviews);
             })
@@ -510,18 +549,33 @@ export default function AppReviewsSection(props) {
                             </Typography>
                         </div>
                         <Divider className={formClasses.fullWidthDivider}/>
-                        <Container className={classes.containerApps}>
+                        <Container className={classes.containerFilters}>
                             <Button onClick={handleDialogOpen} startIcon={<FilterListRounded/>} variant="outlined"
                                     color="primary">
                                 Добавить фильтр
                             </Button>
                             <ReviewsFilterAddDialog
+                                filterTypes={ReviewFilterTypes(reviewsSelectedFilters, filterToEdit.key)}
+                                filterToEdit={filterToEdit}
                                 filterVersions={appVersions}
                                 dialogOpen={dialogFiltersOpen}
                                 setDialogOpen={setDialogFiltersOpen}
                                 handleAddFilter={handleAddReviewsFilter}
                             />
+                            <Grid container className={margins.m1T} alignItems='flex-start' spacing={1}
+                                  justify='flex-start'>
+                                {Object.entries(reviewsSelectedFilters).map(([key, value]) => (
+                                    value !== undefined &&
+                                    <Grid item key={key}>
+                                        <Chip color="primary" clickable
+                                              onClick={handleFilterEdit(key)}
+                                              onDelete={handleFilterDelete(key)}
+                                              label={`${ReviewFilterInfo[key].name}: ${ReviewFilterInfo[key].getLabel(value)}`}/>
+                                    </Grid>))
+                                }
+                            </Grid>
                         </Container>
+
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container className={classes.containerApps}>
                             <Grid container alignItems='center' spacing={2} justify='space-between'>

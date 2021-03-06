@@ -4,6 +4,7 @@ import appStoreDisabled from "../images/app-store-disabled.svg";
 import appStore from "../images/app-store.svg";
 import appGalleryDisabled from "../images/appgallery-disabled.svg";
 import appGallery from "../images/appgallery.svg";
+import {formatDateShort} from "./UtilsHelper";
 
 export const PlayStoreIndex = 0;
 export const AppStoreIndex = 1;
@@ -25,11 +26,30 @@ export const ReviewFilterRatings = [
     {name: "2 звезды", value: 2},
     {name: "1 звезда", value: 1},
 ];
-export const ReviewFilterTypes = [
-    {name: "Дата", value: ReviewFilterDateKey, disabled: false},
-    {name: "Версия", value: ReviewFilterVersionKey, disabled: false},
-    {name: "Оценка", value: ReviewFilterRatingKey, disabled: false}
-];
+export const ReviewFilterTypes = (selectedFilter, filterToEditKey="") => {
+    if (filterToEditKey !== "")
+        return [{name: ReviewFilterInfo[filterToEditKey].name, value: filterToEditKey, disabled: false}];
+    return [
+        {name: "Дата", value: ReviewFilterDateKey, disabled: selectedFilter[ReviewFilterDateKey] !== undefined},
+        {name: "Версия", value: ReviewFilterVersionKey, disabled: selectedFilter[ReviewFilterVersionKey] !== undefined},
+        {name: "Оценка", value: ReviewFilterRatingKey, disabled: selectedFilter[ReviewFilterRatingKey] !== undefined}
+    ];
+}
+
+export const ReviewFilterInfo = {
+    [ReviewFilterDateKey]: {
+        name: "Дата",
+        getLabel: (date) => `${formatDateShort(date.dateFrom)} - ${formatDateShort(date.dateTo)}`
+    },
+    [ReviewFilterVersionKey]: {
+        name: "Версия",
+        getLabel: (selected) => `выбрано: ${selected.length}`
+    },
+    [ReviewFilterRatingKey]: {
+        name: "Оценка",
+        getLabel: (selected) => selected.length === MarketStarsTemplate.length ? "любая" : selected.join(', ')
+    }
+};
 
 export const MarketsLinks = [
     "https://play.google.com/store/apps/details?id=",
@@ -55,7 +75,6 @@ export const MarketsLinksRegex = [
 
 export const MarketsIndexes = [PlayStoreIndex, AppStoreIndex, AppGalleryIndex]; // starts with 0 and +1
 
-export const MarketAllVersions = "Все версии";
 export const MarketsRequestKeys = ["playMarket", "appStore", "appGallery"];
 export const IndexByRequestKey = MarketsRequestKeys.reduce((a, val, index) => ({...a, [val]: index}), {});
 
