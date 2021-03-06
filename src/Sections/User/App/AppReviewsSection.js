@@ -14,9 +14,12 @@ import {
     getFirstExistingMarketRequestKey,
     MarketsInfo,
     MarketsRequestKeys,
-    MarketStarsTemplate, ReviewFilterDateKey,
-    ReviewFilterInfo, ReviewFilterRatingKey,
-    ReviewFilterTypes, ReviewFilterVersionKey
+    MarketStarsTemplate,
+    ReviewFilterDateKey,
+    ReviewFilterInfo,
+    ReviewFilterRatingKey,
+    ReviewFilterTypes,
+    ReviewFilterVersionKey
 } from "../../../Helpers/MarketsInfoHelper";
 import Container from "@material-ui/core/Container";
 import FormSectionStyles from "../../../Styles/FormSectionStyles";
@@ -482,7 +485,6 @@ export default function AppReviewsSection(props) {
                                 {props.app &&
                                 <AdaptiveBreadcrumbItem
                                     maxLength={AppNameMaxLength}
-
                                     link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
                                     icon={() => <img alt='app icon'
                                                      src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}

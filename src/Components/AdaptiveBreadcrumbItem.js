@@ -5,6 +5,7 @@ import Link from "@material-ui/core/Link";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
 import {useMarginStyles} from "../Styles/MarginStyles";
+import {MoreRounded} from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
     textWithIcon: {
@@ -18,8 +19,14 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-//todo PROPS DOCUMENTATION
-//props: text, link, icon, maxLength
+AdaptiveBreadcrumbItem.defaultProps = {
+    maxLength: undefined,
+    icon: MoreRounded,
+    text: "",
+    link: "",
+    isSelected: false,
+}
+
 export default function AdaptiveBreadcrumbItem(props) {
     const classes = useStyles();
     const margins = useMarginStyles();

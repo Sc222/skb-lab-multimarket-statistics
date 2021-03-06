@@ -31,7 +31,12 @@ import MarketChipStyles from "../../../Styles/MarketChipStyles";
 import {Link as RouterLink} from "react-router-dom";
 import clsx from "clsx";
 import {HomepageUrl} from "../../../App";
-import {AppNameMaxLength, getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
+import {
+    AppNameMaxLength,
+    getAppMarketsArray,
+    getMarketIdByStoreIndex,
+    hasMarkets
+} from "../../../Api/Helpers/ApiAppHelper";
 import {getRatings} from "../../../Api/ApiRating";
 import {deleteAllNotificationsForApp, getNotifications} from "../../../Api/ApiNotification";
 import {getAppNotificationsAlert} from "../../../Helpers/AlertsHelper";
@@ -534,7 +539,6 @@ export default function AppDashboard(props) {
                 }
             </Grid>
 
-            {/*TODO IS NOTIFICATION SECTION IN APPS NEEDED?*/}
             <Grid item xs={12} md={5} lg={4}>
                 <Paper elevation={1} className={classes.paper}>
                     <div className={formClasses.container}>
@@ -685,7 +689,7 @@ export default function AppDashboard(props) {
                     <Container
                         className={clsx(classes.containerNotCentered, classes.mYdividers, classes.flexGrowFillCenterVertical)}>
                         <Grid container alignItems='center'
-                              spacing={2}>{/*TODO !!! justify='center' ONLY IF MD and 3 markets*/}
+                              spacing={2}>
                             {latestReviews && latestReviews.map(review => {
                                 return (<Grid key={review.marketIndex} xs={12} md={6} lg={4} item>
                                         <Box border={1} borderRadius={8} borderColor="grey.300"

@@ -482,7 +482,6 @@ export default function AppSettings(props) {
                                         {props.app &&
                                         <AdaptiveBreadcrumbItem
                                             maxLength={AppNameMaxLength}
-
                                             link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
                                             icon={() => <img alt='app icon'
                                                              src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
@@ -505,7 +504,6 @@ export default function AppSettings(props) {
                     <Grid item xs={12}>
                         {props.app &&
                         <Paper className={classes.paperNoPadding} elevation={1}>
-
                             <div className={classes.containerTopPadded}>
                                 <Typography variant="h6">
                                     Информация о приложении

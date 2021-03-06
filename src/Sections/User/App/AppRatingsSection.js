@@ -423,7 +423,6 @@ export default function AppRatingsSection(props) {
                                 {props.app &&
                                 <AdaptiveBreadcrumbItem
                                     maxLength={AppNameMaxLength}
-
                                     link={`${HomepageUrl}/user/${props.userId}/app/${props.appId}`}
                                     icon={() => <img alt='app icon'
                                                      src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}

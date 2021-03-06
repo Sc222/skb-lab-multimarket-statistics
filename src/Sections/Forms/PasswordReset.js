@@ -17,7 +17,7 @@ export default function PasswordReset() {
     const classes = useStyles();
 
     function submitPasswordReset() {
-        //todo validate inputs, get inputs value and send server request
+        //TODO PASSWORD-RESET IN DEVELOPMENT: validate inputs, get inputs value and send server request
     }
 
     return (
