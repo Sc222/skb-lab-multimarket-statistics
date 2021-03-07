@@ -7,6 +7,7 @@ using Domain.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MultimarketStatistics.Models;
+using Storage.Entities;
 
 namespace MultimarketStatistics.Controllers
 {
@@ -25,32 +26,38 @@ namespace MultimarketStatistics.Controllers
             this.appService = appService;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("{userId}/{appId}")]
         public ActionResult<SearchResult<ReviewContract[]>> GetAppReviews(Guid userId, Guid appId, [FromQuery] int? skip, [FromQuery] int? take,
             [FromQuery] string market, [FromQuery(Name = "version")] string[] versions, [FromQuery(Name = "rating")] int[] ratings,
             [FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
-            if (!IsValidAction(userId, appId))
-                return StatusCode(StatusCodes.Status403Forbidden);
+            //if (!IsValidAction(userId, appId))
+            //    return StatusCode(StatusCodes.Status403Forbidden);
 
             if (versions.Contains("notMentioned"))
                 versions = versions.Append(null).ToArray();
 
-            var searchResult = reviewService.GetAppReviews(appId, skip, take, market.ToMarketType());
-            var result = searchResult.FoundItem.AsEnumerable();
+            var searchResult = reviewService.GetAppReviews(appId, market.ToMarketType());
+            var filtered = searchResult.AsEnumerable();
 
             if (versions.Length != 0)
-                result = result.Where(r => versions.Contains(r.Version));
+                filtered = filtered.Where(r => versions.Contains(r.Version));
             if (ratings.Length != 0)
-                result = result.Where(r => ratings.Contains(r.Rating));
+                filtered = filtered.Where(r => ratings.Contains(r.Rating));
             if (from != null)
-                result = result.Where(r => r.Date >= from);
+                filtered = filtered.Where(r => r.Date >= from);
             if (to != null)
-                result = result.Where(r => r.Date <= to);
+                filtered = filtered.Where(r => r.Date <= to);
 
-            return new SearchResult<ReviewContract[]>(searchResult.Total, result.Count(),
-                mapper.Map<ReviewContract[]>(result));
+            var result = filtered as Review[] ?? filtered.ToArray();
+
+            var total = result.Length;
+
+            var requested = result.SkipOrAll(skip).TakeOrAll(take).ToArray();
+
+            return new SearchResult<ReviewContract[]>(total, requested.Length,
+                mapper.Map<ReviewContract[]>(requested));
         }
 
         private bool IsValidAction(Guid userId, Guid appId)

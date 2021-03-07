@@ -26,11 +26,9 @@ namespace Domain.Services
             reviewRepository.CreateRange(reviews);
         }
 
-        public SearchResult<Review[]> GetAppReviews(Guid appId, int? skip, int? take, MarketType market)
+        public Review[] GetAppReviews(Guid appId, MarketType market)
         {
-            var appReviews = reviewRepository.Find(r => r.App.Id == appId && r.Market == market);
-            var requested = appReviews.OrderByDescending(r => r.Date).SkipOrAll(skip).TakeOrAll(take).ToArray();
-            return new SearchResult<Review[]>(appReviews.Length, requested.Length, requested);
+            return reviewRepository.Find(r => r.App.Id == appId && r.Market == market);
         }
     }
 }
