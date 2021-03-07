@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Domain;
@@ -15,9 +14,9 @@ namespace MultimarketStatistics.Controllers
     [Route("api/[controller]")]
     public class ReviewController : ControllerBase
     {
+        private readonly AppService appService;
         private readonly IMapper mapper;
         private readonly ReviewService reviewService;
-        private readonly AppService appService;
 
         public ReviewController(ReviewService reviewService, IMapper mapper, AppService appService)
         {
@@ -26,14 +25,16 @@ namespace MultimarketStatistics.Controllers
             this.appService = appService;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("{userId}/{appId}")]
-        public ActionResult<SearchResult<ReviewContract[]>> GetAppReviews(Guid userId, Guid appId, [FromQuery] int? skip, [FromQuery] int? take,
-            [FromQuery] string market, [FromQuery(Name = "version")] string[] versions, [FromQuery(Name = "rating")] int[] ratings,
+        public ActionResult<SearchResult<ReviewContract[]>> GetAppReviews(Guid userId, Guid appId,
+            [FromQuery] int? skip, [FromQuery] int? take,
+            [FromQuery] string market, [FromQuery(Name = "version")] string[] versions,
+            [FromQuery(Name = "rating")] int[] ratings,
             [FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
-            //if (!IsValidAction(userId, appId))
-            //    return StatusCode(StatusCodes.Status403Forbidden);
+            if (!IsValidAction(userId, appId))
+                return StatusCode(StatusCodes.Status403Forbidden);
 
             if (versions.Contains("notMentioned"))
                 versions = versions.Append(null).ToArray();
