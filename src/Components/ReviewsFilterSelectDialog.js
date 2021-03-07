@@ -86,7 +86,7 @@ export default function ReviewsFilterSelectDialog(props) {
             setSelectedFilter(props.filterToEdit.key);
             setFilterToEditValue(props.filterToEdit);
         }
-    }, [props.filterToEdit])
+    }, [props.filterToEdit]);
 
     function hasFilterDateErrors() {
         return !filterDateFrom || !filterDateTo ||

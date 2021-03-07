@@ -11,6 +11,8 @@ import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
 import {useFormSectionStyles} from "../Styles/FormSectionStyles";
 import {useMarketChipStyles} from "../Styles/MarketChipStyles";
+import {Link as RouterLink} from "react-router-dom";
+import ButtonBase from "@material-ui/core/ButtonBase";
 
 const useStyles = makeStyles((theme) => ({
     paperNoPadding: {
@@ -46,11 +48,18 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         marginBottom: theme.spacing(0.5),
     },
+    primaryRippleFillHeight: {
+        color: theme.palette.primary.light,
+        height: '100%'
+    },
 }));
 
 AppInfoCard.defaultProps = {
     app: undefined,
     iconGridMd: 1,
+    hasCardDescription: false,
+    isButtonBaseEnabled: false,
+    buttonBaseLink: ""
 }
 
 export default function AppInfoCard(props) {
@@ -60,31 +69,38 @@ export default function AppInfoCard(props) {
 
     return (
         <Paper className={classes.paperNoPadding} elevation={1}>
-            <div className={classes.containerTopPadded}>
-                <Typography variant="h6">
-                    Информация о приложении
-                </Typography>
-                <Typography variant="body2">
-                    Текущая информация о приложении
-                </Typography>
-            </div>
-            <Divider className={formClasses.fullWidthDivider}/>
-            <div className={classes.appDescriptionContainer}>
-
-                <Grid container alignItems='center' spacing={2}>
-                    <Grid item xs={3} sm={2} md={props.iconGridMd}>
-                        <img alt='app icon'
-                             src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
-                             className={classes.applicationIcon}/>
+            {props.hasCardDescription &&
+            <>
+                <div className={classes.containerTopPadded}>
+                    <Typography variant="h6">
+                        Информация о приложении
+                    </Typography>
+                    <Typography variant="body2">
+                        Текущая информация о приложении
+                    </Typography>
+                </div>
+                <Divider className={formClasses.fullWidthDivider}/>
+            </>
+            }
+            <ButtonBase className={classes.primaryRippleFillHeight} component={RouterLink}
+                        disabled={!props.isButtonBaseEnabled}
+                        to={props.buttonBaseLink}>
+                <div className={classes.appDescriptionContainer}>
+                    <Grid container alignItems='center' spacing={2}>
+                        <Grid item xs={3} sm={2} md={props.iconGridMd}>
+                            <img alt='app icon'
+                                 src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
+                                 className={classes.applicationIcon}/>
+                        </Grid>
+                        <Grid item xs={9} sm={10} md={12 - props.iconGridMd}>
+                            <Typography component="h5" variant="h6">{props.app.name}</Typography>
+                            <Typography component="p" variant="body1">
+                                {props.app.description}
+                            </Typography>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={9} sm={10} md={12 - props.iconGridMd}>
-                        <Typography component="h5" variant="h6">{props.app.name}</Typography>
-                        <Typography component="p" variant="body1">
-                            {props.app.description}
-                        </Typography>
-                    </Grid>
-                </Grid>
-            </div>
+                </div>
+            </ButtonBase>
             <Divider className={classes.fullWidthDivider}/>
             <div className={marketClasses.marketsContainer}>
                 {

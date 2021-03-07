@@ -11,10 +11,10 @@ import Login from "./Login";
 import Register from "./Register";
 
 export default function FormsSection() {
-    const classes = useFormSectionStyles();
-
     const urlQueryParams = new URLSearchParams(useLocation().search);
     const referer = urlQueryParams.get("referer");
+
+    const classes = useFormSectionStyles();
 
     const [user, setUser] = React.useState(undefined);
 

@@ -24,6 +24,5 @@ function MarginStyles(theme) {
         m1T:{
             marginTop: theme.spacing(1),
         }
-
     };
 }

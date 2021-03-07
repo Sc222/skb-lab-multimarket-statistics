@@ -4,18 +4,15 @@ export const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme)
 
 function MarketChipStyles(theme) {
     return {
-
         marketAvatar: {
             width: theme.spacing(7),
             height: theme.spacing(7)
         },
-
         marketAvatarSmall: {
             width: theme.spacing(3),
             height: theme.spacing(3),
             marginLeft: theme.spacing(-0.5)
         },
-
         transparentBg: {
             background: 'transparent !important'
         },

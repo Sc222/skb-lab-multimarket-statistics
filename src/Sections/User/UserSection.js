@@ -9,7 +9,6 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import {WarningRounded} from "@material-ui/icons";
 import Avatar from "@material-ui/core/Avatar";
 import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch, useLocation, useParams} from 'react-router-dom';
-import {fade} from "@material-ui/core";
 import {HomepageUrl} from "../../App";
 import Apps from "./Apps";
 import AppSection from "./App/AppSection";
@@ -30,85 +29,35 @@ import update from 'immutability-helper';
 import Link from "@material-ui/core/Link";
 import {getUser} from "../../Api/ApiUser";
 import {getDefaultUser} from "../../Api/Helpers/ApiUserHelper";
-import {deleteAllSessionCookies, getCookieToken, getCookieUserId, isCookieTokenExpired} from "../../Helpers/CookieHelper";
+import {
+    deleteAllSessionCookies,
+    getCookieToken,
+    getCookieUserId,
+    isCookieTokenExpired
+} from "../../Helpers/CookieHelper";
 import WrongUser from "./WrongUser";
 import StatusAlert from "../../Components/StatusAlert";
-//image imports
-import demoProfile from '../../images/demo_profile.png';
 import {UIProperties} from "../../Config";
 import {ErrorUnauthorized} from "../../Api/Helpers/ApiHelper";
-
-const drawerWidth = 260;
+import demoProfile from '../../images/demo_profile.png';
 
 const useStyles = makeStyles((theme) => ({
-    appBarSpacer: {
-        height: '48px'
-    },
-
     root: {
         display: 'flex',
     },
-
     flex: {
         display: 'flex'
     },
-
-    toolbarIcon: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
-
-    backToAppsButton: {
-        width: '100%'
-    },
-
     appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-    },
-
-    menuButton: {
-        marginRight: theme.spacing(2),
+        zIndex: theme.zIndex.drawer + 1
     },
     title: {
-        flexGrow: 1,
+        flexGrow: 1
     },
-
-    drawerPaper: {
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: drawerWidth,
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: 0,
-    },
-
     content: {
         flexGrow: 1,
         height: '100vh',
-        overflow: 'auto',
-    },
-    container: {
-        paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
-    },
-    paper: {
-        padding: theme.spacing(2),
-        display: 'flex',
-        overflow: 'auto',
-        flexDirection: 'column',
-    },
-    fixedHeight: {
-        height: 240,
+        overflow: 'auto'
     },
     profileIconButton: {
         marginLeft: theme.spacing(1.5),
@@ -118,70 +67,11 @@ const useStyles = makeStyles((theme) => ({
         width: theme.spacing(4.5),
         height: theme.spacing(4.5),
     },
-
-
-    //search toolbar styles
-    extraToolbar: {
-        background: "transparent",
-        color: theme.palette.text.primary
-    },
-    extraToolbarTitle: {
-        flexGrow: 1,
-        display: 'none',
-        [theme.breakpoints.up('sm')]: {
-            display: 'block',
-        },
-    },
-    search: {
-        position: 'relative',
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: fade(theme.palette.common.black, 0.05),
-        '&:hover': {
-            backgroundColor: fade(theme.palette.common.black, 0.1),
-        },
-        marginLeft: 0,
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            marginLeft: theme.spacing(1),
-            width: 'auto',
-        },
-    },
-    searchIcon: {
-        padding: theme.spacing(0, 2),
-        height: '100%',
-        position: 'absolute',
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    inputRoot: {
-        color: 'inherit',
-    },
-    inputInput: {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            width: '20ch',
-            '&:focus': {
-                width: '30ch',
-            },
-        },
-    },
-
-    extendedIcon: {
-        marginRight: theme.spacing(1),
-    },
-
     //popover styles
     popover: {
         width: theme.spacing(30),
         maxHeight: theme.spacing(25)
     },
-
     fullWidth: {
         width: '100%'
     },
@@ -191,7 +81,6 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: theme.spacing(1),
         paddingBottom: theme.spacing(1)
     },
-
     marginLeftSmall: {
         marginLeft: theme.spacing(1.5)
     }

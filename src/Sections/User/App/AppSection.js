@@ -10,93 +10,22 @@ import {HomepageUrl} from "../../../App";
 import {getApp} from "../../../Api/ApiApp";
 import {NoContent} from "../../../Api/Helpers/ApiHelper";
 
-const drawerWidth = 260;
 const useStyles = makeStyles((theme) => ({
     appBarSpacer: {
         height: '48px'
     },
-
     root: {
-        display: 'flex',
+        display: 'flex'
     },
-    toolbarIcon: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
-
-    backToAppsButton: {
-        width: '100%'
-    },
-
-    mobileDrawerButtonsContainer: {
-        position: "relative",
-    },
-
-    closeDrawerButton: {
-        position: "absolute",
-        top: theme.spacing(0.25),
-        right: theme.spacing(0.5)
-    },
-
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-    },
-
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
-    title: {
-        flexGrow: 1,
-    },
-
-    drawerPaper: {
-        zIndex: theme.zIndex.drawer,
-
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: drawerWidth,
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: 0,
-    },
-
     content: {
         flexGrow: 1,
         height: '100vh',
-        overflow: 'auto',
+        overflow: 'auto'
     },
     container: {
         paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
-    },
-    paper: {
-        padding: theme.spacing(2),
-        display: 'flex',
-        overflow: 'auto',
-        flexDirection: 'column',
-    },
-    fixedHeight: {
-        height: 240,
-    },
-    profileIconButton: {
-        marginLeft: theme.spacing(1.5),
-        padding: 0
-    },
-    profileIcon: {
-        width: theme.spacing(4.5),
-        height: theme.spacing(4.5),
+        paddingBottom: theme.spacing(4)
     }
-
 }));
 
 export default function AppSection(props) {
