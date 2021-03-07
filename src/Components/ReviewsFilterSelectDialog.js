@@ -8,14 +8,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
-import {
-    ReviewFilterDateKey,
-    ReviewFilterInfo,
-    ReviewFilterRatingKey,
-    ReviewFilterRatings,
-    ReviewFilterTypes,
-    ReviewFilterVersionKey
-} from "../Helpers/MarketsInfoHelper";
 import MenuItem from "@material-ui/core/MenuItem";
 import DateTimePickerFromTo from "./DateTimePickerFromTo";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -24,6 +16,14 @@ import {useMarginStyles} from "../Styles/MarginStyles";
 import clsx from "clsx";
 import {UIDefaultValues} from "../Config";
 import {AppVersionNullKey, AppVersionNullName} from "../Api/Helpers/ApiAppHelper";
+import {
+    ReviewFilterDateKey,
+    ReviewFilterInfo,
+    ReviewFilterRatingKey,
+    ReviewFilterRatings,
+    ReviewFilterTypes,
+    ReviewFilterVersionKey
+} from "../Api/Helpers/ApiReviewHelper";
 
 const useStyles = makeStyles((theme) => ({
     selectStyle: {

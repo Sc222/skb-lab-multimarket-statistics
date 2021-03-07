@@ -15,7 +15,10 @@ function Homepage() {
         {link: `${HomepageUrl}/password-reset`, title: 'Сброс пароля'},
         {link: `${HomepageUrl}/user/af19aef2-ddd0-42f6-8613-4685a50f35eb/apps`, title: 'Пользователь малый'},
         {link: `${HomepageUrl}/user/2029c065-29b1-4897-8623-0f06301f5eaf/apps`, title: 'Пользователь большой'},
-        {link: `${HomepageUrl}/user/2029c065-29b1-4897-8623-0f06301f5eaf/profile`, title: 'Профиль пользователя большого'},
+        {
+            link: `${HomepageUrl}/user/2029c065-29b1-4897-8623-0f06301f5eaf/profile`,
+            title: 'Профиль пользователя большого'
+        },
         {
             link: `${HomepageUrl}/user/2029c065-29b1-4897-8623-0f06301f5eaf/new-app`,
             title: 'Добавить приложение'

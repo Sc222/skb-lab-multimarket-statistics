@@ -39,6 +39,7 @@ import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
 import DeleteCardAndConfirmDialog from "../../../Components/DeleteCardAndConfirmDialog";
 import AppInfoCard from "../../../Components/AppInfoCard";
 import defaultAppIcon from "../../../images/default_app_icon.png";
+import {UIDefaultValues} from "../../../Config";
 
 const useStyles = makeStyles((theme) => ({
     containerNotCentered: {
@@ -101,7 +102,7 @@ export default function AppSettings(props) {
     const marketClasses = useMarketChipStyles();
 
     const [isAppDeleted, setIsAppDeleted] = React.useState(false);
-    const [selectedMarkets, setSelectedMarkets] = React.useState([false, false, false]);
+    const [selectedMarkets, setSelectedMarkets] = React.useState(UIDefaultValues.selectedMarkets);
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
     const [fieldsStateApp, setFieldsStateApp] = React.useState(getDefaultAppNoIdNoPic());
     const [playStoreLink, setPlayStoreLink] = React.useState("");

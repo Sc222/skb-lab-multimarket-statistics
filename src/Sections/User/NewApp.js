@@ -30,6 +30,7 @@ import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../../
 import {createApp} from "../../Api/ApiApp";
 import {createAppForCreate, getDefaultAppNoIdNoPic} from "../../Api/Helpers/ApiAppHelper";
 import {HomepageUrl} from "../../App";
+import {UIDefaultValues} from "../../Config";
 
 const useStyles = makeStyles((theme) => ({
     fabBottom: {
@@ -91,7 +92,7 @@ export default function NewApplications(props) {
     const formClasses = useFormSectionStyles();
     const marketClasses = useMarketChipStyles();
 
-    const [selectedMarkets, setSelectedMarkets] = React.useState([false, false, false]);
+    const [selectedMarkets, setSelectedMarkets] = React.useState(UIDefaultValues.selectedMarkets);
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
     const [newApp, setNewApp] = React.useState(getDefaultAppNoIdNoPic());
     const [playStoreLink, setPlayStoreLink] = React.useState("");

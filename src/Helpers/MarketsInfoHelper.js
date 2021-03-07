@@ -4,7 +4,6 @@ import appStoreDisabled from "../images/app-store-disabled.svg";
 import appStore from "../images/app-store.svg";
 import appGalleryDisabled from "../images/appgallery-disabled.svg";
 import appGallery from "../images/appgallery.svg";
-import {formatDateShort} from "./UtilsHelper";
 
 export const PlayStoreIndex = 0;
 export const AppStoreIndex = 1;
@@ -14,42 +13,6 @@ export const AppGalleryIndex = 2;
 export const MarketRatingPrecision = 3;
 export const MarketLatestRatingsDaysCheck = 3; //days before today, increase if "latest rating not found"
 export const MarketStarsTemplate = [1, 2, 3, 4, 5];
-
-//TODO MOVE TO SPECIAL CONSTANT TYPES
-export const ReviewFilterDateKey = "date";
-export const ReviewFilterVersionKey = "version";
-export const ReviewFilterRatingKey = "rating";
-export const ReviewFilterRatings = [
-    {name: "5 звезд", value: 5},
-    {name: "4 звезды", value: 4},
-    {name: "3 звезды", value: 3},
-    {name: "2 звезды", value: 2},
-    {name: "1 звезда", value: 1},
-];
-export const ReviewFilterTypes = (selectedFilter, filterToEditKey="") => {
-    if (filterToEditKey !== "")
-        return [{name: ReviewFilterInfo[filterToEditKey].name, value: filterToEditKey, disabled: false}];
-    return [
-        {name: "Дата", value: ReviewFilterDateKey, disabled: selectedFilter[ReviewFilterDateKey] !== undefined},
-        {name: "Версия", value: ReviewFilterVersionKey, disabled: selectedFilter[ReviewFilterVersionKey] !== undefined},
-        {name: "Оценка", value: ReviewFilterRatingKey, disabled: selectedFilter[ReviewFilterRatingKey] !== undefined}
-    ];
-}
-
-export const ReviewFilterInfo = {
-    [ReviewFilterDateKey]: {
-        name: "Дата",
-        getLabel: (date) => `${formatDateShort(date.dateFrom)} - ${formatDateShort(date.dateTo)}`
-    },
-    [ReviewFilterVersionKey]: {
-        name: "Версия",
-        getLabel: (selected) => `выбрано: ${selected.length}`
-    },
-    [ReviewFilterRatingKey]: {
-        name: "Оценка",
-        getLabel: (selected) => selected.length === MarketStarsTemplate.length ? "любая" : selected.join(', ')
-    }
-};
 
 export const MarketsLinks = [
     "https://play.google.com/store/apps/details?id=",

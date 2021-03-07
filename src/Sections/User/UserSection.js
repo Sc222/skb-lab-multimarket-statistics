@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     },
     profileIcon: {
         width: theme.spacing(4.5),
-        height: theme.spacing(4.5),
+        height: theme.spacing(4.5)
     },
     //popover styles
     popover: {

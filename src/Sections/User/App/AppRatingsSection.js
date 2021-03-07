@@ -83,7 +83,7 @@ export default function AppRatingsSection(props) {
     const formClasses = useFormSectionStyles();
     const marketClasses = useMarketChipStyles();
 
-    const [selectedChartMarkets, setSelectedChartMarkets] = React.useState([false, false, false]);
+    const [selectedChartMarkets, setSelectedChartMarkets] = React.useState(UIDefaultValues.selectedMarkets);
     const [chartData, setChartData] = React.useState(undefined);
     const [chartDateFrom, setChartDateFrom] = React.useState(UIDefaultValues.dateTimePickerFrom());
     const [chartDateTo, setChartDateTo] = React.useState(new Date());

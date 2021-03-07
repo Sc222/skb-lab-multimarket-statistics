@@ -38,12 +38,7 @@ import {
     getFirstExistingMarketRequestKey,
     MarketsInfo,
     MarketsRequestKeys,
-    MarketStarsTemplate,
-    ReviewFilterDateKey,
-    ReviewFilterInfo,
-    ReviewFilterRatingKey,
-    ReviewFilterTypes,
-    ReviewFilterVersionKey
+    MarketStarsTemplate
 } from "../../../Helpers/MarketsInfoHelper";
 import {useFormSectionStyles} from "../../../Styles/FormSectionStyles";
 import {AppNameMaxLength, AppVersionNullKey, getAppMarketsArray, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
@@ -57,6 +52,13 @@ import {getAppVersions} from "../../../Api/ApiApp";
 import {UIDefaultValues, UIProperties} from "../../../Config";
 import ReviewsFilterAddDialog from "../../../Components/ReviewsFilterSelectDialog";
 import {useMarginStyles} from "../../../Styles/MarginStyles";
+import {
+    ReviewFilterDateKey,
+    ReviewFilterInfo,
+    ReviewFilterRatingKey,
+    ReviewFilterTypes,
+    ReviewFilterVersionKey
+} from "../../../Api/Helpers/ApiReviewHelper";
 import defaultAppIcon from "../../../images/default_app_icon.png";
 
 const useStyles = makeStyles((theme) => ({
