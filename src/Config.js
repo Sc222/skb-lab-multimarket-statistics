@@ -1,5 +1,9 @@
 import {ReviewFilterDateKey, ReviewFilterRatingKey, ReviewFilterVersionKey} from "./Api/Helpers/ApiReviewHelper";
 
+export const MainConfig = {
+    ApiRoot: "http://localhost:5000"
+};
+
 export const UIProperties = {
     maxNotificationsInPopup: 200,
     reviewsPerPageDefault: 10,

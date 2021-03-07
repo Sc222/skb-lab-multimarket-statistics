@@ -1,7 +1,8 @@
-import {ApiRoot, getRequestHeaders} from "./Helpers/ApiHelper";
+import {getRequestHeaders} from "./Helpers/ApiHelper";
+import {MainConfig} from "../Config";
 
 export async function getReviews(userId, appId, skip, take, marketKey, date = undefined, versions = [], ratings = []) {
-    let requestLink = `${ApiRoot}/api/Review/${userId}/${appId}?skip=${skip}&take=${take}&market=${marketKey}`;
+    let requestLink = `${MainConfig.ApiRoot}/api/Review/${userId}/${appId}?skip=${skip}&take=${take}&market=${marketKey}`;
     if (date !== undefined)
         requestLink += `&from=${new Date(date.dateFrom).toISOString()}&to=${new Date(date.dateTo).toISOString()}`;
     if (versions.length > 0)

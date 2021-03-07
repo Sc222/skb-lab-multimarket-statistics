@@ -1,6 +1,5 @@
 import {getCookieToken} from "../../Helpers/CookieHelper";
 
-export const ApiRoot="http://localhost:5000";
 export const HttpStatusCodeLength = 3;
 export const ErrorInternalServerErr = "500";
 export const ErrorBadRequest = "400";

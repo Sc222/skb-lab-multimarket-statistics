@@ -1,7 +1,8 @@
-import {ApiRoot, getRequestHeaders, Success} from "./Helpers/ApiHelper";
+import {getRequestHeaders, Success} from "./Helpers/ApiHelper";
+import {MainConfig} from "../Config";
 
 export async function createApp(userId, app) {
-    return fetch(`${ApiRoot}/api/App/create/${userId}`,
+    return fetch(`${MainConfig.ApiRoot}/api/App/create/${userId}`,
         {
             headers: getRequestHeaders(true),
             body: JSON.stringify(app),
@@ -15,7 +16,7 @@ export async function createApp(userId, app) {
 }
 
 export async function updateApp(userId, app) {
-    return fetch(`${ApiRoot}/api/App/update/${userId}`,
+    return fetch(`${MainConfig.ApiRoot}/api/App/update/${userId}`,
         {
             headers: getRequestHeaders(true),
             body: JSON.stringify(app),
@@ -29,7 +30,7 @@ export async function updateApp(userId, app) {
 }
 
 export async function getApps(userId) {
-    return fetch(`${ApiRoot}/api/App/${userId}/apps`,
+    return fetch(`${MainConfig.ApiRoot}/api/App/${userId}/apps`,
         {
             headers: getRequestHeaders(false),
             method: "GET",
@@ -42,7 +43,7 @@ export async function getApps(userId) {
 }
 
 export async function getApp(userId, appId) {
-    return fetch(`${ApiRoot}/api/App/${userId}/${appId}`,
+    return fetch(`${MainConfig.ApiRoot}/api/App/${userId}/${appId}`,
         {
             headers: getRequestHeaders(false),
             method: "GET",
@@ -58,7 +59,7 @@ export async function getApp(userId, appId) {
 }
 
 export async function getAppVersions(userId, appId, marketKey) {
-    return fetch(`${ApiRoot}/api/App/${userId}/${appId}/versions?market=${marketKey}`,
+    return fetch(`${MainConfig.ApiRoot}/api/App/${userId}/${appId}/versions?market=${marketKey}`,
         {
             headers: getRequestHeaders(false),
             method: "GET",
@@ -74,7 +75,7 @@ export async function getAppVersions(userId, appId, marketKey) {
 }
 
 export async function deleteApp(userId, appId) {
-    return fetch(`${ApiRoot}/api/App/${userId}/${appId}`,
+    return fetch(`${MainConfig.ApiRoot}/api/App/${userId}/${appId}`,
         {
             headers: getRequestHeaders(false),
             method: "DELETE",

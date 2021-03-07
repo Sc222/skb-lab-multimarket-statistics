@@ -1,7 +1,8 @@
-import {ApiRoot, getRequestHeaders} from "./Helpers/ApiHelper";
+import {getRequestHeaders} from "./Helpers/ApiHelper";
+import {MainConfig} from "../Config";
 
 export async function getNotifications(userId) {
-    return fetch(`${ApiRoot}/api/Notification/${userId}`,
+    return fetch(`${MainConfig.ApiRoot}/api/Notification/${userId}`,
         {
             headers: getRequestHeaders(false),
             method: "GET",
@@ -15,7 +16,7 @@ export async function getNotifications(userId) {
 }
 
 export async function deleteNotification(userId, appId, notificationId) {
-    return fetch(`${ApiRoot}/api/Notification/${userId}/${appId}/${notificationId}`,
+    return fetch(`${MainConfig.ApiRoot}/api/Notification/${userId}/${appId}/${notificationId}`,
         {
             headers: getRequestHeaders(false),
             method: "DELETE"
@@ -23,7 +24,7 @@ export async function deleteNotification(userId, appId, notificationId) {
 }
 
 export async function deleteAllNotificationsForApp(userId, appId) {
-    return fetch(`${ApiRoot}/api/Notification/${userId}/${appId}`,
+    return fetch(`${MainConfig.ApiRoot}/api/Notification/${userId}/${appId}`,
         {
             headers: getRequestHeaders(false),
             method: "DELETE"
@@ -31,7 +32,7 @@ export async function deleteAllNotificationsForApp(userId, appId) {
 }
 
 export async function deleteAllNotifications(userId) {
-    return fetch(`${ApiRoot}/api/Notification/${userId}`,
+    return fetch(`${MainConfig.ApiRoot}/api/Notification/${userId}`,
         {
             headers: getRequestHeaders(false),
             method: "DELETE"

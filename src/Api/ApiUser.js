@@ -1,8 +1,9 @@
-import {ApiRoot, ErrorBadRequest, ErrorConflict, getRequestHeaders, Success} from "./Helpers/ApiHelper";
+import {ErrorBadRequest, ErrorConflict, getRequestHeaders, Success} from "./Helpers/ApiHelper";
 import {parseServerMailAndUsernameErrors} from "../Helpers/ErrorHelper";
+import {MainConfig} from "../Config";
 
 export async function createUser(user) {
-    return fetch(`${ApiRoot}/api/User/create`,
+    return fetch(`${MainConfig.ApiRoot}/api/User/create`,
         {
             headers: getRequestHeaders(true),
             body: JSON.stringify(user),
@@ -24,7 +25,7 @@ export async function createUser(user) {
 }
 
 export async function updateUser(user) {
-    return fetch(`${ApiRoot}/api/User/update`,
+    return fetch(`${MainConfig.ApiRoot}/api/User/update`,
         {
             headers: getRequestHeaders(true),
             body: JSON.stringify(user),
@@ -46,7 +47,7 @@ export async function updateUser(user) {
 }
 
 export async function getUser(userId) {
-    return fetch(`${ApiRoot}/api/User/${userId}`,
+    return fetch(`${MainConfig.ApiRoot}/api/User/${userId}`,
         {
             headers: getRequestHeaders(false),
             method: "GET",
@@ -62,7 +63,7 @@ export async function getUser(userId) {
 }
 
 export async function deleteUser(userId) {
-    return fetch(`${ApiRoot}/api/User/${userId}`,
+    return fetch(`${MainConfig.ApiRoot}/api/User/${userId}`,
         {
             headers: getRequestHeaders(false),
             method: "DELETE",
@@ -75,7 +76,7 @@ export async function deleteUser(userId) {
 }
 
 export async function authenticateUser(loginCredentials) {
-    return fetch(`${ApiRoot}/api/User/authenticate`,
+    return fetch(`${MainConfig.ApiRoot}/api/User/authenticate`,
         {
             headers: getRequestHeaders(true),
             body: JSON.stringify(loginCredentials),
