@@ -11,14 +11,14 @@ export function getCookieUserId(){
     return userId ? userId : "";
 }
 
-export function setCookieUsername(login){
+export function setCookieLogin(login) {
     const cookies = new Cookies();
-    cookies.set('login', login, { path: '/' });
+    cookies.set('login', login, {path: '/'});
 }
 
-export function getCookieUsername(){
+export function getCookieLogin() {
     const cookies = new Cookies();
-    const login =  cookies.get('login');
+    const login = cookies.get('login');
     return login ? login : "";
 }
 
@@ -35,7 +35,8 @@ export function getCookieToken(){
 
 export function deleteAllSessionCookies(){
     const cookies = new Cookies();
-    cookies.remove('userId', { path: '/' });
+    cookies.remove('login', {path: '/'});
+    cookies.remove('userId', {path: '/'});
     cookies.remove('token', { path: '/' });
 }
 

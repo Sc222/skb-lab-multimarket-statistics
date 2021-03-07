@@ -22,7 +22,7 @@ import {createUserForCreate, getDefaultLoginCredentials, getDefaultUserNoId} fro
 import update from "immutability-helper";
 import {authenticateUser, createUser} from "../../Api/ApiUser";
 import {HomepageUrl} from "../../App";
-import {setCookieToken, setCookieUserId, setCookieUsername} from "../../Helpers/CookieHelper";
+import {setCookieLogin, setCookieToken, setCookieUserId} from "../../Helpers/CookieHelper";
 
 export default function Register(props) {
     const classes = useFormSectionStyles();
@@ -61,7 +61,7 @@ export default function Register(props) {
                         authenticateUser(loginCredentials).then(result => {
                             setCookieUserId(result.user.id);
                             setCookieToken(result.token);
-                            setCookieUsername(result.user.username);
+                            setCookieLogin(result.user.username);
 
                             //set user and redirect
                             props.setLoggedInUser(result.user);
