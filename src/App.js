@@ -1,4 +1,4 @@
-import "./Sections/App.css";
+import "./App.css";
 import Homepage from "./Sections/Homepage";
 import React from "react";
 import {BrowserRouter, Redirect, Route, Switch as RouteSwitch} from "react-router-dom";
