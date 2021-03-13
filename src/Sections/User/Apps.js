@@ -135,7 +135,7 @@ export default function Apps(props) {
                 <Grid item xs={12}>
                     <Paper className={classes.paper}>
                         <div className={classes.paperContainer}>
-                            <Typography component="h2" variant="h6" color="primary">
+                            <Typography variant="h6" color="primary">
                                 Загрузка
                             </Typography>
                             <Typography variant="body1">
@@ -149,9 +149,10 @@ export default function Apps(props) {
                 <Grid item xs={12}>
                     <Paper className={classes.paper}>
                         <div className={classes.paperContainer}>
-                            <Typography component="h2" variant="h6" color="primary">У Вас еще нет
-                                приложений</Typography>
-                            <Typography component="p" variant="body1">
+                            <Typography variant="h6" color="primary">У Вас еще нет
+                                приложений
+                            </Typography>
+                            <Typography variant="body1">
                                 Нажмите на кнопку <Link component={RouterLink}
                                                         to={`${HomepageUrl}/user/${userId}/new-app`}>добавить</Link> для
                                 того, чтобы создать новое приложение
@@ -160,7 +161,24 @@ export default function Apps(props) {
                     </Paper>
                 </Grid>);
         } else if (apps.length !== 0) {
-            return apps.filter(isNameMatchesSearchFilter).map(app => {
+            const filteredApps = apps.filter(isNameMatchesSearchFilter);
+            if (filteredApps.length === 0) {
+                return (
+                    <Grid item xs={12}>
+                        <Paper className={classes.paper}>
+                            <div className={classes.paperContainer}>
+                                <Typography variant="h6" color="primary">
+                                    Приложения не найдены
+                                </Typography>
+                                <Typography variant="body1">
+                                    Не найдены приложения с введенным названием
+                                </Typography>
+                            </div>
+                        </Paper>
+                    </Grid>
+                );
+            }
+            return filteredApps.map(app => {
                 return (
                     <Grid key={app.id} item xs={12} md={6}>
                         <AppInfoCard app={app} iconGridMd={3} isButtonBaseEnabled

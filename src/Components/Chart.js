@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip as ChartTooltip, XAxis, YAxis} from 'recharts';
 import {MarketsInfo, MarketsRatingKeys} from "../Helpers/MarketsInfoHelper";
+import AlertTitle from "@material-ui/lab/AlertTitle";
+import Alert from "@material-ui/lab/Alert";
 
 const useChartStyles = makeStyles((theme) => ({
     chartStyle: {
@@ -30,42 +31,34 @@ Chart.defaultProps = {
 export default function Chart(props) {
     const theme = useTheme();
     const chartClasses = useChartStyles(theme);
+    const [errorAlert, setErrorAlert] = React.useState({title: "", text: ""});
 
-    if (!props.selectedMarkets.some(isSelected => isSelected)) {
-        return (
-            <Container className={chartClasses.containerErrors}>
-                <Typography variant='subtitle1' color='primary'>
-                    Выберите маркеты
-                </Typography>
-                <Typography variant='body2' color='inherit'>
-                    Укажите хотя бы один маркет и нажмите кнопку показать, чтобы увидеть график
-                </Typography>
-            </Container>
-        );
+    function processErrors() {
+        let error = {title: "", text: ""};
+        if (!props.selectedMarkets.some(isSelected => isSelected)) {
+            error.title = "Выберите маркеты";
+            error.text = "Укажите хотя бы один маркет и нажмите кнопку показать, чтобы увидеть график";
+        } else if (props.data && props.data.length === 0) {
+            error.title = "Нет оценок за выбранный период";
+            error.text = "Пользователи не оставили оценок или сервер еще не обновил данные";
+        } else if (props.data === undefined) {
+            error.title = "Загрузка...";
+            error.text = "Идет загрузка графика";
+        }
+        setErrorAlert(error);
     }
 
-    if (props.data && props.data.length === 0) {
-        return (
-            <Container maxWidth='md' className={chartClasses.containerErrors}>
-                <Typography variant='subtitle1' color='primary'>
-                    Нет оценок за выбранный период
-                </Typography>
-                <Typography variant='body2' color='inherit'>
-                    Пользователи не оставили оценок или сервер еще не обновил данные
-                </Typography>
-            </Container>
-        );
-    }
+    useEffect(() => {
+        processErrors();
+    }, [props.selectedMarkets, props.data]);
 
-    if (props.data === undefined) {
+    if (errorAlert.title !== "" && errorAlert.text !== "") {
         return (
-            <Container maxWidth='md' className={chartClasses.containerErrors}>
-                <Typography variant='subtitle1' color='error'>
-                    Загрузка...
-                </Typography>
-                <Typography variant='body2' color='inherit'>
-                    Идет загрузка графика
-                </Typography>
+            <Container maxWidth="md" className={chartClasses.containerErrors}>
+                <Alert severity="info">
+                    <AlertTitle>{errorAlert.title}</AlertTitle>
+                    {errorAlert.text}
+                </Alert>
             </Container>
         );
     }
@@ -74,7 +67,6 @@ export default function Chart(props) {
         <ResponsiveContainer height={300}>
             {props.data &&
             <LineChart
-                className={chartClasses.containerChart}
                 data={props.data}
                 margin={{
                     top: theme.spacing(1),

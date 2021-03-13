@@ -60,6 +60,8 @@ import {
     ReviewFilterVersionKey
 } from "../../../Api/Helpers/ApiReviewHelper";
 import defaultAppIcon from "../../../images/default_app_icon.png";
+import Alert from "@material-ui/lab/Alert";
+import AlertTitle from "@material-ui/lab/AlertTitle";
 
 const useStyles = makeStyles((theme) => ({
     containerApps: {
@@ -333,12 +335,10 @@ export default function AppReviewsSection(props) {
                     </AppBar>
                 </Paper>
             </Grid>
-
             <Grid item xs={12}>
                 <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId}
                                   appId={props.appId}/>
             </Grid>
-
             {props.app && hasMarkets(props.app) &&
             <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paperNoPadding}>
@@ -378,7 +378,6 @@ export default function AppReviewsSection(props) {
                                 }
                             </Grid>
                         </Container>
-
                         <Divider className={formClasses.fullWidthDivider}/>
                         <Container className={classes.containerApps}>
                             <Grid container alignItems='center' spacing={2} justify='space-between'>
@@ -419,6 +418,14 @@ export default function AppReviewsSection(props) {
                                 </Grid>
                             </Grid>
                             <Grid container alignItems='stretch' justify='center' spacing={2}>
+                                {reviews && reviews.foundItem.length === 0 &&
+                                <Grid item xs={12}>
+                                    <Alert severity="info">
+                                        <AlertTitle>Нет отзывов</AlertTitle>
+                                        Отзывы с выбранными фильтрами не найдены
+                                    </Alert>
+                                </Grid>
+                                }
                                 {reviews && reviews.foundItem.length !== 0 &&
                                 reviews.foundItem.map(review =>
                                     <Grid key={review.text + review.date} xs={12} sm={12} md={6} lg={4} item>
@@ -442,7 +449,6 @@ export default function AppReviewsSection(props) {
                                                                 : review.reviewerUsername}
                                                             </b>
                                                         </Typography>
-
                                                         <Typography variant="caption" noWrap>
                                                             {format(new Date(review.date), "dd/MM/yyyy HH:mm")} |
                                                             Версия: {review.version ? review.version : "?"}
@@ -464,7 +470,6 @@ export default function AppReviewsSection(props) {
                                                                 color='error'/>)
                                                         }
                                                     </Typography>
-
                                                 </Grid>
                                             </Grid>
                                             <Typography variant="body2">

@@ -252,13 +252,11 @@ export default function AppDashboard(props) {
                     </AppBar>
                 </Paper>
             </Grid>
-
             {props.app &&
             <Grid item xs={12} md={7} lg={8}>
                 <AppInfoCard app={props.app} iconGridMd={2} hasCardDescription/>
             </Grid>
             }
-
             <Grid item xs={12} md={5} lg={4}>
                 <Paper elevation={1} className={classes.paper}>
                     <div className={formClasses.container}>
@@ -304,7 +302,6 @@ export default function AppDashboard(props) {
                     }
                 </Paper>
             </Grid>
-
             {props.app && hasMarkets(props.app) &&
             <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paper}>
@@ -402,7 +399,6 @@ export default function AppDashboard(props) {
                         </Typography>
                     </div>
                     <Divider className={formClasses.fullWidthDivider}/>
-
                     <Container
                         className={clsx(classes.containerNotCentered, classes.mYdividers, classes.flexGrowFillCenterVertical)}>
                         <Grid container alignItems='center'
@@ -427,20 +423,23 @@ export default function AppDashboard(props) {
                                                 <Grid item>
                                                     <Box pl={0.5}>
                                                         <Typography variant="body1" className={classes.textWithIcon}>
-                                                <span> <Avatar
-                                                    className={clsx(marketChipClasses.marketAvatarSmall, marketChipClasses.iconMargin)}
-                                                    variant='square'
-                                                    src={MarketsInfo[review.marketIndex].getIcon(false)}/></span>
+                                                            <span>
+                                                                <Avatar
+                                                                    className={clsx(marketChipClasses.marketAvatarSmall, marketChipClasses.iconMargin)}
+                                                                    variant='square'
+                                                                    src={MarketsInfo[review.marketIndex].getIcon(false)}/>
+                                                            </span>
                                                             <b>
                                                                 {review.reviewerUsername === undefined
                                                                     ? "Имя неизвестно"
                                                                     : review.reviewerUsername}
                                                             </b>
                                                         </Typography>
-
                                                         <Typography variant="caption" noWrap>
-                                                            {review.date} |
-                                                            Версия: {review.version ? review.version : "?"}
+                                                            {review.rating === 0
+                                                                ? "Нет данных"
+                                                                : `${review.date} | Версия: ${review.version ? review.version : "?"}`
+                                                            }
                                                         </Typography>
                                                     </Box>
                                                     <Typography variant="h6">
@@ -459,11 +458,10 @@ export default function AppDashboard(props) {
                                                                 color='error'/>)
                                                         }
                                                     </Typography>
-
                                                 </Grid>
                                             </Grid>
                                             <Typography variant="body2" noWrap>
-                                                {review.text}
+                                                {review.text ? review.text : "..."}
                                             </Typography>
                                         </Box>
                                     </Grid>
