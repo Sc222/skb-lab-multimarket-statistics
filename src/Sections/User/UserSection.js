@@ -40,6 +40,7 @@ import StatusAlert from "../../Components/StatusAlert";
 import {UIProperties} from "../../Config";
 import {ErrorUnauthorized} from "../../Api/Helpers/ApiHelper";
 import demoProfile from '../../images/demo_profile.png';
+import ServiceNameAndLogo from "../../Components/ServiceNameAndLogo";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -47,12 +48,6 @@ const useStyles = makeStyles((theme) => ({
     },
     flex: {
         display: 'flex'
-    },
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1
-    },
-    title: {
-        flexGrow: 1
     },
     content: {
         flexGrow: 1,
@@ -67,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
         width: theme.spacing(4.5),
         height: theme.spacing(4.5)
     },
+
     //popover styles
     popover: {
         width: theme.spacing(30),
@@ -197,11 +193,9 @@ export default function UserSection() {
             {getCookieToken() !== "" && getCookieUserId() !== "" && getCookieUserId() !== userId && <WrongUser/>}
 
             <div className={classes.root}>
-                <AppBar position="absolute" className={classes.appBar}>
+                <AppBar position="absolute">
                     <Toolbar variant="dense">
-                        <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                            Multimarket Statistics
-                        </Typography>
+                        <ServiceNameAndLogo/>
 
                         <IconButton color="inherit" onClick={(event) => toggleNotificationsPopover(event)}
                                     aria-describedby='notification-popover'>

@@ -8,10 +8,6 @@ function FormSectionStyles(theme) {
         appBarSpacer: {
             height: '48px'
         },
-        titleCentered: {
-            flexGrow: 1,
-            textAlign: "center"
-        },
         content: {
             flexGrow: 1,
             height: '100vh',

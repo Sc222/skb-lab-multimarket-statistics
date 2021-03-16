@@ -11,6 +11,7 @@ import Button from "@material-ui/core/Button";
 import {HomepageUrl} from "../../App";
 import {getCookieUserId} from "../../Helpers/CookieHelper";
 import {Link as RouterLink} from 'react-router-dom';
+import ServiceNameAndLogo from "../../Components/ServiceNameAndLogo";
 
 export default function WrongUser() {
     const classes = useFormSectionStyles();
@@ -19,10 +20,7 @@ export default function WrongUser() {
         <div>
             <AppBar position="absolute">
                 <Toolbar variant="dense">
-                    <Typography component="h1" variant="h6" color="inherit" noWrap
-                                className={classes.titleCentered}>
-                        Multimarket Statistics
-                    </Typography>
+                    <ServiceNameAndLogo centered/>
                 </Toolbar>
             </AppBar>
             <main className={classes.content}>

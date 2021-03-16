@@ -3,12 +3,12 @@ import Container from '@material-ui/core/Container';
 import Paper from "@material-ui/core/Paper";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import {Redirect, Route, Switch as RouteSwitch, useLocation} from 'react-router-dom';
 import {HomepageUrl} from "../../App";
 import {useFormSectionStyles} from "../../Styles/FormSectionStyles";
 import Login from "./Login";
 import Register from "./Register";
+import ServiceNameAndLogo from "../../Components/ServiceNameAndLogo";
 
 export default function FormsSection() {
     const urlQueryParams = new URLSearchParams(useLocation().search);
@@ -27,10 +27,7 @@ export default function FormsSection() {
         <div>
             <AppBar position="absolute">
                 <Toolbar variant="dense">
-                    <Typography component="h1" variant="h6" color="inherit" noWrap
-                                className={classes.titleCentered}>
-                        Multimarket Statistics
-                    </Typography>
+                    <ServiceNameAndLogo centered/>
                 </Toolbar>
             </AppBar>
             <main className={classes.content}>
