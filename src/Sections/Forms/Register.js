@@ -60,9 +60,8 @@ export default function Register(props) {
                         loginCredentials.password = user.password;
                         authenticateUser(loginCredentials).then(result => {
                             setCookieUserId(result.user.id);
-                            setCookieToken(result.token);
+                            setCookieToken(result.token, new Date(result.expires));
                             setCookieLogin(result.user.username);
-
                             //set user and redirect
                             props.setLoggedInUser(result.user);
                         })
