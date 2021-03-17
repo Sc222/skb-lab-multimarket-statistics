@@ -4,6 +4,8 @@ import {Link as RouterLink} from "react-router-dom";
 import Link from "@material-ui/core/Link";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
+import {useMarginStyles} from "../Styles/MarginStyles";
+import {MoreRounded} from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
     textWithIcon: {
@@ -11,19 +13,23 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         flexWrap: 'wrap'
     },
-    mR: {
-        marginRight: theme.spacing(0.5)
-    },
     iconButtonMarginXShrink: {
         marginLeft: theme.spacing(-1.5),
         marginRight: theme.spacing(-1.5)
     }
 }));
 
-//todo PROPS DOCUMENTATION
-//props: text, link, icon, maxLength
+AdaptiveBreadcrumbItem.defaultProps = {
+    maxLength: undefined,
+    icon: MoreRounded,
+    text: "",
+    link: "",
+    isSelected: false,
+}
+
 export default function AdaptiveBreadcrumbItem(props) {
     const classes = useStyles();
+    const margins = useMarginStyles();
     const Icon = props.icon;
 
     function shortenText(text) {
@@ -41,7 +47,7 @@ export default function AdaptiveBreadcrumbItem(props) {
                     component={RouterLink}
                     to={props.link}
                     className={classes.textWithIcon}>
-                    <Icon className={classes.mR}/>
+                    <Icon className={margins.m05R}/>
                     {shortenText(props.text)}
                 </Link>
                 }
@@ -63,7 +69,7 @@ export default function AdaptiveBreadcrumbItem(props) {
                     component={RouterLink}
                     to={props.link}
                     className={classes.textWithIcon}>
-                    <Icon className={classes.mR}/>
+                    <Icon className={margins.m05R}/>
                     {props.text}
                 </Link>
             </Hidden>

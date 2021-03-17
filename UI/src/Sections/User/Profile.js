@@ -6,13 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-
-import update from "immutability-helper";
-
-//image imports
-import demoProfile from '../../images/demo_profile.png';
-
-import {fade} from "@material-ui/core";
 import {
     AddAPhotoRounded,
     ClearRounded,
@@ -24,12 +17,17 @@ import {
 import Fab from "@material-ui/core/Fab";
 import Divider from "@material-ui/core/Divider";
 import Hidden from "@material-ui/core/Hidden";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
 import TextField from "@material-ui/core/TextField";
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
+import IconButton from "@material-ui/core/IconButton";
+import Link from "@material-ui/core/Link";
+import update from "immutability-helper"
+import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch} from "react-router-dom";
+import {useFormSectionStyles} from "../../Styles/FormSectionStyles";
 import {deleteUser, getUser, updateUser} from "../../Api/ApiUser";
 import {createUserForUpdate, getDefaultFieldsStateUser, getDefaultUser} from "../../Api/Helpers/ApiUserHelper";
 import {
@@ -42,63 +40,29 @@ import {
     parseEmailServerError,
     parseUsernameServerError
 } from "../../Helpers/ErrorHelper";
-import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch} from "react-router-dom";
-import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
-import IconButton from "@material-ui/core/IconButton";
 import {HomepageUrl} from "../../App";
-import Link from "@material-ui/core/Link";
 import DeleteCardAndConfirmDialog from "../../Components/DeleteCardAndConfirmDialog";
 import {deleteAllSessionCookies} from "../../Helpers/CookieHelper";
 import {ErrorInternalServerErr, HttpStatusCodeLength} from "../../Api/Helpers/ApiHelper";
-
-const useFormStyles = makeStyles((theme) => FormSectionStyles(theme));
+import {useMarginStyles} from "../../Styles/MarginStyles";
+import demoProfile from '../../images/demo_profile.png';
 
 const useStyles = makeStyles((theme) => ({
-
     fabBottom: {
         position: 'absolute',
         bottom: theme.spacing(2),
-        right: theme.spacing(2),
+        right: theme.spacing(2)
     },
-
     appBarSpacer: {
         height: '48px'
     },
-
-    root: {
-        display: 'flex',
-    },
-
-    toolbarIcon: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
-
-    backToAppsButton: {
-        width: '100%'
-    },
-
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-    },
-
     extraToolbarButtonBack: {
         marginLeft: theme.spacing(0.5),
-        marginRight: theme.spacing(0.5),
-    },
-    title: {
-        flexGrow: 1,
-    },
-
-    content: {
-        flexGrow: 1,
-        height: '100vh',
-        overflow: 'auto',
+        marginRight: theme.spacing(0.5)
     },
     container: {
         paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
+        paddingBottom: theme.spacing(4)
     },
     paper: {
         paddingTop: theme.spacing(1.5),
@@ -106,67 +70,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
-        height: '100%',
-    },
-    paperNoBottomPadding: {
-        display: 'flex',
-        paddingTop: theme.spacing(1.5),
-        overflow: 'auto',
-        flexDirection: 'column',
-        height: '100%',
-    },
-
-    paperContainer: {
-        flexGrow: 1,
-        paddingLeft: theme.spacing(1.5),
-        paddingRight: theme.spacing(1.5),
-        width: '100%'
-    },
-
-    primaryRipple: {
-        color: theme.palette.primary.light
-    },
-
-    appDescriptionContainer: {
-        flexGrow: 1,
-        textAlign: "left",
-        color: theme.palette.text.primary,
-        paddingTop: theme.spacing(1.5),
-        paddingLeft: theme.spacing(1.5),
-        paddingRight: theme.spacing(1.5),
-        paddingBottom: theme.spacing(1),
-        width: '100%'
-    },
-
-    appIcon: {
-        width: 128,
-        height: 128
-    },
-
-    marketsContainer: {
-        display: 'flex',
-        justifyContent: 'left',
-        flexWrap: 'wrap',
-        paddingLeft: theme.spacing(1),
-        paddingRight: theme.spacing(1),
-        paddingBottom: theme.spacing(1.5),
-        '& > *': {
-            marginTop: theme.spacing(1),
-            marginLeft: theme.spacing(0.5),
-            marginRight: theme.spacing(0.5),
-        },
-    },
-
-    fixedHeight: {
-        height: 240,
-    },
-    profileIconButton: {
-        marginLeft: theme.spacing(1.5),
-        padding: 0
-    },
-    profileIcon: {
-        width: theme.spacing(4.5),
-        height: theme.spacing(4.5),
+        height: '100%'
     },
     //search toolbar styles
     extraToolbar: {
@@ -175,56 +79,11 @@ const useStyles = makeStyles((theme) => ({
     },
     extraToolbarTitleNoHide: {
         flexGrow: 1,
-        display: 'block',
+        display: 'block'
     },
-
-    searchCard: {
-        display: 'block',
-        borderRadius: theme.shape.borderRadius,
-        marginTop: theme.spacing(1.5),
-        position: 'relative',
-        backgroundColor: fade(theme.palette.common.black, 0.07),
-        '&:hover': {
-            backgroundColor: fade(theme.palette.common.black, 0.09),
-        },
-
-        [theme.breakpoints.up('sm')]: {
-            display: 'inline-block',
-        },
-
-    },
-    searchIcon: {
-        padding: theme.spacing(0, 2),
-        height: '100%',
-        position: 'absolute',
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    inputRoot: {
-        color: 'inherit',
-        width: '100%'
-    },
-    inputInput: {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            width: '45ch'
-        },
-    },
-
     extendedIcon: {
-        marginRight: theme.spacing(1),
+        marginRight: theme.spacing(1)
     },
-
-    fullWidthDivider: {
-        width: '100%',
-        marginBottom: theme.spacing(0.5),
-    },
-
     containerNotCentered: {
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(2),
@@ -232,15 +91,11 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 0,
         marginRight: 0
     },
-
-
     textWithIcon: {
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'nowrap'
     },
-
-
     //profile settings
     avatarIconContainer: {
         position: 'relative',
@@ -252,7 +107,7 @@ const useStyles = makeStyles((theme) => ({
     },
     avatarIconLarge: {
         width: theme.spacing(20),
-        height: theme.spacing(20),
+        height: theme.spacing(20)
     },
     uploadAvatarIcon: {
         boxShadow: 'none !important',
@@ -265,10 +120,6 @@ const useStyles = makeStyles((theme) => ({
         position: 'absolute',
         bottom: '0',
         left: '0'
-    },
-
-    sectionMarginTop: {
-        marginTop: theme.spacing(1)
     },
 }));
 
@@ -288,7 +139,8 @@ export default function Profile(props) {
     const [emailServerError, setEmailServerError] = React.useState("");
 
     const classes = useStyles();
-    const formClasses = useFormStyles();
+    const formClasses = useFormSectionStyles();
+    const marginClasses = useMarginStyles();
 
     //TODO ADD POSSIBILITY TO CHANGE PROFILE PHOTO
     function editProfile() {
@@ -490,7 +342,7 @@ export default function Profile(props) {
                                     </div>
                                     <Divider className={formClasses.fullWidthDivider}/>
                                     <Container className={classes.containerNotCentered}>
-                                        <Box className={classes.sectionMarginTop}>
+                                        <Box className={marginClasses.m1T}>
                                             <Typography variant='subtitle1' gutterBottom
                                                         className={classes.textWithIcon}>
                                                 <PersonRounded className={classes.extendedIcon} color='primary'/>
@@ -638,7 +490,7 @@ export default function Profile(props) {
                                             </>}
                                         </Box>
                                         {shouldTypeCurrentPassword() &&
-                                        <Box className={classes.sectionMarginTop}>
+                                        <Box className={marginClasses.m1T}>
                                             <Typography variant='subtitle1' gutterBottom
                                                         className={classes.textWithIcon}>
                                                 <LockRounded className={classes.extendedIcon} color='primary'/>

@@ -6,92 +6,33 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-
-//image imports
-import defaultAppIcon from "../../images/default_app_icon.png";
-
 import {fade} from "@material-ui/core";
 import {AddRounded, SearchRounded} from "@material-ui/icons";
 import InputBase from "@material-ui/core/InputBase";
+import Link from "@material-ui/core/Link";
 import Fab from "@material-ui/core/Fab";
-import Divider from "@material-ui/core/Divider";
-import Chip from "@material-ui/core/Chip";
-import Avatar from "@material-ui/core/Avatar";
 import Hidden from "@material-ui/core/Hidden";
-import ButtonBase from "@material-ui/core/ButtonBase";
 import {Link as RouterLink} from "react-router-dom";
-import MarketChipStyles from "../../Styles/MarketChipStyles";
-import {createLinkFromId, MarketsIndexes, MarketsInfo} from "../../Helpers/MarketsInfoHelper";
 import {getApps} from "../../Api/ApiApp";
-import {getMarketIdByStoreIndex} from "../../Api/Helpers/ApiAppHelper";
 import {escapeRegex} from "../../Helpers/UtilsHelper";
 import {HomepageUrl} from "../../App";
-import Link from "@material-ui/core/Link";
-
-const drawerWidth = 260;
+import AppInfoCard from "../../Components/AppInfoCard";
 
 const useStyles = makeStyles((theme) => ({
-
     fabBottom: {
         position: 'absolute',
         bottom: theme.spacing(2),
         right: theme.spacing(2),
     },
-
     appBarSpacer: {
         height: '48px'
     },
-
     root: {
-        display: 'flex',
-    },
-    toolbarIcon: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
-
-    backToAppsButton: {
-        width: '100%'
-    },
-
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-    },
-
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
-    title: {
-        flexGrow: 1,
-    },
-
-    drawerPaper: {
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: drawerWidth,
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: 0,
-    },
-
-    content: {
-        flexGrow: 1,
-        height: '100vh',
-        overflow: 'auto',
+        display: 'flex'
     },
     container: {
         paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
+        paddingBottom: theme.spacing(4)
     },
     paper: {
         paddingTop: theme.spacing(1.5),
@@ -99,59 +40,14 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
-        height: '100%',
+        height: '100%'
     },
-    paperNoPadding: {
-        display: 'flex',
-        overflow: 'auto',
-        flexDirection: 'column',
-        height: '100%',
-    },
-
     paperContainer: {
         flexGrow: 1,
         paddingLeft: theme.spacing(1.5),
         paddingRight: theme.spacing(1.5),
         width: '100%'
     },
-
-    primaryRipple: {
-        color: theme.palette.primary.light
-    },
-
-    primaryRippleFillHeight: {
-        color: theme.palette.primary.light,
-        height: '100%'
-    },
-
-    appDescriptionContainer: {
-        flexGrow: 1,
-        textAlign: "left",
-        color: theme.palette.text.primary,
-        paddingTop: theme.spacing(1.5),
-        paddingLeft: theme.spacing(1.5),
-        paddingRight: theme.spacing(1.5),
-        paddingBottom: theme.spacing(1),
-        width: '100%'
-    },
-
-    appIcon: {
-        width: 128,
-        height: 128
-    },
-
-    fixedHeight: {
-        height: 240,
-    },
-    profileIconButton: {
-        marginLeft: theme.spacing(1.5),
-        padding: 0
-    },
-    profileIcon: {
-        width: theme.spacing(4.5),
-        height: theme.spacing(4.5),
-    },
-
     //search toolbar styles
     extraToolbar: {
         background: "transparent",
@@ -162,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'none',
         [theme.breakpoints.up('sm')]: {
             display: 'block',
-        },
+        }
     },
     search: {
         position: 'relative',
@@ -175,8 +71,8 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         [theme.breakpoints.up('sm')]: {
             marginLeft: theme.spacing(1),
-            width: 'auto',
-        },
+            width: 'auto'
+        }
     },
     searchIcon: {
         padding: theme.spacing(0, 2),
@@ -185,10 +81,10 @@ const useStyles = makeStyles((theme) => ({
         pointerEvents: 'none',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'center'
     },
     inputRoot: {
-        color: 'inherit',
+        color: 'inherit'
     },
     inputInput: {
         padding: theme.spacing(1, 1, 1, 0),
@@ -199,36 +95,21 @@ const useStyles = makeStyles((theme) => ({
         [theme.breakpoints.up('sm')]: {
             width: '20ch',
             '&:focus': {
-                width: '30ch',
-            },
-        },
+                width: '30ch'
+            }
+        }
     },
-
     extendedIcon: {
-        marginRight: theme.spacing(1),
-    },
-
-    fullWidthDivider: {
-        width: '100%',
-        marginBottom: theme.spacing(0.5),
-    },
-
-    applicationIcon: {
-        borderRadius: "1.5em",
-        maxWidth: "100%",
-        maxHeight: '100%'
+        marginRight: theme.spacing(1)
     }
-
 }));
-const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function Apps(props) {
     let userId = props.userId;
+    const classes = useStyles();
+
     const [apps, setApps] = React.useState(undefined);
     const [appsNameFilter, setAppsNameFilter] = React.useState('');
-
-    const classes = useStyles();
-    const marketClasses = useMarketChipStyles();
 
     const handleAppsNameFilterInput = (event) => {
         setAppsNameFilter(event.target.value);
@@ -254,7 +135,7 @@ export default function Apps(props) {
                 <Grid item xs={12}>
                     <Paper className={classes.paper}>
                         <div className={classes.paperContainer}>
-                            <Typography component="h2" variant="h6" color="primary">
+                            <Typography variant="h6" color="primary">
                                 Загрузка
                             </Typography>
                             <Typography variant="body1">
@@ -268,9 +149,10 @@ export default function Apps(props) {
                 <Grid item xs={12}>
                     <Paper className={classes.paper}>
                         <div className={classes.paperContainer}>
-                            <Typography component="h2" variant="h6" color="primary">У Вас еще нет
-                                приложений</Typography>
-                            <Typography component="p" variant="body1">
+                            <Typography variant="h6" color="primary">У Вас еще нет
+                                приложений
+                            </Typography>
+                            <Typography variant="body1">
                                 Нажмите на кнопку <Link component={RouterLink}
                                                         to={`${HomepageUrl}/user/${userId}/new-app`}>добавить</Link> для
                                 того, чтобы создать новое приложение
@@ -279,51 +161,28 @@ export default function Apps(props) {
                     </Paper>
                 </Grid>);
         } else if (apps.length !== 0) {
-            return apps.filter(isNameMatchesSearchFilter).map(app => {
-                return (<Grid key={app.id} item xs={12} md={6}>
-                        <Paper className={classes.paperNoPadding}>
-                            <ButtonBase className={classes.primaryRippleFillHeight} component={RouterLink}
-                                        to={`${HomepageUrl}/user/${userId}/app/${app.id}/`}>
-                                <div className={classes.appDescriptionContainer}>
-                                    <Grid container alignItems='center' spacing={2}>
-                                        <Grid item xs={3} sm={2} md={3}>
-                                            <img alt='app icon'
-                                                 className={classes.applicationIcon}
-                                                 src={app.picUrl !== undefined ? app.picUrl : defaultAppIcon}/>
-                                        </Grid>
-                                        <Grid item xs={9} sm={10} md={9}>
-                                            <Typography component="h5" variant="h6">{app.name}</Typography>
-                                            <Typography component="p" variant="body1">
-                                                {app.description}
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
-                                </div>
-                            </ButtonBase>
-                            <Divider className={classes.fullWidthDivider}/>
-                            <div className={marketClasses.marketsContainer}>
-                                {
-                                    MarketsIndexes.map(marketIndex => {
-                                        let marketId = getMarketIdByStoreIndex(app, marketIndex);
-                                        return <Chip key={marketIndex}
-                                                     variant="outlined"
-                                                     clickable
-                                                     component='a'
-                                                     label={MarketsInfo[marketIndex].name}
-                                                     href={createLinkFromId(marketIndex, marketId)}
-                                                     target="_blank"
-                                                     rel='noreferrer'
-                                                     disabled={marketId === undefined}
-                                                     color={marketId === undefined ? "default" : "primary"}
-                                                     avatar={<Avatar className={marketClasses.transparentBg}
-                                                                     variant='square'
-                                                                     src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
-
-
-                                    })
-                                }
+            const filteredApps = apps.filter(isNameMatchesSearchFilter);
+            if (filteredApps.length === 0) {
+                return (
+                    <Grid item xs={12}>
+                        <Paper className={classes.paper}>
+                            <div className={classes.paperContainer}>
+                                <Typography variant="h6" color="primary">
+                                    Приложения не найдены
+                                </Typography>
+                                <Typography variant="body1">
+                                    Не найдены приложения с введенным названием
+                                </Typography>
                             </div>
                         </Paper>
+                    </Grid>
+                );
+            }
+            return filteredApps.map(app => {
+                return (
+                    <Grid key={app.id} item xs={12} md={6}>
+                        <AppInfoCard app={app} iconGridMd={3} isButtonBaseEnabled
+                                     buttonBaseLink={`${HomepageUrl}/user/${userId}/app/${app.id}/`}/>
                     </Grid>
                 );
             })
@@ -360,11 +219,8 @@ export default function Apps(props) {
                         </AppBar>
                     </Paper>
                 </Grid>
-
                 {renderApplicationsGrid()}
-
             </Grid>
-
             <Hidden smDown>
                 <Fab
                     variant="extended"
@@ -379,7 +235,6 @@ export default function Apps(props) {
                     Добавить
                 </Fab>
             </Hidden>
-
             <Hidden mdUp>
                 <Fab
                     variant="round"

@@ -8,18 +8,22 @@ import DialogActions from "@material-ui/core/DialogActions";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
-import {
-    ReviewFilterDateKey,
-    ReviewFilterRatingKey,
-    ReviewFilterRatings,
-    ReviewFilterTypes, ReviewFilterVersionKey
-} from "../Helpers/MarketsInfoHelper";
 import MenuItem from "@material-ui/core/MenuItem";
 import DateTimePickerFromTo from "./DateTimePickerFromTo";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
 import {useMarginStyles} from "../Styles/MarginStyles";
 import clsx from "clsx";
+import {UIDefaultValues} from "../Config";
+import {AppVersionNullKey, AppVersionNullName} from "../Api/Helpers/ApiAppHelper";
+import {
+    ReviewFilterDateKey,
+    ReviewFilterInfo,
+    ReviewFilterRatingKey,
+    ReviewFilterRatings,
+    ReviewFilterTypes,
+    ReviewFilterVersionKey
+} from "../Api/Helpers/ApiReviewHelper";
 
 const useStyles = makeStyles((theme) => ({
     selectStyle: {
@@ -33,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         height: '100%'
     },
-
     fullWidthDivider: {
         width: '100%',
         marginTop: theme.spacing(1),
@@ -59,14 +62,11 @@ const useStyles = makeStyles((theme) => ({
 ReviewsFilterSelectDialog.defaultProps = {
     dialogOpen: false,
     setDialogOpen: (value) => console.log("specify setDialogOpen prop: " + value),
-    filterTypes: ReviewFilterTypes,
+    filterTypes: ReviewFilterTypes(UIDefaultValues.reviewFilters),
+    filterToEdit: UIDefaultValues.reviewFilterToEdit,
     filterVersions: [],
     filterRatings: ReviewFilterRatings,
-    selectedVersions: [],
-    selectedRatings: [],
-    handleSelectedVersions: (event) => console.log("specify handleSelectedVersions prop: " + event.target.value),
-    handleSelectedRatings: (event) => console.log("specify handleSelectedRatings prop: " + event.target.value),
-    handleAddButton: () => console.log("Добавление фильтра")
+    handleAddFilter: (filterType, filterValue) => console.log(`Добавление фильтра: ${filterType} ${filterValue}`)
 }
 
 export default function ReviewsFilterSelectDialog(props) {
@@ -74,24 +74,110 @@ export default function ReviewsFilterSelectDialog(props) {
     const margins = useMarginStyles();
 
     const [selectedFilter, setSelectedFilter] = React.useState("");
+    const [filterSelectedVersions, setFilterSelectedVersions] = React.useState([]);
+    const [filterSelectedRatings, setFilterSelectedRatings] = React.useState([]);
+    const [filterDateFrom, setFilterDateFrom] = React.useState(UIDefaultValues.dateTimePickerFrom());
+    const [filterDateTo, setFilterDateTo] = React.useState(new Date());
+    const [filterDateFromError, setFilterDateFromError] = React.useState('');
+    const [filterDateToError, setFilterDateToError] = React.useState('');
+
+    React.useEffect(() => {
+        if (props.filterToEdit.key !== "") {
+            setSelectedFilter(props.filterToEdit.key);
+            setFilterToEditValue(props.filterToEdit);
+        }
+    }, [props.filterToEdit]);
+
+    function hasFilterDateErrors() {
+        return !filterDateFrom || !filterDateTo ||
+            filterDateFromError + filterDateToError !== "";
+    }
 
     const handleDialogClose = () => {
         props.setDialogOpen(false);
+        resetLastFilter();
+        setSelectedFilter("");
     };
 
-    //todo add add allow check
+    const handleAddButton = () => {
+        props.handleAddFilter(selectedFilter, getFilterValue());
+        handleDialogClose();
+    };
+
+    function setFilterToEditValue(filterToEdit) {
+        switch (filterToEdit.key) {
+            case ReviewFilterDateKey:
+                setFilterDateFrom(filterToEdit.value.dateFrom);
+                setFilterDateTo(filterToEdit.value.dateTo);
+                break;
+            case ReviewFilterVersionKey:
+                setFilterSelectedVersions(filterToEdit.value);
+                break;
+            case ReviewFilterRatingKey:
+                setFilterSelectedRatings(filterToEdit.value);
+                break;
+        }
+    }
+
+    function getFilterValue() {
+        switch (selectedFilter) {
+            case ReviewFilterDateKey:
+                return {dateTo: filterDateTo, dateFrom: filterDateFrom};
+            case ReviewFilterVersionKey:
+                return filterSelectedVersions;
+            case ReviewFilterRatingKey:
+                return filterSelectedRatings;
+            default:
+                return undefined;
+        }
+    }
+
     function isAddProhibited() {
-        return !selectedFilter;
+        switch (selectedFilter) {
+            case ReviewFilterDateKey:
+                return hasFilterDateErrors();
+            case ReviewFilterVersionKey:
+                return filterSelectedVersions.length === 0;
+            case ReviewFilterRatingKey:
+                return filterSelectedRatings.length === 0;
+            default:
+                return !selectedFilter;
+        }
+    }
+
+    function resetLastFilter() {
+        switch (selectedFilter) {
+            case ReviewFilterDateKey:
+                setFilterDateFrom(UIDefaultValues.dateTimePickerFrom());
+                setFilterDateTo(new Date());
+                break;
+            case ReviewFilterVersionKey:
+                setFilterSelectedVersions([]);
+                break;
+            case ReviewFilterRatingKey:
+                setFilterSelectedRatings([]);
+                break;
+        }
     }
 
     const handleSelectedFilterChange = (event) => {
-        const filter = event.target.value;
-        setSelectedFilter(filter);
+        resetLastFilter();
+        setSelectedFilter(event.target.value);
+    };
+
+    const handleSelectedVersions = (event) => {
+        setFilterSelectedVersions(event.target.value);
+    };
+
+    const handleSelectedRatings = (event) => {
+        setFilterSelectedRatings(event.target.value.sort((r1, r2) => r1 > r2));
     };
 
     return (
         <Dialog open={props.dialogOpen} onClose={handleDialogClose} fullWidth maxWidth='sm'>
-            <DialogTitle>Добавление фильтра</DialogTitle>
+            <DialogTitle>
+                {props.filterToEdit.key !== "" ? "Редактирование фильтра" : "Добавление фильтра"}
+            </DialogTitle>
             <DialogContent>
                 <FormControl variant="outlined" className={clsx(classes.selectStyle, margins.m1)}>
                     <InputLabel id="filter-select-label">Тип фильтра</InputLabel>
@@ -102,26 +188,25 @@ export default function ReviewsFilterSelectDialog(props) {
                         id="filter-select"
                         label="Тип фильтра"
                     >
-                        {/* TODO
-                             value={reviewsSelectedMarket}
-                             onChange={handleSelectedFilterChange}
-                     */}
                         {props.filterTypes.map(type =>
                             <MenuItem disabled={type.disabled} key={type.value} value={type.value}>
                                 {type.name}
                             </MenuItem>
                         )}
-                        {/*props.app
-                            && getAppMarketsArray(props.app)
-                                .map(index =>
-                                    <MenuItem key={index} value={MarketsRequestKeys[index]}>
-                                        {MarketsInfo[index].name}
-                                    </MenuItem>)
-                            */}
                     </Select>
                 </FormControl>
-                {selectedFilter === ReviewFilterDateKey && <DateTimePickerFromTo/>}
-                {/*TODO PROPS FOR DATETIMEPICKER*/}
+                {selectedFilter === ReviewFilterDateKey &&
+                <DateTimePickerFromTo
+                    dateFrom={filterDateFrom}
+                    setDateFrom={setFilterDateFrom}
+                    dateFromError={filterDateFromError}
+                    setDateFromError={setFilterDateFromError}
+                    dateTo={filterDateTo}
+                    setDateTo={setFilterDateTo}
+                    dateToError={filterDateToError}
+                    setDateToError={setFilterDateToError}
+                />
+                }
                 {selectedFilter === ReviewFilterVersionKey &&
                 <FormControl variant="outlined" className={clsx(classes.selectStyle, margins.m1)}>
                     <InputLabel id="version-select-label">Версия</InputLabel>
@@ -129,17 +214,18 @@ export default function ReviewsFilterSelectDialog(props) {
                         multiple
                         labelId="version-select-label"
                         id="version-select"
-                        renderValue={(selected) => selected.length === 0
-                            ? "Любая"
-                            : `Выбрано версий: ${selected.length}`}
+                        renderValue={(selected) => ReviewFilterInfo[ReviewFilterVersionKey].getLabel(selected, props.filterVersions)}
                         label="Версия"
-                        value={props.selectedVersions}
-                        onChange={props.handleSelectedVersions}
+                        value={filterSelectedVersions}
+                        onChange={handleSelectedVersions}
                     >
-                        {props.filterVersions.map(version =>(
+                        {props.filterVersions.map(version => (
                             <MenuItem key={version} value={version}>
-                                <Checkbox checked={props.selectedVersions.indexOf(version) > -1}/>
-                                <ListItemText primary={version}/>
+                                <Checkbox checked={filterSelectedVersions.indexOf(version) > -1}/>
+                                {version === AppVersionNullKey
+                                    ? <ListItemText primary={AppVersionNullName}/>
+                                    : <ListItemText primary={version}/>
+                                }
                             </MenuItem>))
                         }
                     </Select>
@@ -152,16 +238,14 @@ export default function ReviewsFilterSelectDialog(props) {
                         multiple
                         labelId="rating-select-label"
                         id="rating-select"
-                        renderValue={(selected) => selected.length === 0
-                            ? "Любая"
-                            : `Число звезд: ${selected.length}`}
+                        renderValue={(selected) => ReviewFilterInfo[ReviewFilterRatingKey].getLabel(selected)}
                         label="Оценка"
-                        value={props.selectedRatings}
-                        onChange={props.handleSelectedRatings}
+                        value={filterSelectedRatings}
+                        onChange={handleSelectedRatings}
                     >
-                        {props.filterRatings.map(rating =>(
+                        {props.filterRatings.map(rating => (
                             <MenuItem key={rating.value} value={rating.value}>
-                                <Checkbox checked={props.selectedRatings.indexOf(rating.value) > -1}/>
+                                <Checkbox checked={filterSelectedRatings.indexOf(rating.value) > -1}/>
                                 <ListItemText primary={rating.name}/>
                             </MenuItem>))
                         }
@@ -173,9 +257,9 @@ export default function ReviewsFilterSelectDialog(props) {
                 <Button onClick={handleDialogClose} color="primary">
                     Отмена
                 </Button>
-                <Button onClick={props.handleAddButton} disabled={isAddProhibited()} color="primary"
+                <Button onClick={handleAddButton} disabled={isAddProhibited()} color="primary"
                         disableElevation variant='contained'>
-                    Добавить фильтр
+                    {props.filterToEdit.key !== "" ? "Редактировать фильтр" : "Добавить фильтр"}
                 </Button>
             </DialogActions>
         </Dialog>

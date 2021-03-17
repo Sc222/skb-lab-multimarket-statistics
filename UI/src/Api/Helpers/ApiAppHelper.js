@@ -2,6 +2,8 @@
 
 import {AppGalleryIndex, AppStoreIndex, PlayStoreIndex} from "../../Helpers/MarketsInfoHelper";
 export const AppNameMaxLength=10;
+export const AppVersionNullKey = "notMentioned";
+export const AppVersionNullName = "Неизвестная";
 
 export function getDefaultAppNoIdNoPicNoMarkets(){
     return {name:"", description:""};

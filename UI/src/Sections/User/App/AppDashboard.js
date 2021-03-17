@@ -6,9 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Avatar from "@material-ui/core/Avatar";
-import {fade} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
-import Chip from "@material-ui/core/Chip";
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
@@ -26,12 +24,12 @@ import {
     StarBorderRounded,
     StarRounded
 } from "@material-ui/icons";
-import FormSectionStyles from "../../../Styles/FormSectionStyles";
-import MarketChipStyles from "../../../Styles/MarketChipStyles";
+import {useFormSectionStyles} from "../../../Styles/FormSectionStyles";
+import {useMarketChipStyles} from "../../../Styles/MarketChipStyles";
 import {Link as RouterLink} from "react-router-dom";
 import clsx from "clsx";
 import {HomepageUrl} from "../../../App";
-import {AppNameMaxLength, getAppMarketsArray, getMarketIdByStoreIndex, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
+import {AppNameMaxLength, getAppMarketsArray, hasMarkets} from "../../../Api/Helpers/ApiAppHelper";
 import {getRatings} from "../../../Api/ApiRating";
 import {deleteAllNotificationsForApp, getNotifications} from "../../../Api/ApiNotification";
 import {getAppNotificationsAlert} from "../../../Helpers/AlertsHelper";
@@ -41,65 +39,11 @@ import {filterNotificationsByApp} from "../../../Api/Helpers/ApiNotificationHelp
 import AppNoMarketsCard from "../../../Components/AppNoMarketsCard";
 import AdaptiveBreadcrumbItem from "../../../Components/AdaptiveBreadcrumbItem";
 import {formatDateShort} from "../../../Helpers/UtilsHelper";
-import {
-    createLinkFromId,
-    getLatestRatingsStartCheckDate,
-    MarketsIndexes,
-    MarketsInfo,
-    MarketStarsTemplate
-} from "../../../Helpers/MarketsInfoHelper";
-//images imports
+import {getLatestRatingsStartCheckDate, MarketsInfo, MarketStarsTemplate} from "../../../Helpers/MarketsInfoHelper";
+import AppInfoCard from "../../../Components/AppInfoCard";
 import defaultAppIcon from "../../../images/default_app_icon.png";
 
-const drawerWidth = 260;
-
 const useStyles = makeStyles((theme) => ({
-    appBarSpacer: {
-        height: '48px'
-    },
-
-    root: {
-        display: 'flex',
-    },
-    toolbarIcon: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
-
-    backToAppsButton: {
-        width: '100%'
-    },
-
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-    },
-
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
-    title: {
-        flexGrow: 1,
-    },
-
-    drawerPaper: {
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: drawerWidth,
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: 0,
-    },
-
     containerNotCentered: {
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(2),
@@ -107,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 0,
         marginRight: 0
     },
-
     containerNotCenteredSmallerPadding: {
         paddingLeft: theme.spacing(1.5),
         paddingRight: theme.spacing(1.5),
@@ -115,27 +58,10 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 0,
         marginRight: 0
     },
-
-    containerApps: {
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2),
-        paddingTop: theme.spacing(2),
-        paddingBottom: theme.spacing(2),
-        width: '100%',
-        marginLeft: 0,
-        marginRight: 0
-    },
-
-    content: {
-        flexGrow: 1,
-        height: '100vh',
-        overflow: 'auto',
-    },
     container: {
         paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
+        paddingBottom: theme.spacing(4)
     },
-
     paper: {
         paddingTop: theme.spacing(1.5),
         paddingBottom: theme.spacing(1.5),
@@ -144,176 +70,39 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         height: '100%'
     },
-    fixedHeight: {
-        height: 240,
-    },
-    profileIconButton: {
-        marginLeft: theme.spacing(1.5),
-        padding: 0
-    },
-    profileIcon: {
-        width: theme.spacing(4.5),
-        height: theme.spacing(4.5),
-    },
-
-    fabBottom: {
-        position: 'absolute',
-        bottom: theme.spacing(2),
-        right: theme.spacing(2),
-    },
-
-    paperNoPadding: {
-        display: 'flex',
-        overflow: 'auto',
-        flexDirection: 'column',
-        height: '100%',
-    },
-
-    paperContainer: {
-        flexGrow: 1,
-        paddingLeft: theme.spacing(1.5),
-        paddingRight: theme.spacing(1.5),
-        width: '100%'
-    },
-
     flexGrowFillCenterVertical: {
         flexGrow: 1,
         display: 'flex',
         alignItems: 'center'
-    },
-
-    flexGrowFill: {
-        flexGrow: 1
-    },
-
-    containerTopPadded: {
-        flexGrow: 1,
-        textAlign: "left",
-        paddingTop: theme.spacing(1.5),
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2),
-        width: '100%'
-    },
-
-    primaryRipple: {
-        color: theme.palette.primary.light
-    },
-
-    appDescriptionContainer: {
-        flexGrow: 1,
-        textAlign: "left",
-        color: theme.palette.text.primary,
-        paddingTop: theme.spacing(1.5),
-        paddingLeft: theme.spacing(1.5),
-        paddingRight: theme.spacing(1.5),
-        paddingBottom: theme.spacing(1),
-        width: '100%'
-    },
-
-
-    appIcon: {
-        width: 128,
-        height: 128
     },
     //search toolbar styles
     extraToolbar: {
         background: "transparent",
         color: theme.palette.text.primary
     },
-    extraToolbarTitle: {
-        flexGrow: 1,
-        display: 'none',
-        [theme.breakpoints.up('sm')]: {
-            display: 'block',
-        },
-    },
-
     extraToolbarTitleNoHide: {
         flexGrow: 1,
-        display: 'block',
+        display: 'block'
     },
-
     extraToolbarButtonBack: {
         marginLeft: theme.spacing(0.5),
-        marginRight: theme.spacing(0.5),
+        marginRight: theme.spacing(0.5)
     },
-
-    search: {
-        position: 'relative',
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: fade(theme.palette.common.black, 0.07),
-        '&:hover': {
-            backgroundColor: fade(theme.palette.common.black, 0.09),
-        },
-        marginLeft: 0,
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            marginLeft: theme.spacing(1),
-            width: 'auto',
-        },
-    },
-    searchIcon: {
-        padding: theme.spacing(0, 2),
-        height: '100%',
-        position: 'absolute',
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    inputRoot: {
-        color: 'inherit',
-    },
-    inputInput: {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            width: '20ch',
-            '&:focus': {
-                width: '30ch',
-            },
-        },
-    },
-    applicationIcon: {
-        borderRadius: "1.5em",
-        maxWidth: "100%",
-        maxHeight: '100%'
-    },
-
     applicationIconSmall: {
         borderRadius: "0.5em",
         width: theme.spacing(3.5),
         maxHeight: theme.spacing(3.5),
         marginRight: theme.spacing(0.5)
     },
-
-    extendedIcon: {
-        marginRight: theme.spacing(1),
-    },
     fullWidthDivider: {
         width: '100%',
-        marginBottom: theme.spacing(0.5),
+        marginBottom: theme.spacing(0.5)
     },
-    chartSelectsContainer: {
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1),
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1)
-    },
-
-    selectStyle: {
-        minWidth: '200px',
-    },
-
     textWithIcon: {
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'wrap'
     },
-
     reviewAvatar: {
         color: theme.palette.white,
         backgroundColor: theme.palette.primary.light,
@@ -321,16 +110,13 @@ const useStyles = makeStyles((theme) => ({
         height: theme.spacing(7),
         fontSize: "32px"
     },
-
     reviewRating: {
         fill: green[400]
     },
-
     textGreenBold: {
         fontWeight: "bold",
         color: green[400]
     },
-
     reviewCard: {
         height: '100%',
         paddingTop: theme.spacing(1.5),
@@ -338,27 +124,17 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: theme.spacing(1.5),
         paddingBottom: theme.spacing(1)
     },
-
-    mT: {
-        marginTop: theme.spacing(1.5)
-    },
-
     mYdividers: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(0.5)
     }
-
-
 }));
-const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
-const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function AppDashboard(props) {
-
     const theme = useTheme();
     const classes = useStyles();
     const formClasses = useFormSectionStyles();
-    const marketClasses = useMarketChipStyles();
+    const marketChipClasses = useMarketChipStyles();
 
     const [appNotifications, setAppNotifications] = React.useState(undefined);
     const [latestRatings, setLatestRatings] = React.useState(undefined);
@@ -405,7 +181,7 @@ export default function AppDashboard(props) {
                 if (result.ok) {
                     setAppNotifications([]);
                     reloadNotifications();
-                } else{
+                } else {
                     props.updateIsTokenExpired(result.status.toString());
                     props.showStatusAlert("Не удалось удалить уведомления", "error");
                     console.log("error deleting notifications");
@@ -444,7 +220,6 @@ export default function AppDashboard(props) {
                                     text={props.app.name}
                                 />}
                             </Breadcrumbs>
-
                             <Hidden smDown>
                                 <Button
                                     edge="end"
@@ -461,7 +236,6 @@ export default function AppDashboard(props) {
                                     Настройки
                                 </Button>
                             </Hidden>
-
                             <Hidden mdUp>
                                 <IconButton
                                     edge="end"
@@ -478,63 +252,11 @@ export default function AppDashboard(props) {
                     </AppBar>
                 </Paper>
             </Grid>
-
-            {/*TODO !!! APPINFO CARD EXTRACT COMPONENT*/}
+            {props.app &&
             <Grid item xs={12} md={7} lg={8}>
-                {props.app &&
-                <Paper className={classes.paperNoPadding} elevation={1}>
-                    <div className={classes.containerTopPadded}>
-                        <Typography variant="h6">
-                            Информация о приложении
-                        </Typography>
-                        <Typography variant="body2">
-                            Текущая информация о приложении
-                        </Typography>
-                    </div>
-                    <Divider className={formClasses.fullWidthDivider}/>
-                    <div className={classes.appDescriptionContainer}>
-                        <Grid container alignItems='center' spacing={2}>
-                            <Grid item xs={3} sm={2} md={2}>
-                                <img alt='app icon'
-                                     src={props.app.picUrl !== undefined ? props.app.picUrl : defaultAppIcon}
-                                     className={classes.applicationIcon}/>
-                            </Grid>
-                            <Grid item xs={9} sm={10} md={10}>
-                                <Typography component="h5" variant="h6">{props.app.name}</Typography>
-                                <Typography component="p" variant="body1">
-                                    {props.app.description}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                    </div>
-                    <Divider className={classes.fullWidthDivider}/>
-                    <div className={marketClasses.marketsContainer}>
-                        {
-                            MarketsIndexes.map(marketIndex => {
-                                let marketId = getMarketIdByStoreIndex(props.app, marketIndex);
-                                return <Chip key={marketIndex}
-                                             variant="outlined"
-                                             clickable
-                                             component='a'
-                                             label={MarketsInfo[marketIndex].name}
-                                             href={createLinkFromId(marketIndex, marketId)}
-                                             target="_blank"
-                                             rel='noreferrer'
-                                             disabled={marketId === undefined}
-                                             color={marketId === undefined ? "default" : "primary"}
-                                             avatar={<Avatar className={marketClasses.transparentBg}
-                                                             variant='square'
-                                                             src={MarketsInfo[marketIndex].getIcon(marketId === undefined)}/>}/>
-
-
-                            })
-                        }
-                    </div>
-                </Paper>
-                }
+                <AppInfoCard app={props.app} iconGridMd={2} hasCardDescription/>
             </Grid>
-
-            {/*TODO IS NOTIFICATION SECTION IN APPS NEEDED?*/}
+            }
             <Grid item xs={12} md={5} lg={4}>
                 <Paper elevation={1} className={classes.paper}>
                     <div className={formClasses.container}>
@@ -556,7 +278,6 @@ export default function AppDashboard(props) {
                     {appNotifications &&
                     <>
                         <Divider className={classes.fullWidthDivider}/>
-
                         <Container maxWidth='xs' className={classes.containerNotCentered}>
                             <Box mt={1}>
                                 {appNotifications.length !== 0
@@ -581,7 +302,6 @@ export default function AppDashboard(props) {
                     }
                 </Paper>
             </Grid>
-
             {props.app && hasMarkets(props.app) &&
             <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paper}>
@@ -594,7 +314,6 @@ export default function AppDashboard(props) {
                         </Typography>
                     </div>
                     <Divider className={formClasses.fullWidthDivider}/>
-
                     <Container maxWidth='md'
                                className={clsx(classes.containerNotCenteredSmallerPadding, classes.mYdividers, classes.flexGrowFillCenterVertical)}>
                         <Grid container alignItems='center' spacing={2}>
@@ -603,7 +322,7 @@ export default function AppDashboard(props) {
                                     <Grid container alignItems='center' spacing={1} key={marketIndex}>
                                         <Grid item>
                                             <Avatar
-                                                className={marketClasses.marketAvatar}
+                                                className={marketChipClasses.marketAvatar}
                                                 variant='square'
                                                 src={MarketsInfo[marketIndex].getIcon(false)}/>
                                         </Grid>
@@ -668,7 +387,6 @@ export default function AppDashboard(props) {
                 </Paper>
             </Grid>
             }
-
             {props.app && hasMarkets(props.app) &&
             <Grid item xs={12}>
                 <Paper elevation={1} className={classes.paper}>
@@ -681,11 +399,10 @@ export default function AppDashboard(props) {
                         </Typography>
                     </div>
                     <Divider className={formClasses.fullWidthDivider}/>
-
                     <Container
                         className={clsx(classes.containerNotCentered, classes.mYdividers, classes.flexGrowFillCenterVertical)}>
                         <Grid container alignItems='center'
-                              spacing={2}>{/*TODO !!! justify='center' ONLY IF MD and 3 markets*/}
+                              spacing={2}>
                             {latestReviews && latestReviews.map(review => {
                                 return (<Grid key={review.marketIndex} xs={12} md={6} lg={4} item>
                                         <Box border={1} borderRadius={8} borderColor="grey.300"
@@ -706,20 +423,23 @@ export default function AppDashboard(props) {
                                                 <Grid item>
                                                     <Box pl={0.5}>
                                                         <Typography variant="body1" className={classes.textWithIcon}>
-                                                <span> <Avatar
-                                                    className={clsx(marketClasses.marketAvatarSmall, marketClasses.iconMargin)}
-                                                    variant='square'
-                                                    src={MarketsInfo[review.marketIndex].getIcon(false)}/></span>
+                                                            <span>
+                                                                <Avatar
+                                                                    className={clsx(marketChipClasses.marketAvatarSmall, marketChipClasses.iconMargin)}
+                                                                    variant='square'
+                                                                    src={MarketsInfo[review.marketIndex].getIcon(false)}/>
+                                                            </span>
                                                             <b>
                                                                 {review.reviewerUsername === undefined
                                                                     ? "Имя неизвестно"
                                                                     : review.reviewerUsername}
                                                             </b>
                                                         </Typography>
-
                                                         <Typography variant="caption" noWrap>
-                                                            {review.date} |
-                                                            Версия: {review.version ? review.version : "?"}
+                                                            {review.rating === 0
+                                                                ? "Нет данных"
+                                                                : `${review.date} | Версия: ${review.version ? review.version : "?"}`
+                                                            }
                                                         </Typography>
                                                     </Box>
                                                     <Typography variant="h6">
@@ -738,11 +458,10 @@ export default function AppDashboard(props) {
                                                                 color='error'/>)
                                                         }
                                                     </Typography>
-
                                                 </Grid>
                                             </Grid>
                                             <Typography variant="body2" noWrap>
-                                                {review.text}
+                                                {review.text ? review.text : "..."}
                                             </Typography>
                                         </Box>
                                     </Grid>
@@ -771,11 +490,9 @@ export default function AppDashboard(props) {
                 </Paper>
             </Grid>
             }
-
             <Grid item xs={12}>
                 <AppNoMarketsCard isShown={props.app && !hasMarkets(props.app)} userId={props.userId}
                                   appId={props.appId}/>
             </Grid>
-
         </Grid>);
 }

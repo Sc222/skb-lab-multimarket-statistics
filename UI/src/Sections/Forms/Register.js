@@ -1,5 +1,4 @@
 import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Button from "@material-ui/core/Button";
@@ -8,7 +7,7 @@ import Divider from "@material-ui/core/Divider";
 
 import {Link as RouterLink} from 'react-router-dom';
 
-import FormSectionStyles from "../../Styles/FormSectionStyles";
+import {useFormSectionStyles} from "../../Styles/FormSectionStyles";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import {
@@ -23,12 +22,10 @@ import {createUserForCreate, getDefaultLoginCredentials, getDefaultUserNoId} fro
 import update from "immutability-helper";
 import {authenticateUser, createUser} from "../../Api/ApiUser";
 import {HomepageUrl} from "../../App";
-import {setCookieUsername, setCookieToken, setCookieUserId} from "../../Helpers/CookieHelper";
-
-const useStyles = makeStyles((theme) => FormSectionStyles(theme));
+import {setCookieLogin, setCookieToken, setCookieUserId} from "../../Helpers/CookieHelper";
 
 export default function Register(props) {
-    const classes = useStyles();
+    const classes = useFormSectionStyles();
 
     const [enableNotifications, setEnableNotifications] = React.useState(false);
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
@@ -63,9 +60,8 @@ export default function Register(props) {
                         loginCredentials.password = user.password;
                         authenticateUser(loginCredentials).then(result => {
                             setCookieUserId(result.user.id);
-                            setCookieToken(result.token);
-                            setCookieUsername(result.user.username);
-
+                            setCookieToken(result.token, new Date(result.expires));
+                            setCookieLogin(result.user.username);
                             //set user and redirect
                             props.setLoggedInUser(result.user);
                         })

@@ -6,12 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-
-import update from 'immutability-helper';
-
-import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch} from 'react-router-dom';
-
-import {fade} from "@material-ui/core";
 import {DoneRounded} from "@material-ui/icons";
 import Fab from "@material-ui/core/Fab";
 import Divider from "@material-ui/core/Divider";
@@ -21,8 +15,10 @@ import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import TextField from "@material-ui/core/TextField";
 import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
-import MarketChipStyles from "../../Styles/MarketChipStyles";
+import update from 'immutability-helper';
+import {Link as RouterLink, Redirect, Route, Switch as RouteSwitch} from 'react-router-dom';
+import {useFormSectionStyles} from "../../Styles/FormSectionStyles";
+import {useMarketChipStyles} from "../../Styles/MarketChipStyles";
 import {
     AppGalleryIndex,
     AppStoreIndex,
@@ -34,73 +30,24 @@ import {getAppDescriptionError, getAppMarketError, getAppNameError} from "../../
 import {createApp} from "../../Api/ApiApp";
 import {createAppForCreate, getDefaultAppNoIdNoPic} from "../../Api/Helpers/ApiAppHelper";
 import {HomepageUrl} from "../../App";
-
-const drawerWidth = 260;
+import {UIDefaultValues} from "../../Config";
 
 const useStyles = makeStyles((theme) => ({
-
     fabBottom: {
         position: 'absolute',
         bottom: theme.spacing(2),
-        right: theme.spacing(2),
+        right: theme.spacing(2)
     },
-
     appBarSpacer: {
         height: '48px'
     },
-
-    root: {
-        display: 'flex',
-    },
-
-    toolbarIcon: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
-
-    backToAppsButton: {
-        width: '100%'
-    },
-
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-    },
-
     extraToolbarButtonBack: {
         marginLeft: theme.spacing(0.5),
-        marginRight: theme.spacing(0.5),
-    },
-    title: {
-        flexGrow: 1,
-    },
-
-    drawerPaper: {
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: drawerWidth,
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: 0,
-    },
-
-    content: {
-        flexGrow: 1,
-        height: '100vh',
-        overflow: 'auto',
+        marginRight: theme.spacing(0.5)
     },
     container: {
         paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
+        paddingBottom: theme.spacing(4)
     },
     paper: {
         paddingTop: theme.spacing(1.5),
@@ -108,56 +55,15 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
-        height: '100%',
+        height: '100%'
     },
     paperNoBottomPadding: {
         display: 'flex',
         paddingTop: theme.spacing(1.5),
         overflow: 'auto',
         flexDirection: 'column',
-        height: '100%',
+        height: '100%'
     },
-
-    paperContainer: {
-        flexGrow: 1,
-        paddingLeft: theme.spacing(1.5),
-        paddingRight: theme.spacing(1.5),
-        width: '100%'
-    },
-
-    primaryRipple: {
-        color: theme.palette.primary.light
-    },
-
-    appDescriptionContainer: {
-        flexGrow: 1,
-        textAlign: "left",
-        color: theme.palette.text.primary,
-        paddingTop: theme.spacing(1.5),
-        paddingLeft: theme.spacing(1.5),
-        paddingRight: theme.spacing(1.5),
-        paddingBottom: theme.spacing(1),
-        width: '100%'
-    },
-
-    appIcon: {
-        width: 128,
-        height: 128
-    },
-
-    fixedHeight: {
-        height: 240,
-    },
-    profileIconButton: {
-        marginLeft: theme.spacing(1.5),
-        padding: 0
-    },
-    profileIcon: {
-        width: theme.spacing(4.5),
-        height: theme.spacing(4.5)
-    },
-
-
     //search toolbar styles
     extraToolbar: {
         background: "transparent",
@@ -165,55 +71,11 @@ const useStyles = makeStyles((theme) => ({
     },
     extraToolbarTitleNoHide: {
         flexGrow: 1,
-        display: 'block',
+        display: 'block'
     },
-    searchCard: {
-        display: 'block',
-        borderRadius: theme.shape.borderRadius,
-        marginTop: theme.spacing(1.5),
-        position: 'relative',
-        backgroundColor: fade(theme.palette.common.black, 0.07),
-        '&:hover': {
-            backgroundColor: fade(theme.palette.common.black, 0.09),
-        },
-
-        [theme.breakpoints.up('sm')]: {
-            display: 'inline-block',
-        },
-
-    },
-    searchIcon: {
-        padding: theme.spacing(0, 2),
-        height: '100%',
-        position: 'absolute',
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    inputRoot: {
-        color: 'inherit',
-        width: '100%'
-    },
-    inputInput: {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            width: '45ch'
-        },
-    },
-
     extendedIcon: {
         marginRight: theme.spacing(1),
     },
-
-    fullWidthDivider: {
-        width: '100%',
-        marginBottom: theme.spacing(0.5),
-    },
-
     containerNotCentered: {
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(2),
@@ -221,10 +83,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 0,
         marginRight: 0
     }
-
 }));
-const useFormSectionStyles = makeStyles((theme) => FormSectionStyles(theme));
-const useMarketChipStyles = makeStyles((theme) => MarketChipStyles(theme));
 
 export default function NewApplications(props) {
     const userId = props.userId;
@@ -233,7 +92,7 @@ export default function NewApplications(props) {
     const formClasses = useFormSectionStyles();
     const marketClasses = useMarketChipStyles();
 
-    const [selectedMarkets, setSelectedMarkets] = React.useState([false, false, false]);
+    const [selectedMarkets, setSelectedMarkets] = React.useState(UIDefaultValues.selectedMarkets);
     const [areErrorsVisible, setErrorsVisible] = React.useState(false);
     const [newApp, setNewApp] = React.useState(getDefaultAppNoIdNoPic());
     const [playStoreLink, setPlayStoreLink] = React.useState("");

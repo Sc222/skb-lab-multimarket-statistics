@@ -8,7 +8,6 @@ import {HomepageUrl} from "../App";
 import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles((theme) => ({
-
     paper: {
         paddingTop: theme.spacing(1.5),
         paddingBottom: theme.spacing(1.5),
@@ -17,21 +16,23 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         height: '100%'
     },
-
     paperContainer: {
         flexGrow: 1,
         paddingLeft: theme.spacing(1.5),
         paddingRight: theme.spacing(1.5),
         width: '100%'
     },
-
     coloredText: {
         color: theme.palette.primary.light
     }
 }));
 
-//todo PROPS DOCUMENTATION
-//props: isShown, userId, appId
+AppNoMarketsCard.defaultProps = {
+    isShown: false,
+    userId: "",
+    appId: ""
+}
+
 export default function AppNoMarketsCard(props) {
     const classes = useStyles();
 

@@ -1,25 +1,27 @@
-import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import React, {useEffect} from 'react';
 import Container from '@material-ui/core/Container';
 import Paper from "@material-ui/core/Paper";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import {Redirect, Route, Switch as RouteSwitch, useLocation} from 'react-router-dom';
 import {HomepageUrl} from "../../App";
-import FormSectionStyles from "../../Styles/FormSectionStyles";
+import {useFormSectionStyles} from "../../Styles/FormSectionStyles";
 import Login from "./Login";
 import Register from "./Register";
-
-const useStyles = makeStyles((theme) => FormSectionStyles(theme));
+import ServiceNameAndLogo from "../../Components/ServiceNameAndLogo";
+import {getCookieUserId, isUserLoggedIn} from "../../Helpers/CookieHelper";
 
 export default function FormsSection() {
-    const classes = useStyles();
-
     const urlQueryParams = new URLSearchParams(useLocation().search);
     const referer = urlQueryParams.get("referer");
 
+    const classes = useFormSectionStyles();
+
     const [user, setUser] = React.useState(undefined);
+
+    useEffect(() => {
+        console.log("MOUNT FORMS");
+    }, []);
 
     function setLoggedInUser(user) {
         console.log(user);
@@ -30,10 +32,7 @@ export default function FormsSection() {
         <div>
             <AppBar position="absolute">
                 <Toolbar variant="dense">
-                    <Typography component="h1" variant="h6" color="inherit" noWrap
-                                className={classes.titleCentered}>
-                        Multimarket Statistics
-                    </Typography>
+                    <ServiceNameAndLogo centered/>
                 </Toolbar>
             </AppBar>
             <main className={classes.content}>
@@ -41,6 +40,8 @@ export default function FormsSection() {
                     <div className={classes.appBarSpacer}/>
                     <Paper elevation={2} className={classes.paper}>
                         <RouteSwitch>
+                            {isUserLoggedIn() &&
+                            <Redirect to={referer ? referer : `${HomepageUrl}/user/${getCookieUserId()}/apps`}/>}
                             {console.log("WE ARE IN FORM SECTIONS")}
                             {user && console.log("redirect to apps")}
                             {user && <Redirect to={referer? referer : `${HomepageUrl}/user/${user.id}/apps`}/>}
