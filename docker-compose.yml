@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  postgres:
+      #container_name: postgres_container
+    image: postgres
+    environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=wt
+        - POSTGRES_DB=postgres
+    volumes:
+         - ./MultimarketStatistics/docker-pg:/docker-entrypoint-initdb.d
+         - pg_data:/var/lib/postgresql/data
+    ports:
+        - "5432:5432"
+    networks:
+      - my-network
+    restart: unless-stopped
+
+  multimarketstatistics:
+    #image: multimarketapi
+    build:
+        context: ./MultimarketStatistics
+        dockerfile: ./MultimarketStatistics/Dockerfile
+    ports:
+      - "5000:80"
+    networks:
+      - my-network
+    depends_on:
+      - postgres
+
+  reviewsdaemon:
+#    image: reviewsdaemon
+    build:
+         context: ./MultimarketStatistics
+         dockerfile: ./ReviewsDaemon/Dockerfile
+    ports:
+      - "5001:80"
+    networks:
+      - my-network
+    depends_on:
+      - postgres
+      - market-api
+
+  slack-app:
+#    image: slackapp
+    build:
+        context: ./MultimarketStatistics
+        dockerfile: ./SlackApp/Dockerfile
+    ports:
+     - "5002:80"
+    networks:
+     - my-network
+    depends_on: 
+      - postgres
+
+  market-api:
+#    image: slackapp
+    build:
+        context: ./PlayMarketApi
+        dockerfile: ./Dockerfile
+    ports:
+     - "3001:3001"
+    networks:
+     - my-network
+    depends_on: 
+      - postgres
+
+  ui:
+#    image: slackapp
+    build:
+        context: ./UI
+        dockerfile: ./Dockerfile
+    ports:
+     - "3000:80"
+    networks:
+     - my-network
+    depends_on: 
+      - postgres
+
+
+networks:
+  my-network:
+    name: my-network
+    driver: bridge
+
+    
+volumes:
+  pg_data:
+
+    
