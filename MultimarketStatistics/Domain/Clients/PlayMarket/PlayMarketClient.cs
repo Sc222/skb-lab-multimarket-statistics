@@ -9,7 +9,7 @@ namespace Domain.Clients.PlayMarket
 {
     public class PlayMarketClient : IMarketClient
     {
-        private const string apiUrl = "http://localhost:3000/api/playMarket/apps/";
+        private const string apiUrl = "http://market-api:3001/api/playMarket/apps/";
         private const int maxPages = 4;
         private const int ReviewsPerPage = 150;
 
