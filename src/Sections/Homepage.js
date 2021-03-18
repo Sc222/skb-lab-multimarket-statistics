@@ -74,41 +74,6 @@ function Homepage() {
             <AppBar className={classes.defaultBackground} elevation={0}>
                 <Toolbar variant="dense">
                     <ServiceNameAndLogo fontColor="primary"/>
-
-                    {isUserLoggedIn()
-                        ? <IconButton className={classes.profileIconButton}
-                                      color="inherit"
-                                      component={RouterLink}
-                                      to={`${HomepageUrl}/user/${getCookieUserId()}/apps`}>
-                            {/*todo !!! USER PROFILE PIC load profile picture from server or cookies*/}
-                            <Avatar className={classes.profileIcon} alt="Profile picture" src={demoProfile}/>
-                        </IconButton>
-                        : <>
-                            <Button
-                                className={margins.m05R}
-                                size="small"
-                                disableElevation
-                                variant="outlined"
-                                color="primary"
-                                component={RouterLink}
-                                to={`${HomepageUrl}/login`}
-                            >
-                                Войти
-                            </Button>
-                            <Hidden xsDown>
-                                <Button
-                                    size="small"
-                                    disableElevation
-                                    variant="text"
-                                    color="primary"
-                                    component={RouterLink}
-                                    to={`${HomepageUrl}/register`}
-                                >
-                                    Зарегистрироваться
-                                </Button>
-                            </Hidden>
-                        </>
-                    }
                 </Toolbar>
                 <Divider/>
             </AppBar>
@@ -212,7 +177,7 @@ function Homepage() {
                     subtitle={"Система запускается на вашей машине, поэтому нам не нужно платить за хостинг\n" +
                     "и все предоставляется абсолютно бесплатно."}
                 />
-                <HomepageFooter/>
+                <HomepageFooter showStatusAlert={showStatusAlert}/>
             </main>
             <StatusAlert ref={statusAlert}/>
         </div>

@@ -3,14 +3,12 @@ import Typography from "@material-ui/core/Typography";
 import React from "react";
 import logo from "../images/logo.png";
 import clsx from "clsx";
-import {Link as RouterLink} from "react-router-dom";
-import {HomepageUrl} from "../App";
 import Container from "@material-ui/core/Container";
 import Hidden from "@material-ui/core/Hidden";
-import {getCookieUserId, isUserLoggedIn} from "../Helpers/CookieHelper";
 import Button from "@material-ui/core/Button";
 import {useFormSectionStyles} from "../Styles/FormSectionStyles";
 import {useMarginStyles} from "../Styles/MarginStyles";
+import {GitHub} from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
     heroContainer: {
@@ -67,41 +65,19 @@ function HomepageHeroDescription(props) {
                 <span className={classes.heroSubtitleSelection}> в одном месте</span>
             </Typography>
             <div className={clsx(classes.buttonsCentered, margins.m2T)}>
-                {isUserLoggedIn()
-                    ? <Button
-                        size={getButtonSize()}
-                        disableElevation
-                        variant="contained"
-                        color="primary"
-                        component={RouterLink}
-                        to={`${HomepageUrl}/user/${getCookieUserId()}/apps`}
-                    >
-                        Вернуться в консоль
-                    </Button>
-                    : <>
-                        <Button
-                            size={getButtonSize()}
-                            disableElevation
-                            variant="contained"
-                            color="primary"
-                            component={RouterLink}
-                            to={`${HomepageUrl}/login`}
-                        >
-                            Войти
-                        </Button>
-                        <Button
-                            className={margins.m1L}
-                            size={getButtonSize()}
-                            disableElevation
-                            variant="outlined"
-                            color="primary"
-                            component={RouterLink}
-                            to={`${HomepageUrl}/register`}
-                        >
-                            Зарегистрироваться
-                        </Button>
-                    </>
-                }
+                <Button
+                    size={getButtonSize()}
+                    disableElevation
+                    color="primary"
+                    variant="contained"
+                    startIcon={<GitHub color="inherit"/>}
+                    component="a"
+                    href={"https://github.com/Sc222/skb-lab-multimarket-statistics/"}
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    Github
+                </Button>
             </div>
         </>
     );

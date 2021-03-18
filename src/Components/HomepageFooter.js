@@ -2,11 +2,8 @@ import {makeStyles} from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
 import clsx from "clsx";
-import {Link as RouterLink} from "react-router-dom";
-import {HomepageUrl} from "../App";
 import Container from "@material-ui/core/Container";
 import Hidden from "@material-ui/core/Hidden";
-import {getCookieUserId, isUserLoggedIn} from "../Helpers/CookieHelper";
 import Button from "@material-ui/core/Button";
 import {useMarginStyles} from "../Styles/MarginStyles";
 import {GitHub} from "@material-ui/icons";
@@ -55,29 +52,24 @@ function HomepageFooterDescription(props) {
                 Попробуйте прямо сейчас
             </Typography>
             <Typography align="center" variant={getSubtitleVariant()} className={classes.footerSubtitle}>
-                Войдите в консоль, если вы уже настроили ее на своей машине или посмотрите, как это сделать на Github
+                Быстро запустите систему, скопировав команды или посмотрите подробное руководство на Github
             </Typography>
             <div className={clsx(classes.buttonsCentered, margins.m2T)}>
-                {isUserLoggedIn()
-                    ? <Button
+                                    <Button
                         size={getButtonSize()}
                         disableElevation
                         variant="contained"
-                        component={RouterLink}
-                        to={`${HomepageUrl}/user/${getCookieUserId()}/apps`}
+                        onClick={() => {
+                            navigator.clipboard.writeText(
+                                "git clone https://github.com/Sc222/skb-lab-multimarket-statistics\n" +
+                                "cd skb-lab-multimarket-statistics\n" +
+                                "docker-compose up");
+                            props.showStatusAlert("Скопировано!", "success");
+                        }}
                     >
-                        Вернуться в консоль
+                        Копировать
                     </Button>
-                    : <Button
-                        size={getButtonSize()}
-                        disableElevation
-                        variant="contained"
-                        component={RouterLink}
-                        to={`${HomepageUrl}/login`}
-                    >
-                        Войти
-                    </Button>
-                }
+
                 <Button
                     className={clsx(classes.textWhite, margins.m2L)}
                     size={getButtonSize()}
@@ -96,17 +88,17 @@ function HomepageFooterDescription(props) {
     );
 }
 
-export default function HomepageFooter() {
+export default function HomepageFooter(props) {
     const classes = useStyles();
 
     return (
         <div className={clsx(classes.primaryBackground)}>
             <Container maxWidth="md" className={classes.footerContainer}>
                 <Hidden mdUp>
-                    <HomepageFooterDescription/>
+                    <HomepageFooterDescription showStatusAlert={props.showStatusAlert}/>
                 </Hidden>
                 <Hidden smDown>
-                    <HomepageFooterDescription isLarge/>
+                    <HomepageFooterDescription showStatusAlert={props.showStatusAlert} isLarge/>
                 </Hidden>
             </Container>
         </div>
