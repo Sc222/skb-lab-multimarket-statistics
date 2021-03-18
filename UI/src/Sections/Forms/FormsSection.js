@@ -44,7 +44,7 @@ export default function FormsSection() {
                             <Redirect to={referer ? referer : `${HomepageUrl}/user/${getCookieUserId()}/apps`}/>}
                             {console.log("WE ARE IN FORM SECTIONS")}
                             {user && console.log("redirect to apps")}
-                            {user && <Redirect to={referer? referer : `${HomepageUrl}/user/${user.id}/apps`}/>}
+                            {user && <Redirect to={referer ? referer : `${HomepageUrl}/user/${user.id}/apps`}/>}
 
                             <Route exact path={`${HomepageUrl}/login`}>
                                 <Login setLoggedInUser={setLoggedInUser}/>
