@@ -6,6 +6,7 @@ import logo from "../images/logo.png";
 import Box from "@material-ui/core/Box";
 import clsx from "clsx";
 import ButtonBase from "@material-ui/core/ButtonBase";
+import {Link as RouterLink} from "react-router-dom";
 import {HomepageUrl} from "../App";
 
 const useStyles = makeStyles((theme) => ({
@@ -47,7 +48,7 @@ export default function ServiceNameAndLogo(props) {
 
     return (
         <Box className={classes.container}>
-            <ButtonBase component="a" href={`${HomepageUrl}/`}
+            <ButtonBase component={RouterLink} to={`${HomepageUrl}/`}
                         className={clsx(classes.buttonPadding, getPositionClass())}>
                 <Typography variant="h6" color={props.fontColor} display="inline" noWrap
                             className={classes.textWithIcon}>

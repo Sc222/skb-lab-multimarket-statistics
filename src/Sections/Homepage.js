@@ -1,5 +1,3 @@
-import {Link as RouterLink} from "react-router-dom";
-import {HomepageUrl} from "../App";
 import React, {useRef} from "react";
 import Avatar from "@material-ui/core/Avatar";
 import {useFormSectionStyles} from "../Styles/FormSectionStyles";
@@ -8,9 +6,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import ServiceNameAndLogo from "../Components/ServiceNameAndLogo";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
-import {getCookieUserId, isUserLoggedIn} from "../Helpers/CookieHelper";
-import IconButton from "@material-ui/core/IconButton";
-import demoProfile from "../images/demo_profile.png";
 import {makeStyles} from "@material-ui/core/styles";
 import {useMarginStyles} from "../Styles/MarginStyles";
 import clsx from "clsx";
