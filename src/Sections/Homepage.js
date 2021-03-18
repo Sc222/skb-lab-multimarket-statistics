@@ -1,4 +1,3 @@
-import "./Homepage.css";
 import {Link as RouterLink} from "react-router-dom";
 import {HomepageUrl} from "../App";
 import React, {useRef} from "react";
