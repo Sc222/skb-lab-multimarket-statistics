@@ -47,6 +47,7 @@ export const MarketsInfo = [
     {
         name: "Play Store",
         description: "Найдите свое приложение в Google Play Store",
+        homepage: "https://play.google.com/store",
         demoFormat: "https://play.google.com/store/apps/details?id=com.example.test",
         getIcon: (disabled) => {
             return disabled ? googlePlayDisabled : googlePlay
@@ -58,6 +59,7 @@ export const MarketsInfo = [
     {
         name: "App Store",
         description: "Найдите свое приложение в Apple App Store",
+        homepage: "https://apps.apple.com",
         demoFormat: "https://apps.apple.com/app/id111111111",
         getIcon: (disabled) => {
             return disabled ? appStoreDisabled : appStore
@@ -69,6 +71,7 @@ export const MarketsInfo = [
     {
         name: "AppGallery",
         description: "Найдите свое приложение в Huawei AppGallery",
+        homepage: "https://appgallery.huawei.com/",
         demoFormat: "https://appgallery.huawei.com/#/app/C111111111",
         getIcon: (disabled) => {
             return disabled ? appGalleryDisabled : appGallery
