@@ -43,6 +43,7 @@ export default function DateTimePickerFromTo(props){
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <Grid container spacing={2} justify='flex-start' alignItems='stretch'
                       className={clsx(margins.m1Y,margins.m05X)}>
+                    {/*md size depends on showButton existence*/}
                     <Grid item xs={8} sm={7} md={props.handleShowButton?3:5}>
                         <KeyboardDateTimePicker
                             fullWidth

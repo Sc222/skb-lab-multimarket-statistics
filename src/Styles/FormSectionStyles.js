@@ -11,39 +11,39 @@ function FormSectionStyles(theme) {
         content: {
             flexGrow: 1,
             height: '100vh',
-            overflow: 'auto',
+            overflow: 'auto'
         },
         fullWidthDivider: {
             width: '100%',
-            marginTop: theme.spacing(1),
-            marginBottom: theme.spacing(0.5),
+            marginTop: `${theme.spacing(1)}px !important`,
+            marginBottom: `${theme.spacing(0.5)}px !important`
         },
         paper: {
-            marginTop: theme.spacing(2),
-            marginBottom: theme.spacing(2),
-            paddingTop: theme.spacing(1.5),
-            paddingBottom: theme.spacing(1.5),
+            marginTop: `${theme.spacing(2)}px !important`,
+            marginBottom: `${theme.spacing(2)}px !important`,
+            paddingTop: `${theme.spacing(1.5)}px !important`,
+            paddingBottom: `${theme.spacing(1.5)}px !important`,
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
+            alignItems: 'center'
         },
         container: {
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(2),
+            paddingLeft: `${theme.spacing(2)}px !important`,
+            paddingRight: `${theme.spacing(2)}px !important`,
             width: '100%'
         },
-        containerWithYPadding:{
-            paddingTop: theme.spacing(2),
-            paddingBottom: theme.spacing(2),
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(2),
+        containerWithYPadding: {
+            paddingTop: `${theme.spacing(2)}px !important`,
+            paddingBottom: `${theme.spacing(2)}px !important`,
+            paddingLeft: `${theme.spacing(2)}px !important`,
+            paddingRight: `${theme.spacing(2)}px !important`,
             width: '100%'
         },
         cardContainer: {
             width: '100%'
         },
         buttonGrid: {
-            marginTop: theme.spacing(1)
+            marginTop: `${theme.spacing(1)}px !important`
         }
     };
 }
