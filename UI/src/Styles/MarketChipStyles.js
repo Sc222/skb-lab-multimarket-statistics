@@ -37,7 +37,7 @@ function MarketChipStyles(theme) {
                     paddingRight: theme.spacing(0.25),
                     '& > *': {
                         marginLeft: theme.spacing(0.2),
-                        marginRight: theme.spacing(0.2),
+                        marginRight: theme.spacing(0.2)
                     }
                 }
         }
